@@ -10,7 +10,7 @@ from metrics import calculate_sequence_identity
 
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
-os.environ["WANDB_DISABLED"] = "True"
+#os.environ["WANDB_DISABLED"] = "True"
 
 model_checkpoint_path = f"../checkpoints/dynamic-masked/checkpoint-epoch-123"
 
@@ -41,12 +41,7 @@ critic_optimizer = torch.optim.Adam(critic.parameters(), lr=1e-4, betas=(0.5, 0.
 
 
 # wandb
-""" wandb.init(project="ProtGen GAN Training", name="demo-1", config={
-        "epochs": n_epochs,
-        "critic_updates_per_gen": n_critic,
-        "lambda_gp": lambda_gp,
-        "learning_rate": 1e-4,
-    }) """
+wandb.init(project="ProtGen GAN Training", name="demo-2")
 
 # Params
 n_epochs = 100
@@ -153,6 +148,8 @@ for epoch in range(n_epochs):
                 g_loss.backward()
                 gen_optimizer.step()
                 print(f"Current masking rate is: {current_masking_rate}")
+                print(f"Epoch {epoch + 1}/{n_epochs} - Batch {batch_number}")
+                print(f"Critic Loss: {c_loss.item():.4f}, Generator Loss: {g_loss.item():.4f}")
 
                 # Decrease masking rate after each step
                 current_masking_rate = max(0.1, current_masking_rate - iteration_fill_rate)
@@ -161,17 +158,24 @@ for epoch in range(n_epochs):
             break
 
         if batch_number % 1 == 0:
+            print("="*20)
             print(f"Epoch {epoch + 1}/{n_epochs} - Batch {batch_number}")
             print(f"Critic Loss: {c_loss.item():.4f}, Generator Loss: {g_loss.item():.4f}")
-            # Create a fully masked sequence for evaluation
-            evaluation_input_ids = input_ids.clone()
+            wandb.log({
+                "epoch": epoch + 1,
+                "batch": batch_number + 1,
+                "critic_loss": c_loss.item(),
+                "generator_loss": g_loss.item()
+            })
+            
+            """ evaluation_input_ids = input_ids.clone()
             evaluation_attention_mask = attention_mask.clone()
 
             # Mask all meaningful tokens
             for i in range(len(evaluation_input_ids)):
                 meaningful_mask = (evaluation_input_ids[i] > 4)
                 evaluation_input_ids[i][meaningful_mask] = tokenizer.mask_token_id
-
+s
             # Generate a fully completed sequence (fill everything)
             generated_sequence = generator.generate(evaluation_input_ids, evaluation_attention_mask, keep_percent=1.0)
 
@@ -184,7 +188,7 @@ for epoch in range(n_epochs):
             sequence_identity = calculate_sequence_identity(real_sequence, generated_sequence_str)
 
             # Print sequence identity
-            print(f"Batch {batch_number}: Sequence Identity = {sequence_identity:.2f}%")
+            print(f"Batch {batch_number}: Sequence Identity = {sequence_identity:.2f}%") """
 
 
         batch_number += 1

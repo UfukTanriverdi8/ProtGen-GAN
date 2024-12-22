@@ -12,7 +12,7 @@ class Generator(nn.Module):
         return outputs.logits
     
     def generate(self, input_ids, attention_mask=None, temperature=1.0, keep_percent=0.1):
-        # Create a mask for meaningful tokens (not 0, 1, 2, 3, 4)
+        # meaningful tokens
         meaningful_mask = (input_ids > 4)
 
         for _ in range(input_ids.size(1)):  # Iterate up to sequence length
