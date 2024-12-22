@@ -52,6 +52,7 @@ n_epochs = 100
 n_critic = 5  # Number of critic updates per generator update
 lambda_gp = 10  # Gradient penalty weight
 initial_masking_rate = 0.9
+iteration_fill_rate = 0.1
 
 # Training loop
 for epoch in range(n_epochs):
@@ -74,14 +75,19 @@ for epoch in range(n_epochs):
             while current_masking_rate > 0.1:
                 # Apply dynamic masking
                 masked_input_ids = input_ids.clone()
+                updated_attention_mask = attention_mask.clone()  # Clone to avoid modifying the original
+
                 seq_length_per_batch = attention_mask.sum(dim=1)  # sequence that does not include pad or masks
                 for i in range(len(masked_input_ids)):
                     num_to_mask = int(seq_length_per_batch[i].item() * current_masking_rate) # how many items will be masked
                     mask_indices = torch.randperm(seq_length_per_batch[i].item())[:num_to_mask] # 
                     masked_input_ids[i, mask_indices] = tokenizer.mask_token_id
 
+                    # Update attention mask to exclude newly masked tokens
+                    updated_attention_mask[i, mask_indices] = 0
+
                 # Generate fake data
-                fake_data = generator(masked_input_ids, attention_mask)
+                fake_data = generator(masked_input_ids, updated_attention_mask, keep_percent=iteration_fill_rate)
 
                 # ---------------------
                 # Train Critic
@@ -92,23 +98,46 @@ for epoch in range(n_epochs):
                         critic_batch = next(critic_iter)
                         real_data = critic_batch["input_ids"].to(device)
                         attention_mask_real = critic_batch["attention_mask"].to(device)
+
+                        # Mask real data for the critic
+                        masked_real_data = real_data.clone()
+                        updated_attention_mask_real = attention_mask_real.clone()
+
+                        seq_length_real = attention_mask_real.sum(dim=1)  # Lengths of sequences without padding
+                        for i in range(len(masked_real_data)):
+                            num_to_mask_real = int(seq_length_real[i].item() * current_masking_rate)
+                            mask_indices_real = torch.randperm(seq_length_real[i].item())[:num_to_mask_real]
+                            masked_real_data[i, mask_indices_real] = tokenizer.mask_token_id
+                            updated_attention_mask_real[i, mask_indices_real] = 0
+
                     except StopIteration:
                         critic_iter = iter(critic_dataloader)
                         critic_batch = next(critic_iter)
                         real_data = critic_batch["input_ids"].to(device)
                         attention_mask_real = critic_batch["attention_mask"].to(device)
 
+                        # Mask real data for the critic in fallback
+                        masked_real_data = real_data.clone()
+                        updated_attention_mask_real = attention_mask_real.clone()
+
+                        seq_length_real = attention_mask_real.sum(dim=1)
+                        for i in range(len(masked_real_data)):
+                            num_to_mask_real = int(seq_length_real[i].item() * current_masking_rate)
+                            mask_indices_real = torch.randperm(seq_length_real[i].item())[:num_to_mask_real]
+                            masked_real_data[i, mask_indices_real] = tokenizer.mask_token_id
+                            updated_attention_mask_real[i, mask_indices_real] = 0
+
                     critic_optimizer.zero_grad()
 
-                    # Get scores
-                    real_scores = critic(real_data, attention_mask=attention_mask_real)
-                    fake_scores = critic(fake_data, attention_mask=attention_mask)
-
                     # Compute gradient penalty
-                    gp = compute_gradient_penalty(critic, real_data, fake_data, device)
+                    gradient_penalty = compute_gradient_penalty(
+                        critic, masked_real_data, fake_data, device
+                    )
 
-                    # Critic loss
-                    c_loss = -torch.mean(real_scores) + torch.mean(fake_scores) + lambda_gp * gp
+                    # Get scores and compute critic loss
+                    real_scores = critic(masked_real_data, attention_mask=updated_attention_mask_real)
+                    fake_scores = critic(fake_data, attention_mask=None)
+                    c_loss = critic_loss(real_scores, fake_scores, gradient_penalty, lambda_gp)
                     c_loss.backward()
                     critic_optimizer.step()
 
@@ -116,17 +145,15 @@ for epoch in range(n_epochs):
                 # Train Generator
                 # ---------------------
                 gen_optimizer.zero_grad()
-                
-                # Critic feedback for generator
-                fake_scores = critic(fake_data, attention_mask)
 
-                # Generator loss
-                g_loss = -torch.mean(fake_scores)
+                # Compute generator loss
+                fake_scores = critic(fake_data, attention_mask=None)
+                g_loss = generator_loss(fake_scores)
                 g_loss.backward()
                 gen_optimizer.step()
 
                 # Decrease masking rate after each step
-                current_masking_rate = max(0.1, current_masking_rate - 0.1)
+                current_masking_rate = max(0.1, current_masking_rate - iteration_fill_rate)
 
         except StopIteration:
             break
@@ -134,6 +161,29 @@ for epoch in range(n_epochs):
         if batch_number % 10 == 0:
             print(f"Epoch {epoch + 1}/{n_epochs} - Batch {batch_number}")
             print(f"Critic Loss: {c_loss.item():.4f}, Generator Loss: {g_loss.item():.4f}")
+            # Create a fully masked sequence for evaluation
+            evaluation_input_ids = input_ids.clone()
+            evaluation_attention_mask = attention_mask.clone()
+
+            # Mask all meaningful tokens
+            for i in range(len(evaluation_input_ids)):
+                meaningful_mask = (evaluation_input_ids[i] > 4)
+                evaluation_input_ids[i][meaningful_mask] = tokenizer.mask_token_id
+
+            # Generate a fully completed sequence (fill everything)
+            generated_sequence = generator.generate(evaluation_input_ids, evaluation_attention_mask, keep_percent=1.0)
+
+            # Get a real sequence (first one from the batch for simplicity)
+            real_sequence = input_ids[0].tolist()  # Use original input_ids for real sequence
+            real_sequence = ''.join(chr(tok) for tok in real_sequence if tok > 4)  # Convert to amino acid string
+
+            # Compare real and generated sequences
+            generated_sequence_str = ''.join(chr(tok) for tok in generated_sequence[0].tolist() if tok > 4)  # Convert first generated sequence
+            sequence_identity = calculate_sequence_identity(real_sequence, generated_sequence_str)
+
+            # Print sequence identity
+            print(f"Batch {batch_number}: Sequence Identity = {sequence_identity:.2f}%")
+
 
         batch_number += 1
 
@@ -154,4 +204,3 @@ for epoch in range(n_epochs):
     print(f" - Critic ProtBERT saved at: {critic_bert_dir}")
     print(f" - Critic Classifier saved at: {critic_classifier_path}")
     print(f" - Generator ProtBERT saved at: {gen_dir}")
-
