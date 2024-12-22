@@ -29,15 +29,16 @@ class Generator(nn.Module):
             # Set confidence to zero for unmeaningful tokens
             confidence = confidence * meaningful_mask.float()
 
-            # Determine top 10% confident tokens to retain
-            num_tokens_to_keep = int(keep_percent * meaningful_mask.sum(dim=1).item())
-            topk_indices = torch.topk(confidence, num_tokens_to_keep, dim=-1).indices
-
-            # Create a mask to retain only the top 10% most confident tokens
+            # Process each sequence in the batch
             retain_mask = torch.zeros_like(input_ids, dtype=torch.bool)
-            retain_mask.scatter_(1, topk_indices, True)
+            for batch_idx in range(meaningful_mask.size(0)):
+                num_tokens_to_keep = int(keep_percent * meaningful_mask[batch_idx].sum().item())
+                topk_indices = torch.topk(confidence[batch_idx], num_tokens_to_keep).indices
 
-            # Update input_ids: replace only unmasked, non-retained tokens
+                # Create retain_mask for the current sequence
+                retain_mask[batch_idx].scatter_(0, topk_indices, True)
+
+            # Update input_ids for the entire batch
             fill_mask = ~retain_mask & (input_ids <= 4)
             input_ids[fill_mask] = predicted_ids[fill_mask]
 

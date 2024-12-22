@@ -12,11 +12,12 @@ from metrics import calculate_sequence_identity
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 os.environ["WANDB_DISABLED"] = "True"
 
-model_checkpoint_path = f"../checkpoints/dynamic-masked/checkpoint-7610379"
+model_checkpoint_path = f"../checkpoints/dynamic-masked/checkpoint-epoch-123"
 
 tokenizer = AutoTokenizer.from_pretrained("Rostlab/prot_bert", do_lower_case=False)
 
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+torch.tensor([0], device=device)
 
 tokenized_datasets = load_and_tokenize_dataset(
     tokenizer,
@@ -80,14 +81,14 @@ for epoch in range(n_epochs):
                 seq_length_per_batch = attention_mask.sum(dim=1)  # sequence that does not include pad or masks
                 for i in range(len(masked_input_ids)):
                     num_to_mask = int(seq_length_per_batch[i].item() * current_masking_rate) # how many items will be masked
-                    mask_indices = torch.randperm(seq_length_per_batch[i].item())[:num_to_mask] # 
+                    mask_indices = torch.randperm(int(seq_length_per_batch[i].item()))[:num_to_mask] # 
                     masked_input_ids[i, mask_indices] = tokenizer.mask_token_id
 
                     # Update attention mask to exclude newly masked tokens
                     updated_attention_mask[i, mask_indices] = 0
 
                 # Generate fake data
-                fake_data = generator(masked_input_ids, updated_attention_mask, keep_percent=iteration_fill_rate)
+                fake_data = generator.generate(masked_input_ids, updated_attention_mask, keep_percent=iteration_fill_rate)
 
                 # ---------------------
                 # Train Critic
@@ -106,7 +107,7 @@ for epoch in range(n_epochs):
                         seq_length_real = attention_mask_real.sum(dim=1)  # Lengths of sequences without padding
                         for i in range(len(masked_real_data)):
                             num_to_mask_real = int(seq_length_real[i].item() * current_masking_rate)
-                            mask_indices_real = torch.randperm(seq_length_real[i].item())[:num_to_mask_real]
+                            mask_indices_real = torch.randperm(int(seq_length_real[i].item()))[:num_to_mask_real]
                             masked_real_data[i, mask_indices_real] = tokenizer.mask_token_id
                             updated_attention_mask_real[i, mask_indices_real] = 0
 
@@ -123,7 +124,7 @@ for epoch in range(n_epochs):
                         seq_length_real = attention_mask_real.sum(dim=1)
                         for i in range(len(masked_real_data)):
                             num_to_mask_real = int(seq_length_real[i].item() * current_masking_rate)
-                            mask_indices_real = torch.randperm(seq_length_real[i].item())[:num_to_mask_real]
+                            mask_indices_real = torch.randperm(int(seq_length_real[i].item()))[:num_to_mask_real]
                             masked_real_data[i, mask_indices_real] = tokenizer.mask_token_id
                             updated_attention_mask_real[i, mask_indices_real] = 0
 
@@ -151,6 +152,7 @@ for epoch in range(n_epochs):
                 g_loss = generator_loss(fake_scores)
                 g_loss.backward()
                 gen_optimizer.step()
+                print(f"Current masking rate is: {current_masking_rate}")
 
                 # Decrease masking rate after each step
                 current_masking_rate = max(0.1, current_masking_rate - iteration_fill_rate)
@@ -158,7 +160,7 @@ for epoch in range(n_epochs):
         except StopIteration:
             break
 
-        if batch_number % 10 == 0:
+        if batch_number % 1 == 0:
             print(f"Epoch {epoch + 1}/{n_epochs} - Batch {batch_number}")
             print(f"Critic Loss: {c_loss.item():.4f}, Generator Loss: {g_loss.item():.4f}")
             # Create a fully masked sequence for evaluation
