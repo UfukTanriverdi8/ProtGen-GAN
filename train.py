@@ -32,7 +32,7 @@ gen_dataloader, critic_dataloader = get_dataloaders(tokenized_datasets, batch_si
 generator_protbert = AutoModelForMaskedLM.from_pretrained(model_checkpoint_path).to(device)
 critic_protbert = AutoModelForMaskedLM.from_pretrained(model_checkpoint_path).to(device)
 
-generator = Generator(protbert_model=generator_protbert).to(device)
+generator = Generator(protbert_model=generator_protbert, mask_token_id = tokenizer.mask_token_id).to(device)
 critic = Critic(protbert_model=critic_protbert).to(device)
 
 gen_optimizer = torch.optim.Adam(generator.parameters(), lr=1e-4, betas=(0.5, 0.9))
@@ -64,7 +64,7 @@ for epoch in range(n_epochs):
             input_ids = gen_batch["input_ids"].to(device)
             attention_mask = gen_batch["attention_mask"].to(device)
 
-            # Initialize masking rate for this sequence
+            # keeping track of the masking rate
             current_masking_rate = initial_masking_rate
 
             # Iterative filling
@@ -76,7 +76,7 @@ for epoch in range(n_epochs):
                 seq_length_per_batch = attention_mask.sum(dim=1)  # sequence that does not include pad or masks
                 for i in range(len(masked_input_ids)):
                     num_to_mask = int(seq_length_per_batch[i].item() * current_masking_rate) # how many items will be masked
-                    mask_indices = torch.randperm(int(seq_length_per_batch[i].item()))[:num_to_mask] # 
+                    mask_indices = torch.randperm(int(seq_length_per_batch[i].item()))[:num_to_mask] # masked indices
                     masked_input_ids[i, mask_indices] = tokenizer.mask_token_id
 
                     # Update attention mask to exclude newly masked tokens
@@ -130,7 +130,7 @@ for epoch in range(n_epochs):
                         critic, masked_real_data, fake_data, device
                     )
 
-                    # Get scores and compute critic loss
+                    # getting the scores
                     real_scores = critic(masked_real_data, attention_mask=updated_attention_mask_real)
                     fake_scores = critic(fake_data, attention_mask=None)
                     c_loss = critic_loss(real_scores, fake_scores, gradient_penalty, lambda_gp)
@@ -147,7 +147,7 @@ for epoch in range(n_epochs):
                 g_loss = generator_loss(fake_scores)
                 g_loss.backward()
                 gen_optimizer.step()
-                print(f"Current masking rate is: {current_masking_rate}")
+                print(f"Current masking rate is: {current_masking_rate:.2f}")
                 print(f"Epoch {epoch + 1}/{n_epochs} - Batch {batch_number}")
                 print(f"Critic Loss: {c_loss.item():.4f}, Generator Loss: {g_loss.item():.4f}")
 

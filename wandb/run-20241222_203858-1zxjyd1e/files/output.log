@@ -1,0 +1,3309 @@
+Epoch 1/100
+/home/ufuk/protgen/protgen_env/lib/python3.8/site-packages/torch/autograd/graph.py:769: UserWarning: Attempting to run cuBLAS, but there was no current CUDA context! Attempting to set the primary context... (Triggered internally at ../aten/src/ATen/cuda/CublasHandlePool.cpp:135.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 0
+Critic Loss: 8.7966, Generator Loss: 0.0695
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 0
+Critic Loss: 8.1437, Generator Loss: 0.0875
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 0
+Critic Loss: 7.0272, Generator Loss: 0.1103
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 0
+Critic Loss: 6.2562, Generator Loss: 0.1071
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 0
+Critic Loss: 5.6105, Generator Loss: 0.1384
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 0
+Critic Loss: 3.2947, Generator Loss: 0.1438
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 0
+Critic Loss: 2.2854, Generator Loss: 0.1714
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 0
+Critic Loss: 0.6701, Generator Loss: 0.2019
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 0
+Critic Loss: 0.3205, Generator Loss: 0.2699
+====================
+Epoch 1/100 - Batch 0
+Critic Loss: 0.3205, Generator Loss: 0.2699
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 1
+Critic Loss: 1.2925, Generator Loss: 0.3984
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 1
+Critic Loss: -0.1735, Generator Loss: 0.5564
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 1
+Critic Loss: 1.4126, Generator Loss: 0.5990
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 1
+Critic Loss: 0.6410, Generator Loss: 0.5845
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 1
+Critic Loss: -0.4611, Generator Loss: 0.6314
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 1
+Critic Loss: -0.5726, Generator Loss: 0.6077
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 1
+Critic Loss: -0.1241, Generator Loss: 0.6559
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 1
+Critic Loss: -0.5809, Generator Loss: 0.7148
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 1
+Critic Loss: -0.7021, Generator Loss: 0.6417
+====================
+Epoch 1/100 - Batch 1
+Critic Loss: -0.7021, Generator Loss: 0.6417
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 2
+Critic Loss: -0.8416, Generator Loss: 1.1819
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 2
+Critic Loss: -1.1043, Generator Loss: 1.3977
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 2
+Critic Loss: -1.6310, Generator Loss: 1.5260
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 2
+Critic Loss: -1.3314, Generator Loss: 1.1897
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 2
+Critic Loss: -1.7928, Generator Loss: 1.6333
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 2
+Critic Loss: -1.6259, Generator Loss: 1.4771
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 2
+Critic Loss: -1.2919, Generator Loss: 1.2309
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 2
+Critic Loss: -1.9691, Generator Loss: 1.8706
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 2
+Critic Loss: -2.1647, Generator Loss: 1.9061
+====================
+Epoch 1/100 - Batch 2
+Critic Loss: -2.1647, Generator Loss: 1.9061
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 3
+Critic Loss: -3.0323, Generator Loss: 2.9585
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 3
+Critic Loss: -2.9535, Generator Loss: 2.7900
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 3
+Critic Loss: -3.3370, Generator Loss: 3.2853
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 3
+Critic Loss: -3.5962, Generator Loss: 3.4232
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 3
+Critic Loss: -3.1327, Generator Loss: 2.9757
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 3
+Critic Loss: -2.7744, Generator Loss: 2.7249
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 3
+Critic Loss: -3.1630, Generator Loss: 2.9828
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 3
+Critic Loss: -2.7312, Generator Loss: 2.7647
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 3
+Critic Loss: -3.0536, Generator Loss: 3.0289
+====================
+Epoch 1/100 - Batch 3
+Critic Loss: -3.0536, Generator Loss: 3.0289
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 4
+Critic Loss: -3.9397, Generator Loss: 4.3505
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 4
+Critic Loss: -4.5861, Generator Loss: 5.0266
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 4
+Critic Loss: -4.2172, Generator Loss: 4.6110
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 4
+Critic Loss: -4.1732, Generator Loss: 4.7001
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 4
+Critic Loss: -2.9529, Generator Loss: 3.3934
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 4
+Critic Loss: -3.1653, Generator Loss: 3.4432
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 4
+Critic Loss: -3.2847, Generator Loss: 3.5803
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 4
+Critic Loss: -3.5565, Generator Loss: 4.0206
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 4
+Critic Loss: -3.1136, Generator Loss: 3.5671
+====================
+Epoch 1/100 - Batch 4
+Critic Loss: -3.1136, Generator Loss: 3.5671
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 5
+Critic Loss: -4.9507, Generator Loss: 5.8602
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 5
+Critic Loss: -5.1816, Generator Loss: 6.1246
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 5
+Critic Loss: -5.4326, Generator Loss: 6.3314
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 5
+Critic Loss: -4.2745, Generator Loss: 4.8456
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 5
+Critic Loss: -5.6850, Generator Loss: 6.5119
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 5
+Critic Loss: -4.4509, Generator Loss: 5.0845
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 5
+Critic Loss: -4.3757, Generator Loss: 4.9184
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 5
+Critic Loss: -3.1119, Generator Loss: 3.4569
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 5
+Critic Loss: -3.0209, Generator Loss: 3.4338
+====================
+Epoch 1/100 - Batch 5
+Critic Loss: -3.0209, Generator Loss: 3.4338
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 6
+Critic Loss: -5.6577, Generator Loss: 6.6551
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 6
+Critic Loss: -5.1343, Generator Loss: 6.0899
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 6
+Critic Loss: -4.3912, Generator Loss: 5.0510
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 6
+Critic Loss: -6.0704, Generator Loss: 6.9472
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 6
+Critic Loss: -4.7168, Generator Loss: 5.3473
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 6
+Critic Loss: -6.3213, Generator Loss: 7.1746
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 6
+Critic Loss: -3.6732, Generator Loss: 4.1315
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 6
+Critic Loss: -5.2974, Generator Loss: 6.1598
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 6
+Critic Loss: -4.2224, Generator Loss: 4.6771
+====================
+Epoch 1/100 - Batch 6
+Critic Loss: -4.2224, Generator Loss: 4.6771
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 7
+Critic Loss: -6.2272, Generator Loss: 7.2919
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 7
+Critic Loss: -6.3924, Generator Loss: 7.4143
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 7
+Critic Loss: -5.6588, Generator Loss: 6.4546
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 7
+Critic Loss: -5.8917, Generator Loss: 6.5516
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 7
+Critic Loss: -6.6855, Generator Loss: 7.5849
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 7
+Critic Loss: -4.6015, Generator Loss: 5.0029
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 7
+Critic Loss: -5.1835, Generator Loss: 5.6648
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 7
+Critic Loss: -3.9707, Generator Loss: 4.3682
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 7
+Critic Loss: -4.3365, Generator Loss: 4.6137
+====================
+Epoch 1/100 - Batch 7
+Critic Loss: -4.3365, Generator Loss: 4.6137
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 8
+Critic Loss: -5.5745, Generator Loss: 6.3915
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 8
+Critic Loss: -6.0510, Generator Loss: 6.8355
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 8
+Critic Loss: -6.9543, Generator Loss: 7.8361
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 8
+Critic Loss: -6.3565, Generator Loss: 7.1081
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 8
+Critic Loss: -6.6094, Generator Loss: 7.2024
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 8
+Critic Loss: -5.5698, Generator Loss: 6.0321
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 8
+Critic Loss: -3.9760, Generator Loss: 4.3059
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 8
+Critic Loss: -4.5963, Generator Loss: 4.8739
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 8
+Critic Loss: -4.0689, Generator Loss: 4.3263
+====================
+Epoch 1/100 - Batch 8
+Critic Loss: -4.0689, Generator Loss: 4.3263
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 9
+Critic Loss: -6.4644, Generator Loss: 7.2364
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 9
+Critic Loss: -7.4033, Generator Loss: 8.2184
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 9
+Critic Loss: -7.5411, Generator Loss: 8.4106
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 9
+Critic Loss: -5.9084, Generator Loss: 6.4836
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 9
+Critic Loss: -6.9013, Generator Loss: 7.5851
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 9
+Critic Loss: -6.6045, Generator Loss: 7.3668
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 9
+Critic Loss: -6.0858, Generator Loss: 6.5349
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 9
+Critic Loss: -6.1285, Generator Loss: 6.3442
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 9
+Critic Loss: -6.5425, Generator Loss: 6.6799
+====================
+Epoch 1/100 - Batch 9
+Critic Loss: -6.5425, Generator Loss: 6.6799
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 10
+Critic Loss: -7.0144, Generator Loss: 7.8141
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 10
+Critic Loss: -7.3387, Generator Loss: 8.1103
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 10
+Critic Loss: -6.8403, Generator Loss: 7.3641
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 10
+Critic Loss: -7.5040, Generator Loss: 8.2328
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 10
+Critic Loss: -7.5685, Generator Loss: 8.0997
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 10
+Critic Loss: -6.1279, Generator Loss: 6.3713
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 10
+Critic Loss: -6.9637, Generator Loss: 7.2960
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 10
+Critic Loss: -7.0048, Generator Loss: 7.2124
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 10
+Critic Loss: -5.2619, Generator Loss: 5.0293
+====================
+Epoch 1/100 - Batch 10
+Critic Loss: -5.2619, Generator Loss: 5.0293
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 11
+Critic Loss: -8.1851, Generator Loss: 8.8417
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 11
+Critic Loss: -7.3454, Generator Loss: 7.8670
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 11
+Critic Loss: -7.6095, Generator Loss: 8.0750
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 11
+Critic Loss: -8.0578, Generator Loss: 8.6597
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 11
+Critic Loss: -7.7003, Generator Loss: 8.2472
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 11
+Critic Loss: -7.6433, Generator Loss: 8.1874
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 11
+Critic Loss: -5.9469, Generator Loss: 5.8876
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 11
+Critic Loss: -7.0198, Generator Loss: 7.1701
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 11
+Critic Loss: -6.8663, Generator Loss: 6.8411
+====================
+Epoch 1/100 - Batch 11
+Critic Loss: -6.8663, Generator Loss: 6.8411
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 12
+Critic Loss: -8.2891, Generator Loss: 8.9542
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 12
+Critic Loss: -9.0831, Generator Loss: 9.7622
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 12
+Critic Loss: -9.1006, Generator Loss: 9.8396
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 12
+Critic Loss: -8.3897, Generator Loss: 8.7872
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 12
+Critic Loss: -7.9342, Generator Loss: 8.1907
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 12
+Critic Loss: -7.5784, Generator Loss: 7.9319
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 12
+Critic Loss: -6.0480, Generator Loss: 5.8888
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 12
+Critic Loss: -5.9674, Generator Loss: 6.0033
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 12
+Critic Loss: -5.6602, Generator Loss: 5.5496
+====================
+Epoch 1/100 - Batch 12
+Critic Loss: -5.6602, Generator Loss: 5.5496
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 13
+Critic Loss: -7.8198, Generator Loss: 8.4782
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 13
+Critic Loss: -8.3130, Generator Loss: 8.8417
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 13
+Critic Loss: -8.6717, Generator Loss: 9.0458
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 13
+Critic Loss: -9.1697, Generator Loss: 9.7811
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 13
+Critic Loss: -10.0490, Generator Loss: 10.6787
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 13
+Critic Loss: -8.7004, Generator Loss: 8.8663
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 13
+Critic Loss: -8.8611, Generator Loss: 9.0014
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 13
+Critic Loss: -8.2499, Generator Loss: 8.3028
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 13
+Critic Loss: -8.5245, Generator Loss: 8.5851
+====================
+Epoch 1/100 - Batch 13
+Critic Loss: -8.5245, Generator Loss: 8.5851
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 14
+Critic Loss: -9.9928, Generator Loss: 10.8830
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 14
+Critic Loss: -7.7900, Generator Loss: 8.0602
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 14
+Critic Loss: -10.5086, Generator Loss: 11.2154
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 14
+Critic Loss: -9.7926, Generator Loss: 10.3242
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 14
+Critic Loss: -8.8906, Generator Loss: 9.1574
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 14
+Critic Loss: -8.6206, Generator Loss: 8.6981
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 14
+Critic Loss: -8.5134, Generator Loss: 8.6913
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 14
+Critic Loss: -7.1250, Generator Loss: 6.9402
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 14
+Critic Loss: -6.5213, Generator Loss: 6.2147
+====================
+Epoch 1/100 - Batch 14
+Critic Loss: -6.5213, Generator Loss: 6.2147
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 15
+Critic Loss: -10.6288, Generator Loss: 11.5213
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 15
+Critic Loss: -10.8353, Generator Loss: 11.6104
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 15
+Critic Loss: -10.1888, Generator Loss: 10.8540
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 15
+Critic Loss: -10.0051, Generator Loss: 10.2459
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 15
+Critic Loss: -9.4414, Generator Loss: 9.6388
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 15
+Critic Loss: -10.1612, Generator Loss: 10.5630
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 15
+Critic Loss: -7.2593, Generator Loss: 6.8437
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 15
+Critic Loss: -8.5849, Generator Loss: 8.2767
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 15
+Critic Loss: -6.5315, Generator Loss: 6.0565
+====================
+Epoch 1/100 - Batch 15
+Critic Loss: -6.5315, Generator Loss: 6.0565
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 16
+Critic Loss: -11.1819, Generator Loss: 12.0672
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 16
+Critic Loss: -11.3792, Generator Loss: 12.1195
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 16
+Critic Loss: -10.8864, Generator Loss: 11.4451
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 16
+Critic Loss: -10.9974, Generator Loss: 11.5223
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 16
+Critic Loss: -12.0730, Generator Loss: 12.6663
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 16
+Critic Loss: -11.1089, Generator Loss: 11.7861
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 16
+Critic Loss: -8.9464, Generator Loss: 8.5287
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 16
+Critic Loss: -10.2923, Generator Loss: 10.1734
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 16
+Critic Loss: -8.7932, Generator Loss: 8.4508
+====================
+Epoch 1/100 - Batch 16
+Critic Loss: -8.7932, Generator Loss: 8.4508
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 17
+Critic Loss: -12.1302, Generator Loss: 13.0270
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 17
+Critic Loss: -10.0185, Generator Loss: 10.2943
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 17
+Critic Loss: -10.0646, Generator Loss: 10.2671
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 17
+Critic Loss: -11.6460, Generator Loss: 12.2367
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 17
+Critic Loss: -10.6109, Generator Loss: 10.8690
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 17
+Critic Loss: -10.8685, Generator Loss: 10.7564
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 17
+Critic Loss: -9.9224, Generator Loss: 10.0718
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 17
+Critic Loss: -8.6656, Generator Loss: 8.4492
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 17
+Critic Loss: -9.4371, Generator Loss: 9.1595
+====================
+Epoch 1/100 - Batch 17
+Critic Loss: -9.4371, Generator Loss: 9.1595
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 18
+Critic Loss: -12.7216, Generator Loss: 13.6921
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 18
+Critic Loss: -11.3797, Generator Loss: 11.8075
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 18
+Critic Loss: -11.1939, Generator Loss: 11.6097
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 18
+Critic Loss: -11.5897, Generator Loss: 12.0435
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 18
+Critic Loss: -11.7519, Generator Loss: 12.2073
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 18
+Critic Loss: -12.0229, Generator Loss: 12.2048
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 18
+Critic Loss: -11.3849, Generator Loss: 11.3215
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 18
+Critic Loss: -7.5248, Generator Loss: 6.7491
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 18
+Critic Loss: -9.5462, Generator Loss: 8.9778
+====================
+Epoch 1/100 - Batch 18
+Critic Loss: -9.5462, Generator Loss: 8.9778
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 19
+Critic Loss: -12.6406, Generator Loss: 13.4109
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 19
+Critic Loss: -12.5366, Generator Loss: 12.9730
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 19
+Critic Loss: -13.0539, Generator Loss: 13.5845
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 19
+Critic Loss: -13.2958, Generator Loss: 13.7723
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 19
+Critic Loss: -13.1117, Generator Loss: 13.6032
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 19
+Critic Loss: -13.3239, Generator Loss: 13.7670
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 19
+Critic Loss: -9.7922, Generator Loss: 9.2523
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 19
+Critic Loss: -8.9221, Generator Loss: 7.9626
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 19
+Critic Loss: -10.1251, Generator Loss: 9.4747
+====================
+Epoch 1/100 - Batch 19
+Critic Loss: -10.1251, Generator Loss: 9.4747
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 20
+Critic Loss: -14.2786, Generator Loss: 15.4251
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 20
+Critic Loss: -14.5191, Generator Loss: 15.4388
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 20
+Critic Loss: -13.8479, Generator Loss: 14.3509
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 20
+Critic Loss: -13.8405, Generator Loss: 14.4004
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 20
+Critic Loss: -13.9912, Generator Loss: 14.5511
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 20
+Critic Loss: -12.1998, Generator Loss: 12.0097
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 20
+Critic Loss: -11.4416, Generator Loss: 10.9160
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 20
+Critic Loss: -12.1161, Generator Loss: 11.7349
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 20
+Critic Loss: -9.5768, Generator Loss: 8.2986
+====================
+Epoch 1/100 - Batch 20
+Critic Loss: -9.5768, Generator Loss: 8.2986
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 21
+Critic Loss: -15.3321, Generator Loss: 16.2907
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 21
+Critic Loss: -15.3975, Generator Loss: 16.2395
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 21
+Critic Loss: -14.8588, Generator Loss: 15.2423
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 21
+Critic Loss: -15.8029, Generator Loss: 16.6007
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 21
+Critic Loss: -14.5471, Generator Loss: 14.9977
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 21
+Critic Loss: -13.2134, Generator Loss: 12.8729
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 21
+Critic Loss: -11.6533, Generator Loss: 11.2167
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 21
+Critic Loss: -10.3139, Generator Loss: 9.5238
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 21
+Critic Loss: -10.5464, Generator Loss: 9.4205
+====================
+Epoch 1/100 - Batch 21
+Critic Loss: -10.5464, Generator Loss: 9.4205
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 22
+Critic Loss: -16.0802, Generator Loss: 17.0092
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 22
+Critic Loss: -15.3503, Generator Loss: 15.8755
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 22
+Critic Loss: -13.2607, Generator Loss: 13.1429
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 22
+Critic Loss: -15.0024, Generator Loss: 15.0344
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 22
+Critic Loss: -14.4260, Generator Loss: 14.6740
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 22
+Critic Loss: -14.6534, Generator Loss: 14.5617
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 22
+Critic Loss: -14.0838, Generator Loss: 13.8045
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 22
+Critic Loss: -12.9747, Generator Loss: 12.0701
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 22
+Critic Loss: -10.7150, Generator Loss: 9.4089
+====================
+Epoch 1/100 - Batch 22
+Critic Loss: -10.7150, Generator Loss: 9.4089
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 23
+Critic Loss: -15.7352, Generator Loss: 16.4733
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 23
+Critic Loss: -15.2837, Generator Loss: 15.4324
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 23
+Critic Loss: -16.4994, Generator Loss: 16.9621
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 23
+Critic Loss: -16.5358, Generator Loss: 16.8603
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 23
+Critic Loss: -15.1400, Generator Loss: 15.1438
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 23
+Critic Loss: -14.1663, Generator Loss: 13.4934
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 23
+Critic Loss: -13.5387, Generator Loss: 12.8591
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 23
+Critic Loss: -14.1551, Generator Loss: 13.4434
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 23
+Critic Loss: -14.5652, Generator Loss: 13.9045
+====================
+Epoch 1/100 - Batch 23
+Critic Loss: -14.5652, Generator Loss: 13.9045
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 24
+Critic Loss: -18.1375, Generator Loss: 19.0129
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 24
+Critic Loss: -15.2697, Generator Loss: 15.1558
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 24
+Critic Loss: -18.6167, Generator Loss: 19.2980
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 24
+Critic Loss: -17.3718, Generator Loss: 17.3302
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 24
+Critic Loss: -17.9768, Generator Loss: 17.9680
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 24
+Critic Loss: -16.0576, Generator Loss: 16.1308
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 24
+Critic Loss: -15.7447, Generator Loss: 15.5595
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 24
+Critic Loss: -13.4300, Generator Loss: 12.3390
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 24
+Critic Loss: -13.5488, Generator Loss: 12.0511
+====================
+Epoch 1/100 - Batch 24
+Critic Loss: -13.5488, Generator Loss: 12.0511
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 25
+Critic Loss: -17.4200, Generator Loss: 17.9426
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 25
+Critic Loss: -14.3174, Generator Loss: 13.8987
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 25
+Critic Loss: -19.6221, Generator Loss: 20.3057
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 25
+Critic Loss: -16.4537, Generator Loss: 16.6858
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 25
+Critic Loss: -16.6618, Generator Loss: 15.9543
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 25
+Critic Loss: -18.7691, Generator Loss: 18.7851
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 25
+Critic Loss: -15.5639, Generator Loss: 14.5252
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 25
+Critic Loss: -13.1983, Generator Loss: 11.2940
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 25
+Critic Loss: -13.9682, Generator Loss: 12.1377
+====================
+Epoch 1/100 - Batch 25
+Critic Loss: -13.9682, Generator Loss: 12.1377
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 26
+Critic Loss: -20.3247, Generator Loss: 21.2756
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 26
+Critic Loss: -20.4051, Generator Loss: 21.1911
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 26
+Critic Loss: -16.6900, Generator Loss: 16.0596
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 26
+Critic Loss: -16.0296, Generator Loss: 15.0545
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 26
+Critic Loss: -19.2708, Generator Loss: 19.4882
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 26
+Critic Loss: -16.2379, Generator Loss: 15.3956
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 26
+Critic Loss: -15.9481, Generator Loss: 14.6497
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 26
+Critic Loss: -15.2185, Generator Loss: 13.7186
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 26
+Critic Loss: -12.0225, Generator Loss: 9.5300
+====================
+Epoch 1/100 - Batch 26
+Critic Loss: -12.0225, Generator Loss: 9.5300
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 27
+Critic Loss: -21.1776, Generator Loss: 21.9757
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 27
+Critic Loss: -19.9703, Generator Loss: 20.3718
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 27
+Critic Loss: -19.9431, Generator Loss: 19.8071
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 27
+Critic Loss: -15.4162, Generator Loss: 14.1818
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 27
+Critic Loss: -22.5725, Generator Loss: 22.8291
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 27
+Critic Loss: -15.8519, Generator Loss: 14.3993
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 27
+Critic Loss: -16.2041, Generator Loss: 14.3895
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 27
+Critic Loss: -16.4743, Generator Loss: 15.0835
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 27
+Critic Loss: -19.4746, Generator Loss: 18.5139
+====================
+Epoch 1/100 - Batch 27
+Critic Loss: -19.4746, Generator Loss: 18.5139
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 28
+Critic Loss: -20.6487, Generator Loss: 20.8893
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 28
+Critic Loss: -22.7607, Generator Loss: 23.4801
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 28
+Critic Loss: -21.2937, Generator Loss: 21.2330
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 28
+Critic Loss: -23.1013, Generator Loss: 23.7745
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 28
+Critic Loss: -20.3052, Generator Loss: 19.8781
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 28
+Critic Loss: -21.5753, Generator Loss: 21.5252
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 28
+Critic Loss: -20.6134, Generator Loss: 19.9435
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 28
+Critic Loss: -14.2350, Generator Loss: 11.9540
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 28
+Critic Loss: -14.6282, Generator Loss: 12.0078
+====================
+Epoch 1/100 - Batch 28
+Critic Loss: -14.6282, Generator Loss: 12.0078
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 29
+Critic Loss: -21.6589, Generator Loss: 21.7321
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 29
+Critic Loss: -24.0211, Generator Loss: 24.7497
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 29
+Critic Loss: -22.1408, Generator Loss: 22.2676
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 29
+Critic Loss: -24.7181, Generator Loss: 25.0010
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 29
+Critic Loss: -19.7878, Generator Loss: 18.4394
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 29
+Critic Loss: -20.6059, Generator Loss: 19.5048
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 29
+Critic Loss: -14.7774, Generator Loss: 12.4154
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 29
+Critic Loss: -13.8360, Generator Loss: 10.8017
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 29
+Critic Loss: -15.9299, Generator Loss: 13.3368
+====================
+Epoch 1/100 - Batch 29
+Critic Loss: -15.9299, Generator Loss: 13.3368
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 30
+Critic Loss: -24.9589, Generator Loss: 25.9283
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 30
+Critic Loss: -25.4317, Generator Loss: 25.7908
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 30
+Critic Loss: -25.6542, Generator Loss: 25.9594
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 30
+Critic Loss: -23.3248, Generator Loss: 22.8657
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 30
+Critic Loss: -23.3609, Generator Loss: 22.6318
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 30
+Critic Loss: -21.9023, Generator Loss: 20.7306
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 30
+Critic Loss: -17.8874, Generator Loss: 15.1790
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 30
+Critic Loss: -18.6033, Generator Loss: 16.3524
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 30
+Critic Loss: -20.1732, Generator Loss: 18.1297
+====================
+Epoch 1/100 - Batch 30
+Critic Loss: -20.1732, Generator Loss: 18.1297
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 31
+Critic Loss: -26.6014, Generator Loss: 26.7270
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 31
+Critic Loss: -23.6525, Generator Loss: 22.6742
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 31
+Critic Loss: -24.5789, Generator Loss: 24.4597
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 31
+Critic Loss: -20.9182, Generator Loss: 18.8527
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 31
+Critic Loss: -21.1584, Generator Loss: 19.9047
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 31
+Critic Loss: -22.9786, Generator Loss: 21.3768
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 31
+Critic Loss: -22.9094, Generator Loss: 21.7398
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 31
+Critic Loss: -15.4881, Generator Loss: 12.6565
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 31
+Critic Loss: -15.5779, Generator Loss: 11.7340
+====================
+Epoch 1/100 - Batch 31
+Critic Loss: -15.5779, Generator Loss: 11.7340
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 32
+Critic Loss: -27.5594, Generator Loss: 28.4908
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 32
+Critic Loss: -28.3699, Generator Loss: 28.5962
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 32
+Critic Loss: -20.7920, Generator Loss: 18.5457
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 32
+Critic Loss: -22.8269, Generator Loss: 21.2880
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 32
+Critic Loss: -26.4573, Generator Loss: 25.3817
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 32
+Critic Loss: -22.9293, Generator Loss: 20.8131
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 32
+Critic Loss: -24.4152, Generator Loss: 22.9758
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 32
+Critic Loss: -24.4486, Generator Loss: 22.5041
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 32
+Critic Loss: -25.3079, Generator Loss: 23.3055
+====================
+Epoch 1/100 - Batch 32
+Critic Loss: -25.3079, Generator Loss: 23.3055
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 33
+Critic Loss: -29.3722, Generator Loss: 29.8173
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 33
+Critic Loss: -29.9994, Generator Loss: 30.1657
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 33
+Critic Loss: -26.5651, Generator Loss: 25.5525
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 33
+Critic Loss: -30.4206, Generator Loss: 30.2513
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 33
+Critic Loss: -24.3080, Generator Loss: 22.3388
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 33
+Critic Loss: -23.7467, Generator Loss: 21.8861
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 33
+Critic Loss: -24.3176, Generator Loss: 21.6152
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 33
+Critic Loss: -24.8499, Generator Loss: 22.2213
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 33
+Critic Loss: -25.8500, Generator Loss: 23.4723
+====================
+Epoch 1/100 - Batch 33
+Critic Loss: -25.8500, Generator Loss: 23.4723
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 34
+Critic Loss: -30.9498, Generator Loss: 31.6583
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 34
+Critic Loss: -31.2616, Generator Loss: 31.5890
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 34
+Critic Loss: -28.3745, Generator Loss: 27.4753
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 34
+Critic Loss: -29.0210, Generator Loss: 27.9906
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 34
+Critic Loss: -28.3827, Generator Loss: 27.3075
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 34
+Critic Loss: -21.7292, Generator Loss: 17.7818
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 34
+Critic Loss: -26.4719, Generator Loss: 23.8147
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 34
+Critic Loss: -22.5738, Generator Loss: 19.5937
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 34
+Critic Loss: -21.3615, Generator Loss: 16.9698
+====================
+Epoch 1/100 - Batch 34
+Critic Loss: -21.3615, Generator Loss: 16.9698
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 35
+Critic Loss: -32.7304, Generator Loss: 32.1942
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 35
+Critic Loss: -30.2658, Generator Loss: 29.0103
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 35
+Critic Loss: -33.5457, Generator Loss: 33.1246
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 35
+Critic Loss: -23.4091, Generator Loss: 20.3747
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 35
+Critic Loss: -29.4692, Generator Loss: 27.3127
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 35
+Critic Loss: -27.7648, Generator Loss: 25.4772
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 35
+Critic Loss: -26.2230, Generator Loss: 22.3690
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 35
+Critic Loss: -26.9129, Generator Loss: 23.7450
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 35
+Critic Loss: -23.5461, Generator Loss: 18.9796
+====================
+Epoch 1/100 - Batch 35
+Critic Loss: -23.5461, Generator Loss: 18.9796
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 36
+Critic Loss: -34.3681, Generator Loss: 33.6414
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 36
+Critic Loss: -34.7964, Generator Loss: 34.5765
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 36
+Critic Loss: -30.5693, Generator Loss: 28.7822
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 36
+Critic Loss: -35.2299, Generator Loss: 34.4159
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 36
+Critic Loss: -31.8153, Generator Loss: 30.3146
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 36
+Critic Loss: -36.1904, Generator Loss: 35.1103
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 36
+Critic Loss: -36.7510, Generator Loss: 35.5970
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 36
+Critic Loss: -27.3970, Generator Loss: 24.0476
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 36
+Critic Loss: -25.1148, Generator Loss: 20.3411
+====================
+Epoch 1/100 - Batch 36
+Critic Loss: -25.1148, Generator Loss: 20.3411
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 37
+Critic Loss: -36.1506, Generator Loss: 36.0872
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 37
+Critic Loss: -27.9245, Generator Loss: 24.8797
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 37
+Critic Loss: -31.0659, Generator Loss: 28.7990
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 37
+Critic Loss: -37.0934, Generator Loss: 36.3291
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 37
+Critic Loss: -29.2845, Generator Loss: 26.1176
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 37
+Critic Loss: -25.9844, Generator Loss: 22.0360
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 37
+Critic Loss: -23.4814, Generator Loss: 18.0830
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 37
+Critic Loss: -18.2131, Generator Loss: 12.0975
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 37
+Critic Loss: -16.5604, Generator Loss: 8.5988
+====================
+Epoch 1/100 - Batch 37
+Critic Loss: -16.5604, Generator Loss: 8.5988
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 38
+Critic Loss: -37.1372, Generator Loss: 36.0930
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 38
+Critic Loss: -37.8836, Generator Loss: 37.3564
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 38
+Critic Loss: -30.6401, Generator Loss: 27.3929
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 38
+Critic Loss: -32.4118, Generator Loss: 29.1266
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 38
+Critic Loss: -26.0737, Generator Loss: 20.8182
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 38
+Critic Loss: -19.8033, Generator Loss: 12.8419
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 38
+Critic Loss: -27.6819, Generator Loss: 22.6598
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 38
+Critic Loss: -24.7966, Generator Loss: 18.6564
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 38
+Critic Loss: -25.3203, Generator Loss: 19.0751
+====================
+Epoch 1/100 - Batch 38
+Critic Loss: -25.3203, Generator Loss: 19.0751
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 39
+Critic Loss: -39.1360, Generator Loss: 37.9994
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 39
+Critic Loss: -40.1683, Generator Loss: 38.6515
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 39
+Critic Loss: -31.9230, Generator Loss: 28.1875
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 39
+Critic Loss: -36.2612, Generator Loss: 34.3166
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 39
+Critic Loss: -36.5868, Generator Loss: 33.8598
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 39
+Critic Loss: -36.8700, Generator Loss: 33.5796
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 39
+Critic Loss: -32.0879, Generator Loss: 27.3508
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 39
+Critic Loss: -25.6550, Generator Loss: 18.8524
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 39
+Critic Loss: -29.9294, Generator Loss: 24.7054
+====================
+Epoch 1/100 - Batch 39
+Critic Loss: -29.9294, Generator Loss: 24.7054
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 40
+Critic Loss: -41.2253, Generator Loss: 39.2118
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 40
+Critic Loss: -31.1182, Generator Loss: 25.7810
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 40
+Critic Loss: -41.8046, Generator Loss: 40.7317
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 40
+Critic Loss: -31.8269, Generator Loss: 26.9904
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 40
+Critic Loss: -38.8061, Generator Loss: 36.1294
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 40
+Critic Loss: -31.2446, Generator Loss: 25.5026
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 40
+Critic Loss: -39.5709, Generator Loss: 36.3423
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 40
+Critic Loss: -34.9387, Generator Loss: 30.3186
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 40
+Critic Loss: -39.4050, Generator Loss: 35.5952
+====================
+Epoch 1/100 - Batch 40
+Critic Loss: -39.4050, Generator Loss: 35.5952
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 41
+Critic Loss: -43.2126, Generator Loss: 41.8413
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 41
+Critic Loss: -38.6113, Generator Loss: 35.4529
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 41
+Critic Loss: -39.7038, Generator Loss: 36.5419
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 41
+Critic Loss: -35.6073, Generator Loss: 31.3829
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 41
+Critic Loss: -31.0955, Generator Loss: 25.2439
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 41
+Critic Loss: -40.6754, Generator Loss: 36.8422
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 41
+Critic Loss: -27.8816, Generator Loss: 20.0871
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 41
+Critic Loss: -21.9167, Generator Loss: 13.0660
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 41
+Critic Loss: -23.6735, Generator Loss: 15.2304
+====================
+Epoch 1/100 - Batch 41
+Critic Loss: -23.6735, Generator Loss: 15.2304
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 42
+Critic Loss: -44.6091, Generator Loss: 42.8881
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 42
+Critic Loss: -45.5840, Generator Loss: 43.5524
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 42
+Critic Loss: -38.8882, Generator Loss: 33.8826
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 42
+Critic Loss: -41.8848, Generator Loss: 38.5850
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 42
+Critic Loss: -35.7327, Generator Loss: 29.8256
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 42
+Critic Loss: -35.2560, Generator Loss: 29.3700
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 42
+Critic Loss: -30.6537, Generator Loss: 23.4865
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 42
+Critic Loss: -26.3402, Generator Loss: 17.5966
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 42
+Critic Loss: -28.0499, Generator Loss: 19.7822
+====================
+Epoch 1/100 - Batch 42
+Critic Loss: -28.0499, Generator Loss: 19.7822
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 43
+Critic Loss: -36.8281, Generator Loss: 31.9171
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 43
+Critic Loss: -47.3496, Generator Loss: 44.0685
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 43
+Critic Loss: -42.7730, Generator Loss: 37.9793
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 43
+Critic Loss: -44.2314, Generator Loss: 39.7808
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 43
+Critic Loss: -39.5791, Generator Loss: 33.6644
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 43
+Critic Loss: -33.9695, Generator Loss: 26.4077
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 43
+Critic Loss: -37.1145, Generator Loss: 30.0185
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 43
+Critic Loss: -29.3800, Generator Loss: 20.1042
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 43
+Critic Loss: -33.4539, Generator Loss: 24.8890
+====================
+Epoch 1/100 - Batch 43
+Critic Loss: -33.4539, Generator Loss: 24.8890
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 44
+Critic Loss: -49.0129, Generator Loss: 45.3077
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 44
+Critic Loss: -49.6713, Generator Loss: 46.9081
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 44
+Critic Loss: -44.0590, Generator Loss: 38.8868
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 44
+Critic Loss: -50.5095, Generator Loss: 46.9711
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 44
+Critic Loss: -36.7369, Generator Loss: 29.4450
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 44
+Critic Loss: -44.3552, Generator Loss: 39.7616
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 44
+Critic Loss: -33.7438, Generator Loss: 24.6071
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 44
+Critic Loss: -28.5995, Generator Loss: 17.7139
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 44
+Critic Loss: -33.7429, Generator Loss: 24.1322
+====================
+Epoch 1/100 - Batch 44
+Critic Loss: -33.7429, Generator Loss: 24.1322
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 45
+Critic Loss: -50.8932, Generator Loss: 47.2162
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 45
+Critic Loss: -51.3465, Generator Loss: 47.5947
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 45
+Critic Loss: -52.1628, Generator Loss: 48.8744
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 45
+Critic Loss: -47.8429, Generator Loss: 42.6719
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 45
+Critic Loss: -52.6930, Generator Loss: 49.2926
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 45
+Critic Loss: -42.7470, Generator Loss: 34.9488
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 45
+Critic Loss: -34.5194, Generator Loss: 25.3344
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 45
+Critic Loss: -36.8962, Generator Loss: 27.8586
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 45
+Critic Loss: -38.8748, Generator Loss: 29.8603
+====================
+Epoch 1/100 - Batch 45
+Critic Loss: -38.8748, Generator Loss: 29.8603
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 46
+Critic Loss: -53.2869, Generator Loss: 49.7018
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 46
+Critic Loss: -47.3348, Generator Loss: 42.1411
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 46
+Critic Loss: -53.9656, Generator Loss: 50.4177
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 46
+Critic Loss: -54.7028, Generator Loss: 51.0138
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 46
+Critic Loss: -54.6560, Generator Loss: 51.1299
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 46
+Critic Loss: -44.1854, Generator Loss: 36.3803
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 46
+Critic Loss: -37.2524, Generator Loss: 27.4080
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 46
+Critic Loss: -36.2434, Generator Loss: 26.0385
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 46
+Critic Loss: -37.0845, Generator Loss: 26.3156
+====================
+Epoch 1/100 - Batch 46
+Critic Loss: -37.0845, Generator Loss: 26.3156
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 47
+Critic Loss: -55.4687, Generator Loss: 51.6518
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 47
+Critic Loss: -40.4655, Generator Loss: 31.2077
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 47
+Critic Loss: -44.0146, Generator Loss: 36.0693
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 47
+Critic Loss: -45.7963, Generator Loss: 38.2063
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 47
+Critic Loss: -46.7899, Generator Loss: 38.0291
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 47
+Critic Loss: -51.8872, Generator Loss: 44.4383
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 47
+Critic Loss: -45.8550, Generator Loss: 36.3797
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 47
+Critic Loss: -38.3033, Generator Loss: 28.6629
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 47
+Critic Loss: -31.8320, Generator Loss: 19.6362
+====================
+Epoch 1/100 - Batch 47
+Critic Loss: -31.8320, Generator Loss: 19.6362
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 48
+Critic Loss: -57.5515, Generator Loss: 52.6946
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 48
+Critic Loss: -59.4190, Generator Loss: 52.7735
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 48
+Critic Loss: -50.1764, Generator Loss: 42.6600
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 48
+Critic Loss: -54.0580, Generator Loss: 47.4408
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 48
+Critic Loss: -47.9575, Generator Loss: 38.3285
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 48
+Critic Loss: -41.7210, Generator Loss: 30.7185
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 48
+Critic Loss: -38.1767, Generator Loss: 26.8244
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 48
+Critic Loss: -34.0050, Generator Loss: 20.9218
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 48
+Critic Loss: -33.6869, Generator Loss: 19.7316
+====================
+Epoch 1/100 - Batch 48
+Critic Loss: -33.6869, Generator Loss: 19.7316
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 49
+Critic Loss: -59.6949, Generator Loss: 53.9919
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 49
+Critic Loss: -61.2653, Generator Loss: 54.8564
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 49
+Critic Loss: -61.1799, Generator Loss: 55.6362
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 49
+Critic Loss: -62.0166, Generator Loss: 56.3256
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 49
+Critic Loss: -51.4821, Generator Loss: 42.9022
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 49
+Critic Loss: -56.6919, Generator Loss: 49.7089
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 49
+Critic Loss: -48.4071, Generator Loss: 38.4913
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 49
+Critic Loss: -33.4568, Generator Loss: 18.5402
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 49
+Critic Loss: -36.7541, Generator Loss: 22.8633
+====================
+Epoch 1/100 - Batch 49
+Critic Loss: -36.7541, Generator Loss: 22.8633
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 50
+Critic Loss: -62.4164, Generator Loss: 56.3129
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 50
+Critic Loss: -63.1142, Generator Loss: 56.3108
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 50
+Critic Loss: -63.6326, Generator Loss: 57.7855
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 50
+Critic Loss: -58.0145, Generator Loss: 50.4642
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 50
+Critic Loss: -49.2402, Generator Loss: 39.0931
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 50
+Critic Loss: -56.6827, Generator Loss: 48.1939
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 50
+Critic Loss: -40.3574, Generator Loss: 26.2808
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 50
+Critic Loss: -35.0917, Generator Loss: 19.2413
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 50
+Critic Loss: -41.3704, Generator Loss: 26.5123
+====================
+Epoch 1/100 - Batch 50
+Critic Loss: -41.3704, Generator Loss: 26.5123
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 51
+Critic Loss: -64.3369, Generator Loss: 57.4914
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 51
+Critic Loss: -65.4916, Generator Loss: 58.0973
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 51
+Critic Loss: -58.5719, Generator Loss: 50.2340
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 51
+Critic Loss: -51.5244, Generator Loss: 40.1635
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 51
+Critic Loss: -33.9298, Generator Loss: 19.2561
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 51
+Critic Loss: -46.1207, Generator Loss: 32.0160
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 51
+Critic Loss: -68.3437, Generator Loss: 59.6805
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 51
+Critic Loss: -33.6295, Generator Loss: 17.8312
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 51
+Critic Loss: -51.7343, Generator Loss: 38.1376
+====================
+Epoch 1/100 - Batch 51
+Critic Loss: -51.7343, Generator Loss: 38.1376
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 52
+Critic Loss: -66.9753, Generator Loss: 60.1274
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 52
+Critic Loss: -60.0095, Generator Loss: 51.4998
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 52
+Critic Loss: -60.2338, Generator Loss: 51.6772
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 52
+Critic Loss: -69.1472, Generator Loss: 61.2592
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 52
+Critic Loss: -62.4583, Generator Loss: 52.2212
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 52
+Critic Loss: -51.5962, Generator Loss: 38.7193
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 52
+Critic Loss: -48.3706, Generator Loss: 34.7818
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 52
+Critic Loss: -41.2152, Generator Loss: 25.0006
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 52
+Critic Loss: -38.0583, Generator Loss: 20.9510
+====================
+Epoch 1/100 - Batch 52
+Critic Loss: -38.0583, Generator Loss: 20.9510
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 53
+Critic Loss: -60.5667, Generator Loss: 50.7456
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 53
+Critic Loss: -59.6707, Generator Loss: 49.3208
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 53
+Critic Loss: -64.4281, Generator Loss: 53.2970
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 53
+Critic Loss: -57.0057, Generator Loss: 45.5658
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 53
+Critic Loss: -46.3022, Generator Loss: 30.0936
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 53
+Critic Loss: -53.1389, Generator Loss: 39.9225
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 53
+Critic Loss: -41.9706, Generator Loss: 25.6779
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 53
+Critic Loss: -41.6347, Generator Loss: 25.4716
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 53
+Critic Loss: -43.8623, Generator Loss: 26.3250
+====================
+Epoch 1/100 - Batch 53
+Critic Loss: -43.8623, Generator Loss: 26.3250
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 54
+Critic Loss: -71.1653, Generator Loss: 61.8842
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 54
+Critic Loss: -72.2327, Generator Loss: 63.2002
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 54
+Critic Loss: -73.1909, Generator Loss: 64.2907
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 54
+Critic Loss: -74.2121, Generator Loss: 65.3129
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 54
+Critic Loss: -64.1414, Generator Loss: 53.4598
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 54
+Critic Loss: -57.3288, Generator Loss: 42.6716
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 54
+Critic Loss: -74.4769, Generator Loss: 65.6136
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 54
+Critic Loss: -65.6900, Generator Loss: 55.1818
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 54
+Critic Loss: -60.2620, Generator Loss: 45.0291
+====================
+Epoch 1/100 - Batch 54
+Critic Loss: -60.2620, Generator Loss: 45.0291
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 55
+Critic Loss: -74.8203, Generator Loss: 65.9953
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 55
+Critic Loss: -67.9212, Generator Loss: 56.2653
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 55
+Critic Loss: -67.6604, Generator Loss: 56.3019
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 55
+Critic Loss: -69.2717, Generator Loss: 58.5440
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 55
+Critic Loss: -52.4929, Generator Loss: 36.9171
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 55
+Critic Loss: -55.0037, Generator Loss: 37.9872
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 55
+Critic Loss: -50.6415, Generator Loss: 33.0921
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 55
+Critic Loss: -46.8076, Generator Loss: 28.3514
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 55
+Critic Loss: -49.0369, Generator Loss: 31.1715
+====================
+Epoch 1/100 - Batch 55
+Critic Loss: -49.0369, Generator Loss: 31.1715
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 56
+Critic Loss: -55.8263, Generator Loss: 68.3220
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 56
+Critic Loss: -77.1485, Generator Loss: 65.7170
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 56
+Critic Loss: -77.9668, Generator Loss: 67.5156
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 56
+Critic Loss: -62.4870, Generator Loss: 47.8296
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 56
+Critic Loss: -59.4958, Generator Loss: 44.6361
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 56
+Critic Loss: -59.8075, Generator Loss: 44.7156
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 56
+Critic Loss: -44.2952, Generator Loss: 25.0819
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 56
+Critic Loss: -51.1657, Generator Loss: 32.1964
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 56
+Critic Loss: -47.2702, Generator Loss: 26.9968
+====================
+Epoch 1/100 - Batch 56
+Critic Loss: -47.2702, Generator Loss: 26.9968
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 57
+Critic Loss: -79.6439, Generator Loss: 67.5770
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 57
+Critic Loss: -80.0468, Generator Loss: 68.9922
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 57
+Critic Loss: -81.8322, Generator Loss: 70.4125
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 57
+Critic Loss: -73.1657, Generator Loss: 59.6521
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 57
+Critic Loss: -72.4841, Generator Loss: 59.0059
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 57
+Critic Loss: -69.2922, Generator Loss: 54.3519
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 57
+Critic Loss: -53.7969, Generator Loss: 33.2993
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 57
+Critic Loss: -48.6099, Generator Loss: 28.2494
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 57
+Critic Loss: -46.3792, Generator Loss: 24.3054
+====================
+Epoch 1/100 - Batch 57
+Critic Loss: -46.3792, Generator Loss: 24.3054
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 58
+Critic Loss: -81.7929, Generator Loss: 69.8540
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 58
+Critic Loss: -82.9005, Generator Loss: 71.1048
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 58
+Critic Loss: -72.5817, Generator Loss: 59.1740
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 58
+Critic Loss: -84.0966, Generator Loss: 71.6138
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 58
+Critic Loss: -85.2218, Generator Loss: 72.4912
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 58
+Critic Loss: -76.1167, Generator Loss: 62.2313
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 58
+Critic Loss: -61.5574, Generator Loss: 42.8453
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 58
+Critic Loss: -45.6316, Generator Loss: 22.7782
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 58
+Critic Loss: -54.2514, Generator Loss: 32.1772
+====================
+Epoch 1/100 - Batch 58
+Critic Loss: -54.2514, Generator Loss: 32.1772
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 59
+Critic Loss: -84.8178, Generator Loss: 73.0245
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 59
+Critic Loss: -78.3301, Generator Loss: 63.8023
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 59
+Critic Loss: -86.6213, Generator Loss: 73.2181
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 59
+Critic Loss: -87.1108, Generator Loss: 75.4746
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 59
+Critic Loss: -58.5457, Generator Loss: 40.6449
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 59
+Critic Loss: -53.0167, Generator Loss: 31.0287
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 59
+Critic Loss: -60.4891, Generator Loss: 39.0612
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 59
+Critic Loss: -59.5849, Generator Loss: 38.6720
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 59
+Critic Loss: -45.5574, Generator Loss: 21.5669
+====================
+Epoch 1/100 - Batch 59
+Critic Loss: -45.5574, Generator Loss: 21.5669
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 60
+Critic Loss: -87.5588, Generator Loss: 72.5252
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 60
+Critic Loss: -88.2149, Generator Loss: 75.5334
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 60
+Critic Loss: -82.0385, Generator Loss: 67.0001
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 60
+Critic Loss: -79.1506, Generator Loss: 64.8103
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 60
+Critic Loss: -71.9465, Generator Loss: 52.5705
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 60
+Critic Loss: -73.0613, Generator Loss: 53.4949
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 60
+Critic Loss: -52.2827, Generator Loss: 29.4977
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 60
+Critic Loss: -66.4911, Generator Loss: 45.7920
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 60
+Critic Loss: -55.0186, Generator Loss: 31.1149
+====================
+Epoch 1/100 - Batch 60
+Critic Loss: -55.0186, Generator Loss: 31.1149
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 61
+Critic Loss: -90.6575, Generator Loss: 75.5230
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 61
+Critic Loss: -91.6305, Generator Loss: 76.9940
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 61
+Critic Loss: -82.0652, Generator Loss: 66.0499
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 61
+Critic Loss: -70.1186, Generator Loss: 52.3443
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 61
+Critic Loss: -74.4077, Generator Loss: 54.7786
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 61
+Critic Loss: -87.1871, Generator Loss: 69.6178
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 61
+Critic Loss: -58.9441, Generator Loss: 35.6043
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 61
+Critic Loss: -64.2883, Generator Loss: 40.2285
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 61
+Critic Loss: -61.7298, Generator Loss: 37.0517
+====================
+Epoch 1/100 - Batch 61
+Critic Loss: -61.7298, Generator Loss: 37.0517
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 62
+Critic Loss: -93.7818, Generator Loss: 78.5075
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 62
+Critic Loss: -84.3896, Generator Loss: 67.6092
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 62
+Critic Loss: -94.2822, Generator Loss: 79.3311
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 62
+Critic Loss: -81.8925, Generator Loss: 63.3509
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 62
+Critic Loss: -96.6954, Generator Loss: 80.4896
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 62
+Critic Loss: -97.9642, Generator Loss: 82.4762
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 62
+Critic Loss: -58.2592, Generator Loss: 34.7909
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 62
+Critic Loss: -54.1643, Generator Loss: 27.5341
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 62
+Critic Loss: -55.5762, Generator Loss: 28.8698
+====================
+Epoch 1/100 - Batch 62
+Critic Loss: -55.5762, Generator Loss: 28.8698
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 63
+Critic Loss: -95.3193, Generator Loss: 78.9997
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 63
+Critic Loss: -85.0714, Generator Loss: 67.5733
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 63
+Critic Loss: -64.2370, Generator Loss: 41.2554
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 63
+Critic Loss: -87.5435, Generator Loss: 69.2883
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 63
+Critic Loss: -65.7887, Generator Loss: 41.5417
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 63
+Critic Loss: -82.4769, Generator Loss: 61.9071
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 63
+Critic Loss: -53.4306, Generator Loss: 28.2980
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 63
+Critic Loss: -56.7099, Generator Loss: 30.3493
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 63
+Critic Loss: -56.8592, Generator Loss: 28.4068
+====================
+Epoch 1/100 - Batch 63
+Critic Loss: -56.8592, Generator Loss: 28.4068
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 64
+Critic Loss: -86.1073, Generator Loss: 66.6952
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 64
+Critic Loss: -100.1340, Generator Loss: 83.2700
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 64
+Critic Loss: -100.3912, Generator Loss: 83.0423
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 64
+Critic Loss: -89.8946, Generator Loss: 69.4041
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 64
+Critic Loss: -81.8323, Generator Loss: 59.4113
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 64
+Critic Loss: -80.2274, Generator Loss: 57.8253
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 64
+Critic Loss: -56.1971, Generator Loss: 28.7753
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 64
+Critic Loss: -57.6828, Generator Loss: 28.5265
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 64
+Critic Loss: -60.5973, Generator Loss: 32.2681
+====================
+Epoch 1/100 - Batch 64
+Critic Loss: -60.5973, Generator Loss: 32.2681
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 65
+Critic Loss: -100.7453, Generator Loss: 84.3703
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 65
+Critic Loss: -91.0218, Generator Loss: 71.7043
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 65
+Critic Loss: -91.8217, Generator Loss: 72.8108
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 65
+Critic Loss: -95.4505, Generator Loss: 75.8894
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 65
+Critic Loss: -92.1440, Generator Loss: 72.5205
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 65
+Critic Loss: -93.1360, Generator Loss: 71.4879
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 65
+Critic Loss: -82.8180, Generator Loss: 58.2668
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 65
+Critic Loss: -72.3084, Generator Loss: 45.1676
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 65
+Critic Loss: -73.4896, Generator Loss: 46.4445
+====================
+Epoch 1/100 - Batch 65
+Critic Loss: -73.4896, Generator Loss: 46.4445
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 66
+Critic Loss: -105.1106, Generator Loss: 84.9902
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 66
+Critic Loss: -93.9296, Generator Loss: 74.8462
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 66
+Critic Loss: -70.2142, Generator Loss: 45.0632
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 66
+Critic Loss: -87.2139, Generator Loss: 64.5633
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 66
+Critic Loss: -87.9758, Generator Loss: 64.8817
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 66
+Critic Loss: -67.9085, Generator Loss: 38.0311
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 66
+Critic Loss: -70.1756, Generator Loss: 41.3584
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 66
+Critic Loss: -56.2744, Generator Loss: 23.6194
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 66
+Critic Loss: -97.1560, Generator Loss: 71.2178
+====================
+Epoch 1/100 - Batch 66
+Critic Loss: -97.1560, Generator Loss: 71.2178
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 67
+Critic Loss: -96.1973, Generator Loss: 75.4152
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 67
+Critic Loss: -108.3014, Generator Loss: 88.1979
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 67
+Critic Loss: -109.5303, Generator Loss: 90.2778
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 67
+Critic Loss: -109.9153, Generator Loss: 92.4070
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 67
+Critic Loss: -100.7110, Generator Loss: 78.2859
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 67
+Critic Loss: -77.5103, Generator Loss: 50.2248
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 67
+Critic Loss: -66.3993, Generator Loss: 34.8843
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 67
+Critic Loss: -79.6867, Generator Loss: 51.8590
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 67
+Critic Loss: -67.6826, Generator Loss: 36.9751
+====================
+Epoch 1/100 - Batch 67
+Critic Loss: -67.6826, Generator Loss: 36.9751
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 68
+Critic Loss: -109.9302, Generator Loss: 89.9829
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 68
+Critic Loss: -89.4884, Generator Loss: 64.4671
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 68
+Critic Loss: -88.8666, Generator Loss: 62.5566
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 68
+Critic Loss: -115.6926, Generator Loss: 91.5915
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 68
+Critic Loss: -93.2255, Generator Loss: 67.1639
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 68
+Critic Loss: -97.0393, Generator Loss: 72.8941
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 68
+Critic Loss: -77.7487, Generator Loss: 47.3906
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 68
+Critic Loss: -89.8594, Generator Loss: 63.2802
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 68
+Critic Loss: -77.3689, Generator Loss: 44.7776
+====================
+Epoch 1/100 - Batch 68
+Critic Loss: -77.3689, Generator Loss: 44.7776
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 69
+Critic Loss: -113.1156, Generator Loss: 91.9309
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 69
+Critic Loss: -103.5634, Generator Loss: 80.1429
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 69
+Critic Loss: -81.7227, Generator Loss: 51.6363
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 69
+Critic Loss: -107.0851, Generator Loss: 83.4641
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 69
+Critic Loss: -84.8918, Generator Loss: 53.8969
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 69
+Critic Loss: -80.6414, Generator Loss: 49.2634
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 69
+Critic Loss: -82.4595, Generator Loss: 52.3321
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 69
+Critic Loss: -84.6281, Generator Loss: 55.7320
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 69
+Critic Loss: -72.9742, Generator Loss: 38.2117
+====================
+Epoch 1/100 - Batch 69
+Critic Loss: -72.9742, Generator Loss: 38.2117
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 70
+Critic Loss: -116.7036, Generator Loss: 93.6598
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 70
+Critic Loss: -102.6331, Generator Loss: 79.3009
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 70
+Critic Loss: -96.6567, Generator Loss: 71.2666
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 70
+Critic Loss: -92.6020, Generator Loss: 62.6182
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 70
+Critic Loss: -87.7251, Generator Loss: 57.8204
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 70
+Critic Loss: -73.8244, Generator Loss: 40.8871
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 70
+Critic Loss: -84.9345, Generator Loss: 52.9930
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 70
+Critic Loss: -78.4108, Generator Loss: 45.1168
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 70
+Critic Loss: -84.2412, Generator Loss: 51.1509
+====================
+Epoch 1/100 - Batch 70
+Critic Loss: -84.2412, Generator Loss: 51.1509
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 71
+Critic Loss: -118.1670, Generator Loss: 92.4467
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 71
+Critic Loss: -106.4792, Generator Loss: 80.6659
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 71
+Critic Loss: -92.6616, Generator Loss: 64.1905
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 71
+Critic Loss: -107.1914, Generator Loss: 82.2990
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 71
+Critic Loss: -121.7444, Generator Loss: 97.6142
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 71
+Critic Loss: -84.5331, Generator Loss: 52.0880
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 71
+Critic Loss: -69.5072, Generator Loss: 33.3452
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 71
+Critic Loss: -75.5231, Generator Loss: 39.9935
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 71
+Critic Loss: -79.4593, Generator Loss: 42.7851
+====================
+Epoch 1/100 - Batch 71
+Critic Loss: -79.4593, Generator Loss: 42.7851
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 72
+Critic Loss: -121.5818, Generator Loss: 97.9521
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 72
+Critic Loss: -122.6690, Generator Loss: 99.6645
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 72
+Critic Loss: -124.1547, Generator Loss: 99.8502
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 72
+Critic Loss: -105.1095, Generator Loss: 74.5366
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 72
+Critic Loss: -87.4908, Generator Loss: 54.2322
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 72
+Critic Loss: -111.4486, Generator Loss: 83.2645
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 72
+Critic Loss: -93.1917, Generator Loss: 58.9350
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 72
+Critic Loss: -83.6655, Generator Loss: 47.8880
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 72
+Critic Loss: -74.6498, Generator Loss: 34.8440
+====================
+Epoch 1/100 - Batch 72
+Critic Loss: -74.6498, Generator Loss: 34.8440
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 73
+Critic Loss: -124.0675, Generator Loss: 98.0034
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 73
+Critic Loss: -126.5300, Generator Loss: 100.3669
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 73
+Critic Loss: -112.4135, Generator Loss: 85.1103
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 73
+Critic Loss: -113.9865, Generator Loss: 85.1379
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 73
+Critic Loss: -109.7896, Generator Loss: 80.9896
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 73
+Critic Loss: -116.7403, Generator Loss: 85.4662
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 73
+Critic Loss: -81.3454, Generator Loss: 43.6832
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 73
+Critic Loss: -94.1397, Generator Loss: 58.4720
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 73
+Critic Loss: -102.1873, Generator Loss: 66.1638
+====================
+Epoch 1/100 - Batch 73
+Critic Loss: -102.1873, Generator Loss: 66.1638
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 74
+Critic Loss: -128.3175, Generator Loss: 102.3880
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 74
+Critic Loss: -129.2912, Generator Loss: 104.4379
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 74
+Critic Loss: -103.6190, Generator Loss: 72.0095
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 74
+Critic Loss: -119.6272, Generator Loss: 90.3419
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 74
+Critic Loss: -111.1646, Generator Loss: 78.2508
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 74
+Critic Loss: -120.0968, Generator Loss: 89.2200
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 74
+Critic Loss: -97.3438, Generator Loss: 61.3399
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 74
+Critic Loss: -87.2272, Generator Loss: 47.3016
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 74
+Critic Loss: -88.0747, Generator Loss: 48.1004
+====================
+Epoch 1/100 - Batch 74
+Critic Loss: -88.0747, Generator Loss: 48.1004
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 75
+Critic Loss: -131.0835, Generator Loss: 105.2439
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 75
+Critic Loss: -132.2981, Generator Loss: 106.7732
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 75
+Critic Loss: -133.7425, Generator Loss: 105.1679
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 75
+Critic Loss: -121.2518, Generator Loss: 89.3661
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 75
+Critic Loss: -120.5524, Generator Loss: 92.9480
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 75
+Critic Loss: -93.3929, Generator Loss: 54.5914
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 75
+Critic Loss: -88.1149, Generator Loss: 46.7601
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 75
+Critic Loss: -83.4100, Generator Loss: 42.0937
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 75
+Critic Loss: -89.1646, Generator Loss: 47.4662
+====================
+Epoch 1/100 - Batch 75
+Critic Loss: -89.1646, Generator Loss: 47.4662
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 76
+Critic Loss: -134.2336, Generator Loss: 108.0174
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 76
+Critic Loss: -123.5099, Generator Loss: 93.1880
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 76
+Critic Loss: -125.1659, Generator Loss: 91.0110
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 76
+Critic Loss: -104.5260, Generator Loss: 67.3233
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 76
+Critic Loss: -100.7254, Generator Loss: 63.5107
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 76
+Critic Loss: -113.8291, Generator Loss: 75.9474
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 76
+Critic Loss: -93.4587, Generator Loss: 51.7155
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 76
+Critic Loss: -84.2474, Generator Loss: 39.7962
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 76
+Critic Loss: -87.7160, Generator Loss: 45.9270
+====================
+Epoch 1/100 - Batch 76
+Critic Loss: -87.7160, Generator Loss: 45.9270
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 77
+Critic Loss: -123.4513, Generator Loss: 89.9654
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 77
+Critic Loss: -139.1254, Generator Loss: 107.1166
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 77
+Critic Loss: -126.0049, Generator Loss: 92.9003
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 77
+Critic Loss: -130.9948, Generator Loss: 98.3940
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 77
+Critic Loss: -122.8042, Generator Loss: 87.8184
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 77
+Critic Loss: -142.5714, Generator Loss: 111.4043
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 77
+Critic Loss: -92.6504, Generator Loss: 53.1029
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 77
+Critic Loss: -87.6114, Generator Loss: 42.0859
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 77
+Critic Loss: -91.9379, Generator Loss: 46.0309
+====================
+Epoch 1/100 - Batch 77
+Critic Loss: -91.9379, Generator Loss: 46.0309
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 78
+Critic Loss: -140.4093, Generator Loss: 109.3946
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 78
+Critic Loss: -120.7237, Generator Loss: 83.7997
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 78
+Critic Loss: -126.6537, Generator Loss: 94.1282
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 78
+Critic Loss: -131.8559, Generator Loss: 100.6799
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 78
+Critic Loss: -123.2848, Generator Loss: 88.1854
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 78
+Critic Loss: -147.2636, Generator Loss: 112.4134
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 78
+Critic Loss: -96.0311, Generator Loss: 53.1881
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 78
+Critic Loss: -123.1428, Generator Loss: 81.8228
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 78
+Critic Loss: -102.4603, Generator Loss: 57.3903
+====================
+Epoch 1/100 - Batch 78
+Critic Loss: -102.4603, Generator Loss: 57.3903
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 79
+Critic Loss: -144.4129, Generator Loss: 113.8264
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 79
+Critic Loss: -145.9796, Generator Loss: 113.0890
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 79
+Critic Loss: -148.6314, Generator Loss: 116.8921
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 79
+Critic Loss: -127.1250, Generator Loss: 91.3830
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 79
+Critic Loss: -136.9371, Generator Loss: 101.1873
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 79
+Critic Loss: -134.6991, Generator Loss: 101.0159
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 79
+Critic Loss: -109.3620, Generator Loss: 67.0758
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 79
+Critic Loss: -122.3236, Generator Loss: 81.7867
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 79
+Critic Loss: -98.3592, Generator Loss: 52.0638
+====================
+Epoch 1/100 - Batch 79
+Critic Loss: -98.3592, Generator Loss: 52.0638
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 80
+Critic Loss: -148.4810, Generator Loss: 114.1203
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 80
+Critic Loss: -122.1234, Generator Loss: 81.7803
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 80
+Critic Loss: -113.8176, Generator Loss: 72.6161
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 80
+Critic Loss: -149.3371, Generator Loss: 115.1478
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 80
+Critic Loss: -101.8486, Generator Loss: 58.2369
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 80
+Critic Loss: -109.1364, Generator Loss: 64.7696
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 80
+Critic Loss: -102.6119, Generator Loss: 57.2261
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 80
+Critic Loss: -100.1959, Generator Loss: 50.9217
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 80
+Critic Loss: -95.5204, Generator Loss: 44.2707
+====================
+Epoch 1/100 - Batch 80
+Critic Loss: -95.5204, Generator Loss: 44.2707
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 81
+Critic Loss: -151.4068, Generator Loss: 115.4869
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 81
+Critic Loss: -151.6289, Generator Loss: 117.3473
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 81
+Critic Loss: -155.6723, Generator Loss: 117.2210
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 81
+Critic Loss: -137.4431, Generator Loss: 102.2493
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 81
+Critic Loss: -125.8349, Generator Loss: 85.8557
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 81
+Critic Loss: -139.7911, Generator Loss: 102.5650
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 81
+Critic Loss: -139.9063, Generator Loss: 103.4185
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 81
+Critic Loss: -114.4666, Generator Loss: 65.3876
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 81
+Critic Loss: -104.2544, Generator Loss: 55.2258
+====================
+Epoch 1/100 - Batch 81
+Critic Loss: -104.2544, Generator Loss: 55.2258
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 82
+Critic Loss: -154.2543, Generator Loss: 119.4942
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 82
+Critic Loss: -134.2380, Generator Loss: 95.0718
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 82
+Critic Loss: -130.0788, Generator Loss: 88.9928
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 82
+Critic Loss: -126.0241, Generator Loss: 79.7786
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 82
+Critic Loss: -131.8998, Generator Loss: 92.5059
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 82
+Critic Loss: -130.0163, Generator Loss: 87.5405
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 82
+Critic Loss: -119.7453, Generator Loss: 71.8983
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 82
+Critic Loss: -104.1680, Generator Loss: 51.1493
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 82
+Critic Loss: -103.3584, Generator Loss: 49.6556
+====================
+Epoch 1/100 - Batch 82
+Critic Loss: -103.3584, Generator Loss: 49.6556
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 83
+Critic Loss: -159.4925, Generator Loss: 118.9054
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 83
+Critic Loss: -159.7534, Generator Loss: 120.6776
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 83
+Critic Loss: -128.5645, Generator Loss: 84.6682
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 83
+Critic Loss: -134.8892, Generator Loss: 94.2656
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 83
+Critic Loss: -133.6811, Generator Loss: 85.5884
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 83
+Critic Loss: -117.3670, Generator Loss: 69.8119
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 83
+Critic Loss: -112.3379, Generator Loss: 59.1800
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 83
+Critic Loss: -135.1489, Generator Loss: 86.6270
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 83
+Critic Loss: -105.4471, Generator Loss: 49.9381
+====================
+Epoch 1/100 - Batch 83
+Critic Loss: -105.4471, Generator Loss: 49.9381
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 84
+Critic Loss: -160.2714, Generator Loss: 121.9782
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 84
+Critic Loss: -146.5332, Generator Loss: 105.0106
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 84
+Critic Loss: -162.3026, Generator Loss: 125.1695
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 84
+Critic Loss: -157.8131, Generator Loss: 113.5728
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 84
+Critic Loss: -128.3277, Generator Loss: 80.5453
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 84
+Critic Loss: -139.1530, Generator Loss: 89.8444
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 84
+Critic Loss: -120.4896, Generator Loss: 69.7559
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 84
+Critic Loss: -108.2383, Generator Loss: 52.7307
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 84
+Critic Loss: -115.9316, Generator Loss: 63.3735
+====================
+Epoch 1/100 - Batch 84
+Critic Loss: -115.9316, Generator Loss: 63.3735
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 85
+Critic Loss: -164.3155, Generator Loss: 126.6453
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 85
+Critic Loss: -151.4185, Generator Loss: 110.6707
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 85
+Critic Loss: -166.9532, Generator Loss: 126.8576
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 85
+Critic Loss: -153.7997, Generator Loss: 112.0737
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 85
+Critic Loss: -143.9075, Generator Loss: 95.1390
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 85
+Critic Loss: -132.4530, Generator Loss: 83.0861
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 85
+Critic Loss: -159.0205, Generator Loss: 116.1209
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 85
+Critic Loss: -99.4275, Generator Loss: 41.3361
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 85
+Critic Loss: -118.9842, Generator Loss: 61.0719
+====================
+Epoch 1/100 - Batch 85
+Critic Loss: -118.9842, Generator Loss: 61.0719
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 86
+Critic Loss: -169.1735, Generator Loss: 127.8668
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 86
+Critic Loss: -169.9293, Generator Loss: 127.8459
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 86
+Critic Loss: -171.0096, Generator Loss: 130.0253
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 86
+Critic Loss: -170.0375, Generator Loss: 131.5736
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 86
+Critic Loss: -157.4225, Generator Loss: 110.1472
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 86
+Critic Loss: -146.0258, Generator Loss: 95.0609
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 86
+Critic Loss: -145.5878, Generator Loss: 99.4296
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 86
+Critic Loss: -132.9790, Generator Loss: 80.5344
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 86
+Critic Loss: -129.9993, Generator Loss: 71.8901
+====================
+Epoch 1/100 - Batch 86
+Critic Loss: -129.9993, Generator Loss: 71.8901
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 87
+Critic Loss: -171.5179, Generator Loss: 128.2338
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 87
+Critic Loss: -174.0889, Generator Loss: 131.8554
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 87
+Critic Loss: -146.6767, Generator Loss: 98.8291
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 87
+Critic Loss: -167.1489, Generator Loss: 119.6214
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 87
+Critic Loss: -139.6443, Generator Loss: 84.2597
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 87
+Critic Loss: -158.1662, Generator Loss: 105.0126
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 87
+Critic Loss: -111.4908, Generator Loss: 52.8407
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 87
+Critic Loss: -121.9089, Generator Loss: 62.9605
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 87
+Critic Loss: -120.1238, Generator Loss: 59.9611
+====================
+Epoch 1/100 - Batch 87
+Critic Loss: -120.1238, Generator Loss: 59.9611
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 88
+Critic Loss: -175.8692, Generator Loss: 131.4689
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 88
+Critic Loss: -177.4769, Generator Loss: 133.1527
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 88
+Critic Loss: -165.6652, Generator Loss: 118.3195
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 88
+Critic Loss: -165.8684, Generator Loss: 117.6419
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 88
+Critic Loss: -135.4265, Generator Loss: 83.7989
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 88
+Critic Loss: -168.5837, Generator Loss: 118.3962
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 88
+Critic Loss: -133.4456, Generator Loss: 72.1426
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 88
+Critic Loss: -143.9517, Generator Loss: 83.3690
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 88
+Critic Loss: -125.1508, Generator Loss: 60.8945
+====================
+Epoch 1/100 - Batch 88
+Critic Loss: -125.1508, Generator Loss: 60.8945
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 89
+Critic Loss: -178.3474, Generator Loss: 133.4523
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 89
+Critic Loss: -167.1895, Generator Loss: 118.2070
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 89
+Critic Loss: -181.8230, Generator Loss: 136.0899
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 89
+Critic Loss: -171.0923, Generator Loss: 123.4612
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 89
+Critic Loss: -170.0103, Generator Loss: 124.0993
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 89
+Critic Loss: -188.4696, Generator Loss: 135.8466
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 89
+Critic Loss: -143.1942, Generator Loss: 87.2438
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 89
+Critic Loss: -113.2505, Generator Loss: 47.4311
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 89
+Critic Loss: -130.5937, Generator Loss: 67.5885
+====================
+Epoch 1/100 - Batch 89
+Critic Loss: -130.5937, Generator Loss: 67.5885
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 90
+Critic Loss: -187.1743, Generator Loss: 136.0366
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 90
+Critic Loss: -185.1850, Generator Loss: 138.8778
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 90
+Critic Loss: -165.3766, Generator Loss: 116.8594
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 90
+Critic Loss: -186.0743, Generator Loss: 138.9753
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 90
+Critic Loss: -190.0799, Generator Loss: 138.7889
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 90
+Critic Loss: -166.1305, Generator Loss: 113.6613
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 90
+Critic Loss: -140.6688, Generator Loss: 78.5793
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 90
+Critic Loss: -136.9138, Generator Loss: 71.8676
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 90
+Critic Loss: -152.4194, Generator Loss: 95.1932
+====================
+Epoch 1/100 - Batch 90
+Critic Loss: -152.4194, Generator Loss: 95.1932
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 91
+Critic Loss: -188.0315, Generator Loss: 139.5950
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 91
+Critic Loss: -187.0892, Generator Loss: 141.9299
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 91
+Critic Loss: -188.5909, Generator Loss: 141.6238
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 91
+Critic Loss: -189.9426, Generator Loss: 140.5683
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 91
+Critic Loss: -173.5060, Generator Loss: 119.2907
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 91
+Critic Loss: -177.1963, Generator Loss: 121.6900
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 91
+Critic Loss: -179.9300, Generator Loss: 122.7133
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 91
+Critic Loss: -155.7844, Generator Loss: 90.3891
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 91
+Critic Loss: -138.4830, Generator Loss: 74.3221
+====================
+Epoch 1/100 - Batch 91
+Critic Loss: -138.4830, Generator Loss: 74.3221
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 92
+Critic Loss: -180.5705, Generator Loss: 128.3750
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 92
+Critic Loss: -174.0347, Generator Loss: 120.6918
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 92
+Critic Loss: -193.3983, Generator Loss: 144.5120
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 92
+Critic Loss: -178.8520, Generator Loss: 126.0421
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 92
+Critic Loss: -173.7868, Generator Loss: 112.5529
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 92
+Critic Loss: -183.0872, Generator Loss: 125.9359
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 92
+Critic Loss: -154.6668, Generator Loss: 87.8223
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 92
+Critic Loss: -131.0370, Generator Loss: 59.2624
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 92
+Critic Loss: -148.8273, Generator Loss: 80.9917
+====================
+Epoch 1/100 - Batch 92
+Critic Loss: -148.8273, Generator Loss: 80.9917
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 93
+Critic Loss: -195.3631, Generator Loss: 144.9266
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 93
+Critic Loss: -194.5784, Generator Loss: 145.6686
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 93
+Critic Loss: -182.0360, Generator Loss: 127.2821
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 93
+Critic Loss: -197.6576, Generator Loss: 147.0594
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 93
+Critic Loss: -168.2678, Generator Loss: 105.5480
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 93
+Critic Loss: -161.2149, Generator Loss: 97.5320
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 93
+Critic Loss: -125.3882, Generator Loss: 49.8476
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 93
+Critic Loss: -161.3121, Generator Loss: 94.8492
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 93
+Critic Loss: -145.4168, Generator Loss: 73.0748
+====================
+Epoch 1/100 - Batch 93
+Critic Loss: -145.4168, Generator Loss: 73.0748
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 94
+Critic Loss: -196.9553, Generator Loss: 145.4708
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 94
+Critic Loss: -183.4123, Generator Loss: 129.3893
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 94
+Critic Loss: -198.1431, Generator Loss: 143.3448
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 94
+Critic Loss: -175.3253, Generator Loss: 115.9559
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 94
+Critic Loss: -188.8848, Generator Loss: 131.2466
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 94
+Critic Loss: -155.0906, Generator Loss: 89.1427
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 94
+Critic Loss: -156.0040, Generator Loss: 88.5186
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 94
+Critic Loss: -118.8935, Generator Loss: 41.7295
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 94
+Critic Loss: -126.3178, Generator Loss: 49.1382
+====================
+Epoch 1/100 - Batch 94
+Critic Loss: -126.3178, Generator Loss: 49.1382
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 95
+Critic Loss: -201.2043, Generator Loss: 140.9911
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 95
+Critic Loss: -205.9341, Generator Loss: 147.8819
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 95
+Critic Loss: -208.8772, Generator Loss: 149.3844
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 95
+Critic Loss: -163.8160, Generator Loss: 96.5477
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 95
+Critic Loss: -190.7320, Generator Loss: 132.2183
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 95
+Critic Loss: -194.7918, Generator Loss: 129.3830
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 95
+Critic Loss: -182.2593, Generator Loss: 119.2474
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 95
+Critic Loss: -194.4981, Generator Loss: 133.9505
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 95
+Critic Loss: -163.0200, Generator Loss: 88.5118
+====================
+Epoch 1/100 - Batch 95
+Critic Loss: -163.0200, Generator Loss: 88.5118
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 96
+Critic Loss: -205.1758, Generator Loss: 150.9744
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 96
+Critic Loss: -176.9328, Generator Loss: 116.5077
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 96
+Critic Loss: -177.8095, Generator Loss: 116.2280
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 96
+Critic Loss: -194.4228, Generator Loss: 132.2897
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 96
+Critic Loss: -192.3607, Generator Loss: 129.2787
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 96
+Critic Loss: -200.1197, Generator Loss: 137.2641
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 96
+Critic Loss: -180.0279, Generator Loss: 107.7566
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 96
+Critic Loss: -148.3975, Generator Loss: 73.1931
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 96
+Critic Loss: -132.9032, Generator Loss: 47.9549
+====================
+Epoch 1/100 - Batch 96
+Critic Loss: -132.9032, Generator Loss: 47.9549
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 97
+Critic Loss: -207.2853, Generator Loss: 146.4631
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 97
+Critic Loss: -211.4077, Generator Loss: 149.7320
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 97
+Critic Loss: -197.8875, Generator Loss: 136.4204
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 97
+Critic Loss: -210.8006, Generator Loss: 154.1011
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 97
+Critic Loss: -203.4528, Generator Loss: 136.8123
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 97
+Critic Loss: -218.9612, Generator Loss: 155.5824
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 97
+Critic Loss: -164.2427, Generator Loss: 87.6437
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 97
+Critic Loss: -203.7597, Generator Loss: 133.3960
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 97
+Critic Loss: -223.1238, Generator Loss: 155.5364
+====================
+Epoch 1/100 - Batch 97
+Critic Loss: -223.1238, Generator Loss: 155.5364
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 98
+Critic Loss: -212.4213, Generator Loss: 152.8092
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 98
+Critic Loss: -216.4225, Generator Loss: 155.5765
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 98
+Critic Loss: -201.8408, Generator Loss: 138.8350
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 98
+Critic Loss: -207.3294, Generator Loss: 139.9871
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 98
+Critic Loss: -188.0989, Generator Loss: 122.5579
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 98
+Critic Loss: -166.7453, Generator Loss: 93.3921
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 98
+Critic Loss: -146.7001, Generator Loss: 59.5404
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 98
+Critic Loss: -167.9153, Generator Loss: 91.5065
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 98
+Critic Loss: -169.6652, Generator Loss: 86.7129
+====================
+Epoch 1/100 - Batch 98
+Critic Loss: -169.6652, Generator Loss: 86.7129
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 99
+Critic Loss: -219.2019, Generator Loss: 157.7639
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 99
+Critic Loss: -217.7287, Generator Loss: 158.3849
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 99
+Critic Loss: -205.4360, Generator Loss: 133.6378
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 99
+Critic Loss: -194.6211, Generator Loss: 123.6442
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 99
+Critic Loss: -167.9623, Generator Loss: 89.1000
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 99
+Critic Loss: -168.6115, Generator Loss: 89.0507
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 99
+Critic Loss: -168.3874, Generator Loss: 85.1006
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 99
+Critic Loss: -198.1363, Generator Loss: 120.8611
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 99
+Critic Loss: -191.4347, Generator Loss: 111.7317
+====================
+Epoch 1/100 - Batch 99
+Critic Loss: -191.4347, Generator Loss: 111.7317
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 100
+Critic Loss: -220.8489, Generator Loss: 160.2355
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 100
+Critic Loss: -221.2315, Generator Loss: 159.5054
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 100
+Critic Loss: -227.3935, Generator Loss: 160.9283
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 100
+Critic Loss: -228.0627, Generator Loss: 162.1856
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 100
+Critic Loss: -213.6446, Generator Loss: 144.5993
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 100
+Critic Loss: -194.9483, Generator Loss: 123.5242
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 100
+Critic Loss: -170.5255, Generator Loss: 88.7551
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 100
+Critic Loss: -168.8045, Generator Loss: 83.0865
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 100
+Critic Loss: -182.5405, Generator Loss: 99.4038
+====================
+Epoch 1/100 - Batch 100
+Critic Loss: -182.5405, Generator Loss: 99.4038
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 101
+Critic Loss: -227.4515, Generator Loss: 162.1011
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 101
+Critic Loss: -199.7216, Generator Loss: 126.6675
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 101
+Critic Loss: -228.9210, Generator Loss: 162.2984
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 101
+Critic Loss: -229.2751, Generator Loss: 161.6740
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 101
+Critic Loss: -194.6493, Generator Loss: 113.7249
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 101
+Critic Loss: -211.6059, Generator Loss: 134.4536
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 101
+Critic Loss: -215.9956, Generator Loss: 146.7048
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 101
+Critic Loss: -199.3470, Generator Loss: 114.5617
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 101
+Critic Loss: -198.3674, Generator Loss: 111.8941
+====================
+Epoch 1/100 - Batch 101
+Critic Loss: -198.3674, Generator Loss: 111.8941
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 102
+Critic Loss: -229.0644, Generator Loss: 165.6747
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 102
+Critic Loss: -229.7027, Generator Loss: 164.4620
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 102
+Critic Loss: -212.2802, Generator Loss: 140.0684
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 102
+Critic Loss: -212.3033, Generator Loss: 130.4404
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 102
+Critic Loss: -216.4035, Generator Loss: 141.0382
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 102
+Critic Loss: -226.4480, Generator Loss: 144.3583
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 102
+Critic Loss: -167.5939, Generator Loss: 75.9746
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 102
+Critic Loss: -159.5935, Generator Loss: 59.5215
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 102
+Critic Loss: -172.1139, Generator Loss: 74.1841
+====================
+Epoch 1/100 - Batch 102
+Critic Loss: -172.1139, Generator Loss: 74.1841
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 103
+Critic Loss: -234.7781, Generator Loss: 161.9468
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 103
+Critic Loss: -217.1169, Generator Loss: 146.0897
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 103
+Critic Loss: -233.8759, Generator Loss: 165.9279
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 103
+Critic Loss: -217.9016, Generator Loss: 146.7944
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 103
+Critic Loss: -211.2071, Generator Loss: 128.4371
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 103
+Critic Loss: -232.3765, Generator Loss: 152.6367
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 103
+Critic Loss: -215.8495, Generator Loss: 127.3156
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 103
+Critic Loss: -196.7865, Generator Loss: 102.0879
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 103
+Critic Loss: -211.3564, Generator Loss: 133.3991
+====================
+Epoch 1/100 - Batch 103
+Critic Loss: -211.3564, Generator Loss: 133.3991
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 104
+Critic Loss: -222.8798, Generator Loss: 151.8932
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 104
+Critic Loss: -224.7452, Generator Loss: 146.2026
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 104
+Critic Loss: -217.6659, Generator Loss: 134.0864
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 104
+Critic Loss: -185.7610, Generator Loss: 95.4395
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 104
+Critic Loss: -225.0246, Generator Loss: 142.8842
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 104
+Critic Loss: -195.3504, Generator Loss: 104.7069
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 104
+Critic Loss: -182.0933, Generator Loss: 80.6774
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 104
+Critic Loss: -172.1477, Generator Loss: 71.5129
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 104
+Critic Loss: -168.6142, Generator Loss: 62.7922
+====================
+Epoch 1/100 - Batch 104
+Critic Loss: -168.6142, Generator Loss: 62.7922
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 105
+Critic Loss: -239.8281, Generator Loss: 164.1290
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 105
+Critic Loss: -241.5165, Generator Loss: 167.5935
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 105
+Critic Loss: -245.8300, Generator Loss: 170.8641
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 105
+Critic Loss: -234.1648, Generator Loss: 157.1447
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 105
+Critic Loss: -250.5052, Generator Loss: 172.0856
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 105
+Critic Loss: -236.8575, Generator Loss: 152.9931
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 105
+Critic Loss: -199.2507, Generator Loss: 103.5895
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 105
+Critic Loss: -210.8261, Generator Loss: 111.4674
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 105
+Critic Loss: -201.1333, Generator Loss: 104.3665
+====================
+Epoch 1/100 - Batch 105
+Critic Loss: -201.1333, Generator Loss: 104.3665
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 106
+Critic Loss: -233.3669, Generator Loss: 153.3790
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 106
+Critic Loss: -245.9377, Generator Loss: 172.5153
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 106
+Critic Loss: -233.9048, Generator Loss: 153.0949
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 106
+Critic Loss: -233.3206, Generator Loss: 146.8148
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 106
+Critic Loss: -215.3544, Generator Loss: 128.1323
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 106
+Critic Loss: -239.3514, Generator Loss: 159.9629
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 106
+Critic Loss: -202.0532, Generator Loss: 106.9724
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 106
+Critic Loss: -195.0866, Generator Loss: 87.4728
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 106
+Critic Loss: -165.1658, Generator Loss: 57.9465
+====================
+Epoch 1/100 - Batch 106
+Critic Loss: -165.1658, Generator Loss: 57.9465
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 107
+Critic Loss: -248.0308, Generator Loss: 166.2525
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 107
+Critic Loss: -257.5919, Generator Loss: 173.8198
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 107
+Critic Loss: -230.1040, Generator Loss: 149.5709
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 107
+Critic Loss: -228.0510, Generator Loss: 138.7252
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 107
+Critic Loss: -243.8455, Generator Loss: 156.4165
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 107
+Critic Loss: -248.6535, Generator Loss: 157.7067
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 107
+Critic Loss: -199.2388, Generator Loss: 90.2329
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 107
+Critic Loss: -239.4539, Generator Loss: 141.7589
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 107
+Critic Loss: -216.9636, Generator Loss: 109.1295
+====================
+Epoch 1/100 - Batch 107
+Critic Loss: -216.9636, Generator Loss: 109.1295
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 108
+Critic Loss: -253.6411, Generator Loss: 172.8553
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 108
+Critic Loss: -239.7171, Generator Loss: 158.5533
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 108
+Critic Loss: -239.9234, Generator Loss: 157.8541
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 108
+Critic Loss: -262.7706, Generator Loss: 172.8428
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 108
+Critic Loss: -237.6231, Generator Loss: 133.3575
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 108
+Critic Loss: -251.9381, Generator Loss: 157.3941
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 108
+Critic Loss: -252.3518, Generator Loss: 156.9231
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 108
+Critic Loss: -240.7629, Generator Loss: 136.9652
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 108
+Critic Loss: -223.0511, Generator Loss: 114.3602
+====================
+Epoch 1/100 - Batch 108
+Critic Loss: -223.0511, Generator Loss: 114.3602
+Current masking rate is: 0.90
+Epoch 1/100 - Batch 109
+Critic Loss: -242.8469, Generator Loss: 160.6037
+Current masking rate is: 0.80
+Epoch 1/100 - Batch 109
+Critic Loss: -258.9019, Generator Loss: 178.4573
+Current masking rate is: 0.70
+Epoch 1/100 - Batch 109
+Critic Loss: -190.4693, Generator Loss: 88.4944
+Current masking rate is: 0.60
+Epoch 1/100 - Batch 109
+Critic Loss: -232.9303, Generator Loss: 144.2802
+Current masking rate is: 0.50
+Epoch 1/100 - Batch 109
+Critic Loss: -239.6823, Generator Loss: 153.5359
+Current masking rate is: 0.40
+Epoch 1/100 - Batch 109
+Critic Loss: -245.9485, Generator Loss: 146.0105
+Current masking rate is: 0.30
+Epoch 1/100 - Batch 109
+Critic Loss: -212.9305, Generator Loss: 107.7770
+Current masking rate is: 0.20
+Epoch 1/100 - Batch 109
+Critic Loss: -200.4769, Generator Loss: 92.1359
+Current masking rate is: 0.10
+Epoch 1/100 - Batch 109
+Critic Loss: -223.0161, Generator Loss: 110.5246
+====================
+Epoch 1/100 - Batch 109
+Critic Loss: -223.0161, Generator Loss: 110.5246
+Traceback (most recent call last):
+  File "train.py", line 86, in <module>
+    fake_data = generator.generate(masked_input_ids, updated_attention_mask, keep_percent=iteration_fill_rate)
+  File "/home/ufuk/protgen/gan/models.py", line 35, in generate
+    num_tokens_to_keep = int(keep_percent * total_meaningful_tokens)
+KeyboardInterrupt

@@ -3,46 +3,52 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 class Generator(nn.Module):
-    def __init__(self, protbert_model):
+    def __init__(self, protbert_model, mask_token_id = 4):
         super().__init__()
         self.protbert = protbert_model
+        self.mask_token_id = mask_token_id
 
     def forward(self, input_ids, attention_mask=None):
         outputs = self.protbert(input_ids=input_ids, attention_mask=attention_mask)
         return outputs.logits
     
     def generate(self, input_ids, attention_mask=None, temperature=1.0, keep_percent=0.1):
-        # meaningful tokens
-        meaningful_mask = (input_ids > 4)
+        # not including special tokens except masks
+        meaningful_mask = (input_ids >= self.mask_token_id)
 
-        for _ in range(input_ids.size(1)):  # Iterate up to sequence length
-            outputs = self.protbert(input_ids=input_ids, attention_mask=attention_mask)
-            logits = outputs.logits
+        # logits
+        outputs = self.protbert(input_ids=input_ids, attention_mask=attention_mask)
+        logits = outputs.logits
 
-            # Apply temperature scaling
-            logits = logits / temperature
-            probabilities = F.softmax(logits, dim=-1)
+        # temperature scaling and softmax
+        logits = logits / temperature
+        probabilities = F.softmax(logits, dim=-1)
 
-            # Compute confidence (max probability for each token)
-            confidence, predicted_ids = probabilities.max(dim=-1)
+        # compute confidence and predicted IDs
+        confidence, predicted_ids = probabilities.max(dim=-1)
 
-            # Set confidence to zero for unmeaningful tokens
-            confidence = confidence * meaningful_mask.float()
+        # Zero out confidence for non-meaningful tokens(cls, unk, sep, pad)
+        confidence[~meaningful_mask] = 0.0
 
-            # Process each sequence in the batch
-            retain_mask = torch.zeros_like(input_ids, dtype=torch.bool)
-            for batch_idx in range(meaningful_mask.size(0)):
-                num_tokens_to_keep = int(keep_percent * meaningful_mask[batch_idx].sum().item())
-                topk_indices = torch.topk(confidence[batch_idx], num_tokens_to_keep).indices
+        # top percent that will be kept
+        total_meaningful_tokens = meaningful_mask.sum().item()
+        num_tokens_to_keep = int(keep_percent * total_meaningful_tokens)
 
-                # Create retain_mask for the current sequence
-                retain_mask[batch_idx].scatter_(0, topk_indices, True)
+        # Get top-k confident token indices
+        topk_indices = torch.topk(confidence.view(-1), num_tokens_to_keep).indices
 
-            # Update input_ids for the entire batch
-            fill_mask = ~retain_mask & (input_ids <= 4)
-            input_ids[fill_mask] = predicted_ids[fill_mask]
+        # Convert flat indices back to 2D indices (batch, seq)
+        batch_indices = topk_indices // input_ids.size(1)
+        seq_indices = topk_indices % input_ids.size(1)
+
+        # Replace only `[MASK]` tokens in the top 10%
+        for batch_idx, seq_idx in zip(batch_indices, seq_indices):
+            if input_ids[batch_idx, seq_idx] == self.mask_token_id:  # Only replace `[MASK]` tokens
+                input_ids[batch_idx, seq_idx] = predicted_ids[batch_idx, seq_idx]
 
         return input_ids
+
+
 
 class Critic(nn.Module):
     def __init__(self, protbert_model):
