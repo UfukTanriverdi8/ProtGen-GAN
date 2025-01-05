@@ -3,50 +3,56 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 class Generator(nn.Module):
-    def __init__(self, protbert_model, mask_token_id = 4):
+    def __init__(self, protbert_model, cls_token_id=2, sep_token_id=3 , mask_token_id=4, pad_token_id=0):
         super().__init__()
         self.protbert = protbert_model
         self.mask_token_id = mask_token_id
+        self.pad_token_id = pad_token_id
+        self.cls_token_id = cls_token_id
+        self.sep_token_id = sep_token_id
 
     def forward(self, input_ids, attention_mask=None):
         outputs = self.protbert(input_ids=input_ids, attention_mask=attention_mask)
         return outputs.logits
-    
-    def generate(self, input_ids, attention_mask=None, temperature=1.0, keep_percent=0.1):
-        # not including special tokens except masks
-        meaningful_mask = (input_ids >= self.mask_token_id)
 
-        # logits
+    def generate(self, input_ids, attention_mask=None, temperature=1.0, keep_percent=0.1, current_rate=None):
+        meaningful_seq = (input_ids != self.pad_token_id) & (input_ids != self.cls_token_id) & (input_ids != self.sep_token_id)
+
+        meaningful_token_count = meaningful_seq.sum().item()  # the keep_percent will be calculated by this value
+
         outputs = self.protbert(input_ids=input_ids, attention_mask=attention_mask)
-        logits = outputs.logits
+        logits = outputs.logits / temperature
 
-        # temperature scaling and softmax
-        logits = logits / temperature
         probabilities = F.softmax(logits, dim=-1)
-
-        # compute confidence and predicted IDs
         confidence, predicted_ids = probabilities.max(dim=-1)
 
-        # Zero out confidence for non-meaningful tokens(cls, unk, sep, pad)
-        confidence[~meaningful_mask] = 0.0
+        mask_indices = (input_ids == self.mask_token_id)
+        confidence[~mask_indices] = 0.0  # we will only get the confidence for the mask indices
 
-        # top percent that will be kept
-        total_meaningful_tokens = meaningful_mask.sum().item()
-        num_tokens_to_keep = int(keep_percent * total_meaningful_tokens)
+        num_tokens_to_fill = max(1, int(keep_percent * meaningful_token_count))  # Constant 10% fill
+        remaining_masks = mask_indices.sum().item()
 
-        # Get top-k confident token indices
-        topk_indices = torch.topk(confidence.view(-1), num_tokens_to_keep).indices
+        if remaining_masks == 0:
+            print("All tokens are filled early!")
+            return input_ids  # No more masks to fill
+        
+        if current_rate == 0.1:
+            num_tokens_to_fill = remaining_masks
+        else:
+            num_tokens_to_fill = min(num_tokens_to_fill, remaining_masks)  # don't fill more than available
 
-        # Convert flat indices back to 2D indices (batch, seq)
+        # Get top-k confident predictions
+        topk_indices = torch.topk(confidence.view(-1), num_tokens_to_fill).indices
+
         batch_indices = topk_indices // input_ids.size(1)
         seq_indices = topk_indices % input_ids.size(1)
 
-        # Replace only `[MASK]` tokens in the top 10%
         for batch_idx, seq_idx in zip(batch_indices, seq_indices):
-            if input_ids[batch_idx, seq_idx] == self.mask_token_id:  # Only replace `[MASK]` tokens
+            if input_ids[batch_idx, seq_idx] == self.mask_token_id:
                 input_ids[batch_idx, seq_idx] = predicted_ids[batch_idx, seq_idx]
 
         return input_ids
+
 
 
 
@@ -54,7 +60,7 @@ class Critic(nn.Module):
     def __init__(self, protbert_model):
         super().__init__()
         self.protbert = protbert_model
-        hidden_size = self.protbert.config.hidden_size  # 1024
+        hidden_size = self.protbert.config.hidden_size
 
         # Classification head
         self.classifier = nn.Sequential(
@@ -69,8 +75,13 @@ class Critic(nn.Module):
 
     def forward(self, input_data, attention_mask=None):
         if input_data.dim() == 2:  # Token IDs
-            last_hidden_state = self.protbert.bert.embeddings(input_data)  # Convert to embeddings
-        elif input_data.dim() == 3:  # Already Embeddings
+            outputs = self.protbert(
+                input_ids=input_data,
+                attention_mask=attention_mask,
+                output_hidden_states=True,
+            )
+            last_hidden_state = outputs.hidden_states[-1]
+        elif input_data.dim() == 3:  # Embeddings
             last_hidden_state = input_data
 
         cls_output = last_hidden_state[:, 0, :]  # CLS token embedding

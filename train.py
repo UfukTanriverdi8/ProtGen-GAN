@@ -7,12 +7,13 @@ import wandb
 from loss import critic_loss, generator_loss, compute_gradient_penalty
 from dataset import load_and_tokenize_dataset, get_dataloaders
 from metrics import calculate_sequence_identity
+#torch.manual_seed(4)
 
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
-#os.environ["WANDB_DISABLED"] = "True"
+os.environ["WANDB_DISABLED"] = "True"
 
-model_checkpoint_path = f"../checkpoints/dynamic-masked/checkpoint-epoch-123"
+model_checkpoint_path = f"../checkpoints/dynamic-masked/checkpoint-epoch-240"
 
 tokenizer = AutoTokenizer.from_pretrained("Rostlab/prot_bert", do_lower_case=False)
 
@@ -23,7 +24,7 @@ tokenized_datasets = load_and_tokenize_dataset(
     tokenizer,
     gen_file = "data/dnmt_gen.txt",
     critic_file = "data/dnmt_critic.txt",
-    max_length=512
+    max_length = 512
 )
 
 batch_size = 4
@@ -41,14 +42,16 @@ critic_optimizer = torch.optim.Adam(critic.parameters(), lr=1e-4, betas=(0.5, 0.
 
 
 # wandb
-wandb.init(project="ProtGen GAN Training", name="demo-2")
+wandb.init(project="ProtGen GAN Training", name="demo-3")
 
 # Params
 n_epochs = 100
-n_critic = 5  # Number of critic updates per generator update
+n_critic = 8  # Number of critic updates per generator update
 lambda_gp = 10  # Gradient penalty weight
 initial_masking_rate = 0.9
 iteration_fill_rate = 0.1
+
+debug_seq = "TIALRPDRLTQVLGTEVPTDEGTRLLGAIGFDVEAGEDALHCTVPTWRPDVSIEEDLIEEVA"
 
 # Training loop
 for epoch in range(n_epochs):
@@ -61,98 +64,119 @@ for epoch in range(n_epochs):
         try:
             # generator batch loading
             gen_batch = next(gen_iter)
+            #debug_tokens = list(debug_seq)  # ["K", "T", "I", "A", "L", ...]
+
+            # Add CLS and SEP tokens
+            # debug_tokens = ["[CLS]"] + debug_tokens + ["[SEP]"]
+            # debug_input_ids = tokenizer.convert_tokens_to_ids(debug_tokens)
             input_ids = gen_batch["input_ids"].to(device)
+            #debug_attention_mask = (input_ids != tokenizer.pad_token_id).long()
+
             attention_mask = gen_batch["attention_mask"].to(device)
+            final_input_ids = input_ids.clone()
+            """ print("ORIGINAL SEQUENCE")
+            for i in range(batch_size):
+                print("="*50)
+                tokens = tokenizer.convert_ids_to_tokens(input_ids[i])
+                print(tokens)
+                print(attention_mask[i]) """
+                
+            # Initial masking before iterative loop
+            # seq that does not contain pad, unk, 
+            meaningful_seq = (input_ids != tokenizer.pad_token_id) & (input_ids != tokenizer.unk_token_id) & (input_ids != tokenizer.cls_token_id) & (input_ids != tokenizer.sep_token_id)
 
-            # keeping track of the masking rate
+            # Compute masking indices within meaningful tokens
+            random_mask = torch.rand(input_ids.shape, device=device) < initial_masking_rate
+            mask_indices = meaningful_seq & random_mask
+
+            # Apply masking
+            final_input_ids = input_ids.clone()
+            final_input_ids[mask_indices] = tokenizer.mask_token_id
+
+            """ print("BEFORE FILLING")
+            for i in range(batch_size):
+                print("="*50)
+                tokens = tokenizer.convert_ids_to_tokens(final_input_ids[i])
+                print(tokens)
+                print(f"Mask count: {tokens.count('[MASK]')}")
+                #print(attention_mask[i]) """
+
+            iteration_count = 0
             current_masking_rate = initial_masking_rate
+            """
+            PAD: 0
+            UNK: 1
+            CLS: 2
+            SEP: 3
+            MASK: 4
+            """
 
+            min_temp = 0.7
+            max_temp = 1.5
             # Iterative filling
-            while current_masking_rate > 0.1:
-                # Apply dynamic masking
-                masked_input_ids = input_ids.clone()
-                updated_attention_mask = attention_mask.clone()  # Clone to avoid modifying the original
+            while current_masking_rate > 0:
+                iteration_count += 1
+                updated_attention_mask = ((final_input_ids != tokenizer.mask_token_id) & (final_input_ids != tokenizer.pad_token_id)).long()
+                random_temperature = min_temp + torch.rand(1).item() * (max_temp - min_temp)
+                generated_ids = generator.generate(final_input_ids, updated_attention_mask, temperature=random_temperature, keep_percent=iteration_fill_rate, current_rate=current_masking_rate)
+                final_input_ids = generated_ids
 
-                seq_length_per_batch = attention_mask.sum(dim=1)  # sequence that does not include pad or masks
-                for i in range(len(masked_input_ids)):
-                    num_to_mask = int(seq_length_per_batch[i].item() * current_masking_rate) # how many items will be masked
-                    mask_indices = torch.randperm(int(seq_length_per_batch[i].item()))[:num_to_mask] # masked indices
-                    masked_input_ids[i, mask_indices] = tokenizer.mask_token_id
+                print("*"*50)
+                print(iteration_count)
 
-                    # Update attention mask to exclude newly masked tokens
-                    updated_attention_mask[i, mask_indices] = 0
+                for i in range(final_input_ids.size(0)):
+                    tokens = final_input_ids[i].tolist() 
+                    sample = tokenizer.convert_ids_to_tokens(tokens)
+                    sample_mask_count = sample.count("[MASK]")
+                    print(f"Batch element {i}, Mask count {sample_mask_count}, Mask rate: {sample_mask_count/len(meaningful_seq[i]):.2f}")
 
-                # Generate fake data
-                fake_data = generator.generate(masked_input_ids, updated_attention_mask, keep_percent=iteration_fill_rate)
+            
+                current_masking_rate = max(0, current_masking_rate - iteration_fill_rate)
 
-                # ---------------------
-                # Train Critic
-                # ---------------------
-                for _ in range(n_critic):
-                    try:
-                        # Critic batch
-                        critic_batch = next(critic_iter)
-                        real_data = critic_batch["input_ids"].to(device)
-                        attention_mask_real = critic_batch["attention_mask"].to(device)
+            # Final fake data generation complete
+            fake_data = final_input_ids
 
-                        # Mask real data for the critic
-                        masked_real_data = real_data.clone()
-                        updated_attention_mask_real = attention_mask_real.clone()
+            # ---------------------
+            # Train Critic
+            # ---------------------
+            for _ in range(n_critic):
+                try:
+                    # Critic batch
+                    critic_batch = next(critic_iter)
+                    real_data = critic_batch["input_ids"].to(device)
+                    attention_mask_real = critic_batch["attention_mask"].to(device)
 
-                        seq_length_real = attention_mask_real.sum(dim=1)  # Lengths of sequences without padding
-                        for i in range(len(masked_real_data)):
-                            num_to_mask_real = int(seq_length_real[i].item() * current_masking_rate)
-                            mask_indices_real = torch.randperm(int(seq_length_real[i].item()))[:num_to_mask_real]
-                            masked_real_data[i, mask_indices_real] = tokenizer.mask_token_id
-                            updated_attention_mask_real[i, mask_indices_real] = 0
+                except StopIteration:
+                    critic_iter = iter(critic_dataloader)
+                    critic_batch = next(critic_iter)
+                    real_data = critic_batch["input_ids"].to(device)
+                    attention_mask_real = critic_batch["attention_mask"].to(device)
 
-                    except StopIteration:
-                        critic_iter = iter(critic_dataloader)
-                        critic_batch = next(critic_iter)
-                        real_data = critic_batch["input_ids"].to(device)
-                        attention_mask_real = critic_batch["attention_mask"].to(device)
+                critic_optimizer.zero_grad()
 
-                        # Mask real data for the critic in fallback
-                        masked_real_data = real_data.clone()
-                        updated_attention_mask_real = attention_mask_real.clone()
+                # Compute gradient penalty
+                gradient_penalty = compute_gradient_penalty(
+                    critic, real_data, fake_data, device
+                )
 
-                        seq_length_real = attention_mask_real.sum(dim=1)
-                        for i in range(len(masked_real_data)):
-                            num_to_mask_real = int(seq_length_real[i].item() * current_masking_rate)
-                            mask_indices_real = torch.randperm(int(seq_length_real[i].item()))[:num_to_mask_real]
-                            masked_real_data[i, mask_indices_real] = tokenizer.mask_token_id
-                            updated_attention_mask_real[i, mask_indices_real] = 0
+                # getting the scores
+                real_scores = critic(real_data, attention_mask=attention_mask_real)
+                attention_mask_fake = (fake_data != tokenizer.pad_token_id).long()
+                fake_scores = critic(fake_data, attention_mask=attention_mask_fake)
+                c_loss = critic_loss(real_scores, fake_scores, gradient_penalty, lambda_gp)
+                c_loss.backward()
+                critic_optimizer.step()
 
-                    critic_optimizer.zero_grad()
+            # ---------------------
+            # Train Generator
+            # ---------------------
+            gen_optimizer.zero_grad()
 
-                    # Compute gradient penalty
-                    gradient_penalty = compute_gradient_penalty(
-                        critic, masked_real_data, fake_data, device
-                    )
-
-                    # getting the scores
-                    real_scores = critic(masked_real_data, attention_mask=updated_attention_mask_real)
-                    fake_scores = critic(fake_data, attention_mask=None)
-                    c_loss = critic_loss(real_scores, fake_scores, gradient_penalty, lambda_gp)
-                    c_loss.backward()
-                    critic_optimizer.step()
-
-                # ---------------------
-                # Train Generator
-                # ---------------------
-                gen_optimizer.zero_grad()
-
-                # Compute generator loss
-                fake_scores = critic(fake_data, attention_mask=None)
-                g_loss = generator_loss(fake_scores)
-                g_loss.backward()
-                gen_optimizer.step()
-                print(f"Current masking rate is: {current_masking_rate:.2f}")
-                print(f"Epoch {epoch + 1}/{n_epochs} - Batch {batch_number}")
-                print(f"Critic Loss: {c_loss.item():.4f}, Generator Loss: {g_loss.item():.4f}")
-
-                # Decrease masking rate after each step
-                current_masking_rate = max(0.1, current_masking_rate - iteration_fill_rate)
+            # Compute generator loss
+            fake_scores = critic(fake_data, attention_mask=None)
+            g_loss = generator_loss(fake_scores)
+            g_loss.backward()
+            gen_optimizer.step()
 
         except StopIteration:
             break
@@ -167,34 +191,11 @@ for epoch in range(n_epochs):
                 "critic_loss": c_loss.item(),
                 "generator_loss": g_loss.item()
             })
-            
-            """ evaluation_input_ids = input_ids.clone()
-            evaluation_attention_mask = attention_mask.clone()
-
-            # Mask all meaningful tokens
-            for i in range(len(evaluation_input_ids)):
-                meaningful_mask = (evaluation_input_ids[i] > 4)
-                evaluation_input_ids[i][meaningful_mask] = tokenizer.mask_token_id
-s
-            # Generate a fully completed sequence (fill everything)
-            generated_sequence = generator.generate(evaluation_input_ids, evaluation_attention_mask, keep_percent=1.0)
-
-            # Get a real sequence (first one from the batch for simplicity)
-            real_sequence = input_ids[0].tolist()  # Use original input_ids for real sequence
-            real_sequence = ''.join(chr(tok) for tok in real_sequence if tok > 4)  # Convert to amino acid string
-
-            # Compare real and generated sequences
-            generated_sequence_str = ''.join(chr(tok) for tok in generated_sequence[0].tolist() if tok > 4)  # Convert first generated sequence
-            sequence_identity = calculate_sequence_identity(real_sequence, generated_sequence_str)
-
-            # Print sequence identity
-            print(f"Batch {batch_number}: Sequence Identity = {sequence_identity:.2f}%") """
-
 
         batch_number += 1
 
     # Save models
-    epoch_dir = f"./checkpoints/gan/epoch_{epoch + 1}"
+    epoch_dir = f"./checkpoints/epoch_{epoch + 1}"
     os.makedirs(epoch_dir, exist_ok=True)
 
     critic_bert_dir = f"{epoch_dir}/critic_bert"

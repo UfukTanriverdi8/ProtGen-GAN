@@ -18,7 +18,7 @@ def compute_gradient_penalty(critic, real_data, fake_data, device):
     # Pass interpolated embeddings through the critic
     critic_scores = critic(
         interpolates,
-        attention_mask=attention_mask,
+        attention_mask=attention_mask
     )
 
     # Compute gradients

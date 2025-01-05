@@ -1,6 +1,6 @@
 import random
 
-input_file = 'filtered_2_1_1_37.txt'
+input_file = '../../data/filtered_2_1_1_37.txt'
 sequences = []
 
 count = 0
@@ -33,10 +33,10 @@ with open('dnmt_gen.txt', 'w') as train_file:
         seq = " ".join(seq)
         train_file.write(seq + '\n')
 
-with open('dnmt_critic.txt', "w") as val_file:
+with open('dnmt_critic.txt', "w") as critic_file:
     for seq in critic_sequences:
         seq = " ".join(seq)
-        val_file.write(seq + "\n")
+        critic_file.write(seq + "\n")
 
 with open('dnmt_full.txt', "w") as whole_file:
     for seq in sequences:
@@ -44,3 +44,18 @@ with open('dnmt_full.txt', "w") as whole_file:
 
 print(f"Generator set size: {len(gen_sequences)}")
 print(f"Critic set size: {len(critic_sequences)}")
+
+mini_gen_sequences = gen_sequences[:100]
+mini_critic_sequences = critic_sequences[:100]
+
+with open('dnmt_gen_mini.txt', "w") as mini_gen_file:
+    for seq in mini_gen_sequences:
+        if len(seq) < 128:
+            seq = " ".join(seq)
+            mini_gen_file.write(seq + "\n")
+
+with open('dnmt_critic_mini.txt', "w") as mini_critic_file:
+    for seq in mini_critic_sequences:
+        if len(seq) < 128:
+            seq = " ".join(seq)
+            mini_critic_file.write(seq + "\n")
