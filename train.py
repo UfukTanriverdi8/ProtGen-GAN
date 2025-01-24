@@ -2,8 +2,7 @@ import torch
 from transformers import AutoTokenizer, AutoModelForMaskedLM
 from models import Generator, Critic
 import os
-from tqdm import tqdm
-import wandb
+#import wandb
 from loss import critic_loss, generator_loss, compute_gradient_penalty
 from dataset import load_and_tokenize_dataset, get_dataloaders
 from metrics import calculate_sequence_identity
@@ -42,10 +41,10 @@ critic_optimizer = torch.optim.Adam(critic.parameters(), lr=1e-4, betas=(0.5, 0.
 
 
 # wandb
-wandb.init(project="ProtGen GAN Training", name="demo-3")
+#wandb.init(project="ProtGen GAN Training", name="demo-01-12-21_47")
 
 # Params
-n_epochs = 100
+n_epochs = 10
 n_critic = 8  # Number of critic updates per generator update
 lambda_gp = 10  # Gradient penalty weight
 initial_masking_rate = 0.9
@@ -111,8 +110,8 @@ for epoch in range(n_epochs):
             MASK: 4
             """
 
-            min_temp = 0.7
-            max_temp = 1.5
+            min_temp = 0.6
+            max_temp = 1.2
             # Iterative filling
             while current_masking_rate > 0:
                 iteration_count += 1
@@ -128,10 +127,13 @@ for epoch in range(n_epochs):
                     tokens = final_input_ids[i].tolist() 
                     sample = tokenizer.convert_ids_to_tokens(tokens)
                     sample_mask_count = sample.count("[MASK]")
-                    print(f"Batch element {i}, Mask count {sample_mask_count}, Mask rate: {sample_mask_count/len(meaningful_seq[i]):.2f}")
-
+                    print(f"Batch element {i}, Mask count {sample_mask_count}, Mask rate: {sample_mask_count / meaningful_seq[i].sum().item():.2f}")
             
                 current_masking_rate = max(0, current_masking_rate - iteration_fill_rate)
+                if (final_input_ids == tokenizer.mask_token_id).sum() == 0:
+                    print("No [MASK] tokens remain, exiting early in the loop!")
+                    break
+
 
             # Final fake data generation complete
             fake_data = final_input_ids
@@ -164,7 +166,9 @@ for epoch in range(n_epochs):
                 attention_mask_fake = (fake_data != tokenizer.pad_token_id).long()
                 fake_scores = critic(fake_data, attention_mask=attention_mask_fake)
                 c_loss = critic_loss(real_scores, fake_scores, gradient_penalty, lambda_gp)
+
                 c_loss.backward()
+                #torch.nn.utils.clip_grad_norm_(critic.parameters(), max_norm=5)
                 critic_optimizer.step()
 
             # ---------------------
@@ -175,22 +179,26 @@ for epoch in range(n_epochs):
             # Compute generator loss
             fake_scores = critic(fake_data, attention_mask=None)
             g_loss = generator_loss(fake_scores)
+            # gradient clipping +5 ile -5 ya da +1 -1 ile
+            # bu da olmazsa gradient penalty ekle
             g_loss.backward()
+            torch.nn.utils.clip_grad_norm_(generator.parameters(), max_norm=5)
+
             gen_optimizer.step()
 
         except StopIteration:
             break
 
-        if batch_number % 1 == 0:
+        if batch_number % 10 == 0:
             print("="*20)
             print(f"Epoch {epoch + 1}/{n_epochs} - Batch {batch_number}")
             print(f"Critic Loss: {c_loss.item():.4f}, Generator Loss: {g_loss.item():.4f}")
-            wandb.log({
+            """ wandb.log({
                 "epoch": epoch + 1,
                 "batch": batch_number + 1,
                 "critic_loss": c_loss.item(),
                 "generator_loss": g_loss.item()
-            })
+            }) """
 
         batch_number += 1
 

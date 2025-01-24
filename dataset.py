@@ -39,6 +39,7 @@ def get_dataloaders(tokenized_datasets, batch_size):
         gen_dataset,
         batch_size=batch_size,
         shuffle=True,
+        drop_last=True
     )
 
     critic_dataset = DNMTDataset(tokenized_datasets["critic"])
@@ -46,6 +47,7 @@ def get_dataloaders(tokenized_datasets, batch_size):
         critic_dataset,
         batch_size=batch_size,
         shuffle=True,
+        drop_last=True
     )
 
     return gen_dataloader, critic_dataloader
