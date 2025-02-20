@@ -6,28 +6,15 @@ import wandb
 from loss import critic_loss, generator_loss, compute_gradient_penalty
 from dataset import load_and_tokenize_dataset, get_dataloaders
 from torch.optim import AdamW
-from val_metrics import calculate_plddt_scores_and_save_pdb, sample_sequence_length
+from val_metrics import calculate_plddt_scores_and_save_pdb, sample_sequence_length, clean_m8_folder, calculate_tm_scores
 from torch.nn.utils.rnn import pad_sequence
-
-
 torch.backends.cuda.matmul.allow_tf32 = True
-#torch.manual_seed(4)
-
-"""
-1. Per-sequence top-k (instead of global top-k).
-2. Exact masking (strictly 90% per sequence).
-3. Try removing WGAN-GP if it remains unstable—use clipping on the critic instead.
-4. Hyperparameters (max_grad_norm, λ gp, optimizer betas/lr/weight decay, etc.) can all be tuned.
-5. Partial freezing or additional MLM loss to preserve the “protein knowledge” in ProtBERT.
-6. Dont forget to also try by loading from the saved model
-"""
-
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "3"
 
 model_checkpoint_path = f"../checkpoints/dynamic/saved-260"
 
-tokenizer = AutoTokenizer.from_pretrained("Rostlab/prot_bert", do_lower_case=False)
+tokenizer = AutoTokenizer.from_pretrained(model_checkpoint_path, do_lower_case=False)
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -54,7 +41,7 @@ gen_optimizer = AdamW(generator.parameters(), lr=5e-5, betas=(0.9, 0.999), weigh
 critic_optimizer = AdamW(critic.parameters(), lr=5e-5, betas=(0.9, 0.999), weight_decay=0.01)
 
 # wandb
-run_name = "fully_masked_with_plddt"
+run_name = "fully_masked_run"
 wandb.init(project="ProtGen GAN Training", name=run_name, mode="online")
 
 # Params
@@ -194,7 +181,7 @@ for epoch in range(n_epochs):
         # Debug/logging
         real_score_mean = real_scores.mean().item()
         fake_score_mean = fake_scores.mean().item()
-        if batch_number % 50 == 0:
+        if batch_number % 300 == 0:
             print("=" * 20)
             print(f"Epoch {epoch + 1}/{n_epochs} - Batch {batch_number}")
             print(f"Critic Loss: {c_loss.item():.4f}, Generator Loss: {g_loss.item():.4f}")
@@ -204,15 +191,19 @@ for epoch in range(n_epochs):
                 batch_size=4, num_sequences=10
             )
             print(f"Average pLDDT score: {avg_plddt_score:.2f}")
+            avg_max_tm_score = calculate_tm_scores(num_sequences=10)
+            print(f"Average max TM-Score: {avg_max_tm_score}")
 
             wandb.log({
                 "epoch": epoch + 1,
                 "batch": batch_number + 1,
                 "critic_loss": c_loss.item(),
                 "generator_loss": g_loss.item(),
-                "plddt_score": avg_plddt_score
+                "plddt_score": avg_plddt_score,
+                "max_tm_score": avg_max_tm_score,
             })
             torch.cuda.empty_cache()
+            clean_m8_folder()
 
         batch_number += 1
     # Save models

@@ -174,9 +174,9 @@ def wait_for_completion(tickets, interval=10, max_wait=600):
                 else:
                     print(f"🔄 Job {ticket} still running...")
             
-            except requests.exceptions.RequestException as e:
-                print(f"⚠️ API error for {ticket}: {e} (Retrying in {interval*3}s)")
-                time.sleep(interval)  # Wait before retrying
+            except Exception as e:
+                print(f"⚠️ API error for {ticket}: {e} (Retrying in {interval*20}s)")
+                time.sleep(interval*20)  # Wait before retrying
                 continue
 
         for ticket in completed_tickets:

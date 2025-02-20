@@ -24,7 +24,7 @@ os.environ["TOKENIZERS_PARALLELISM"] = "true"
 
 model_checkpoint_path = f"../checkpoints/dynamic/saved-final-300"
 
-tokenizer = AutoTokenizer.from_pretrained("Rostlab/prot_bert", do_lower_case=False)
+tokenizer = AutoTokenizer.from_pretrained(model_checkpoint_path, do_lower_case=False)
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
