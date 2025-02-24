@@ -51,7 +51,7 @@ critic_optimizer = AdamW(critic.parameters(), lr=5e-5, betas=(0.9, 0.999), weigh
 
 # wandb
 run_name = "10percent_run"
-wandb.init(project="ProtGen GAN Training", name=run_name, mode="online")
+wandb.init(project="ProtGen GAN Training", name=run_name, mode="disabled")
 
 # Params
 n_epochs = 10
