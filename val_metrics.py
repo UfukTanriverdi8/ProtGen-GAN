@@ -135,22 +135,27 @@ FOLDSEEK_API = "https://search.foldseek.com/api"
 PDB_FOLDER = "validation/pdbs/"
 M8_FOLDER = "validation/m8s/"
 
-def submit_to_foldseek(pdb_file):
-    """ Submits a PDB file to Foldseek and returns the ticket ID. """
-    with open(pdb_file, 'rb') as file:
-        response = requests.post(
-            f"{FOLDSEEK_API}/ticket",
-            files={"q": file},
-            data={'mode': 'tmalign', 'database[]': ['afdb50', 'afdb-swissprot', 'afdb-proteome', 'cath50']}
-        )
+def submit_to_foldseek(pdb_file, wait_time=120):
+    while True:
+        try:
+            with open(pdb_file, 'rb') as file:
+                response = requests.post(
+                    f"{FOLDSEEK_API}/ticket",
+                    files={"q": file},
+                    data={'mode': 'tmalign', 'database[]': ['afdb50', 'afdb-swissprot', 'afdb-proteome', 'cath50']}
+                )
+            if response.status_code == 200:
+                ticket = response.json().get("id")
+                print(f"✅ Submitted {pdb_file} | Ticket ID: {ticket}")
+                return ticket
+            else:
+                print(f"❌ Submission failed for {pdb_file}: {response.text}")
+        except requests.exceptions.RequestException as e:
+            print(f"🪝 Catched the error: {e}")
+            print(f"⚠️ Error submitting: {pdb_file}")
+        print(f"⏳ Retrying in {wait_time} seconds...")
+        time.sleep(wait_time)
 
-    if response.status_code == 200:
-        ticket = response.json().get("id")
-        print(f"✅ Submitted {pdb_file} | Ticket ID: {ticket}")
-        return ticket
-    else:
-        print(f"❌ Submission failed for {pdb_file}: {response.text}")
-        return None
 
 
 def wait_for_completion(tickets, interval=10, max_wait=600):

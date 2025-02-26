@@ -50,8 +50,8 @@ gen_optimizer = AdamW(generator.parameters(), lr=5e-5, betas=(0.9, 0.999), weigh
 critic_optimizer = AdamW(critic.parameters(), lr=5e-5, betas=(0.9, 0.999), weight_decay=0.01)
 
 # wandb
-run_name = "10percent_run"
-wandb.init(project="ProtGen GAN Training", name=run_name, mode="disabled")
+run_name = "10percent_run_api_fix"
+wandb.init(project="ProtGen GAN Training", name=run_name, mode="online")
 
 # Params
 n_epochs = 10

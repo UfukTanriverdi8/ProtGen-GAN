@@ -45,5 +45,4 @@ print(f"Average pLDDT score: {avg_plddt_score:.2f}") """
 print(tokenized_datasets)
 batch_size = 4
 critic_dataloader = get_dataloaders(tokenized_datasets, batch_size) """
-from val_metrics import clean_m8_folder
-clean_m8_folder()
+print("im here")
