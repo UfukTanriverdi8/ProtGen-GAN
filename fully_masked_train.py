@@ -1,7 +1,8 @@
+import os
+os.environ["CUDA_VISIBLE_DEVICES"] = "3"
 import torch
 from transformers import AutoTokenizer, AutoModelForMaskedLM, EsmForProteinFolding
 from models import Generator, Critic
-import os
 import wandb
 from loss import critic_loss, generator_loss, compute_gradient_penalty
 from dataset import load_and_tokenize_dataset, get_dataloaders
@@ -10,14 +11,14 @@ from val_metrics import *
 from torch.nn.utils.rnn import pad_sequence
 torch.backends.cuda.matmul.allow_tf32 = True
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "3"
+
 os.environ["TOKENIZERS_PARALLELISM"] = "true"
 
 model_checkpoint_path = f"../checkpoints/dynamic/saved-final-300"
 
 tokenizer = AutoTokenizer.from_pretrained(model_checkpoint_path, do_lower_case=False)
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
 tokenized_datasets = load_and_tokenize_dataset(
     tokenizer,
@@ -58,7 +59,7 @@ debug_seq = "TIALRPDRLTQVLGTEVPTDEGTRLLGAIGFDVEAGEDALHCTVPTWRPDVSIEEDLIEEVA"
 
 
 # ESMFold Initialization
-esmfold_model = EsmForProteinFolding.from_pretrained("facebook/esmfold_v1", low_cpu_mem_usage=True).to("cuda")
+esmfold_model = EsmForProteinFolding.from_pretrained("facebook/esmfold_v1", low_cpu_mem_usage=True).to(device)
 esmfold_tokenizer = AutoTokenizer.from_pretrained("facebook/esmfold_v1")
 esmfold_model.esm = esmfold_model.esm.half()
 esmfold_model.eval()

@@ -9,7 +9,7 @@ from dataset import load_and_tokenize_dataset, get_dataloaders
 from metrics import calculate_sequence_identity
 
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+os.environ["CUDA_VISIBLE_DEVICES"] = "3"
 #os.environ["WANDB_DISABLED"] = "True"
 
 model_checkpoint_path = f"../checkpoints/dynamic-masked/checkpoint-epoch-123"
