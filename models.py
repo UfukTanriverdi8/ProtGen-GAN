@@ -16,43 +16,6 @@ class Generator(nn.Module):
         outputs = self.protbert(input_ids=input_ids, attention_mask=attention_mask)
         return outputs.logits
 
-    """def generate(self, input_ids, attention_mask=None, temperature=1.0, keep_percent=0.1, current_rate=None):
-        meaningful_seq = (input_ids != self.pad_token_id) & (input_ids != self.cls_token_id) & (input_ids != self.sep_token_id)
-
-        meaningful_token_count = meaningful_seq.sum().item()  # the keep_percent will be calculated by this value
-
-        outputs = self.protbert(input_ids=input_ids, attention_mask=attention_mask)
-        logits = outputs.logits / temperature
-
-        probabilities = F.softmax(logits, dim=-1)
-        confidence, predicted_ids = probabilities.max(dim=-1)
-
-        mask_indices = (input_ids == self.mask_token_id)
-        confidence[~mask_indices] = 0.0  # we will only get the confidence for the mask indices
-
-        num_tokens_to_fill = max(1, int(keep_percent * meaningful_token_count))  # Constant 10% fill
-        remaining_masks = mask_indices.sum().item()
-
-        if remaining_masks == 0:
-            print("All tokens are filled early!")
-            return input_ids  # No more masks to fill
-        
-        if current_rate == 0.1:
-            num_tokens_to_fill = remaining_masks
-        else:
-            num_tokens_to_fill = min(num_tokens_to_fill, remaining_masks)  # don't fill more than available
-
-        # Get top-k confident predictions
-        topk_indices = torch.topk(confidence.view(-1), num_tokens_to_fill).indices
-
-        batch_indices = topk_indices // input_ids.size(1)
-        seq_indices = topk_indices % input_ids.size(1)
-
-        for batch_idx, seq_idx in zip(batch_indices, seq_indices):
-            if input_ids[batch_idx, seq_idx] == self.mask_token_id:
-                input_ids[batch_idx, seq_idx] = predicted_ids[batch_idx, seq_idx]
-
-        return input_ids """
     def generate(self, input_ids, attention_mask=None, temperature=1.0, keep_percent=0.1, current_rate=None):
         batch_size, seq_len = input_ids.size()
         outputs = self.protbert(input_ids=input_ids, attention_mask=attention_mask)
@@ -71,9 +34,6 @@ class Generator(nn.Module):
                 # Fill all remaining
                 num_to_fill = remaining_masks
             else:
-                # Normal top-k fill
-                # Compute how many tokens to fill (10% of meaningful tokens, etc.)
-                # ...
                 meaningful_seq = (
                     (input_ids[i] != self.pad_token_id) &
                     (input_ids[i] != self.cls_token_id) &
@@ -82,7 +42,6 @@ class Generator(nn.Module):
                 meaningful_count = meaningful_seq.sum().item()
                 num_to_fill = max(1, int(keep_percent * meaningful_count))
                 remaining_masks = seq_mask_indices.sum().item()
-                num_to_fill = min(num_to_fill, remaining_masks)
                 num_to_fill = min(num_to_fill, remaining_masks)
 
             # Now pick the top-k for only this sequence
@@ -93,7 +52,6 @@ class Generator(nn.Module):
             for pos in topk_positions:
                 if input_ids[i, pos] == self.mask_token_id:
                     input_ids[i, pos] = predicted_ids[i, pos]
-
         return input_ids
 
 

@@ -1,48 +1,68 @@
-""" from transformers import AutoTokenizer, EsmForProteinFolding, AutoModelForMaskedLM
-from models import Generator
 import torch
-from val_metrics import calculate_plddt_scores_and_save_pdb, sample_sequence_length
-from dataset import load_and_tokenize_dataset, get_dataloaders
-
-torch.backends.cuda.matmul.allow_tf32 = True
+from transformers import AutoTokenizer, AutoModelForMaskedLM, EsmForProteinFolding
+from models import Generator, Critic
 import os
+import wandb
+from loss import critic_loss, generator_loss, compute_gradient_penalty
+from dataset import load_and_tokenize_dataset, get_dataloaders
+from torch.optim import AdamW
+#from val_metrics import calculate_plddt_scores_and_save_pdb, calculate_tm_scores, clean_m8_folder, calculate_mpnn_alignment_metric, generate_fake_sequences
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "3"
+#os.environ["CUDA_VISIBLE_DEVICES"] = "3"
+device="cuda"
+
+from tmtools.io import get_structure, get_residue_data
+from tmtools import tm_align
+
+# Load the first protein structure and extract backbone data
+structure1 = get_structure("validation/test_pdb/generated_protein_0.pdb")
+chains = structure1.get_chains()
+chain1 = next(chains)
+print(chain1)
+coords1, seq1 = get_residue_data(chain1)
+print(seq1)
+
+# Do the same for the second protein
+structure2 = get_structure("validation/pdbs/generated_protein_1.pdb")
+chain2 = next(structure2.get_chains())
+coords2, seq2 = get_residue_data(chain2)
+
+# Compare the proteins using their backbone coordinates and sequences
+result = tm_align(coords1, coords2, seq1, seq2)
+
+# Print the TM score and alignment details
+print("TM score (chain1):", result.tm_norm_chain1)
+print("TM score (chain2):", result.tm_norm_chain2)
+print("RMSD:", result.rmsd)
 
 
-tokenizer = AutoTokenizer.from_pretrained("Rostlab/prot_bert", do_lower_case=False)
 
-print(tokenizer.vocab)
 
-model_checkpoint_path = f"../checkpoints/dynamic/saved-260"
-
-tokenizer = AutoTokenizer.from_pretrained("Rostlab/prot_bert", do_lower_case=False)
-
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-
+""" model_checkpoint_path = f"../checkpoints/dynamic/saved-final-300"
 generator_protbert = AutoModelForMaskedLM.from_pretrained(model_checkpoint_path).to(device)
+tokenizer = AutoTokenizer.from_pretrained(model_checkpoint_path, do_lower_case=False)
 
-generator = Generator(protbert_model=generator_protbert, mask_token_id = tokenizer.mask_token_id).to(device)
-                                                                                                     
+
+generator = Generator(generator_protbert, tokenizer).to(device)
 esmfold_model = EsmForProteinFolding.from_pretrained("facebook/esmfold_v1", low_cpu_mem_usage=True).to("cuda")
 esmfold_tokenizer = AutoTokenizer.from_pretrained("facebook/esmfold_v1")
 esmfold_model.esm = esmfold_model.esm.half()
 esmfold_model.eval()
 
 
-avg_plddt_score = calculate_plddt_scores_and_save_pdb(generator, esmfold_tokenizer, esmfold_model, tokenizer,batch_size=4, num_sequences=10)
-print(f"Average pLDDT score: {avg_plddt_score:.2f}") """
-
-
-""" tokenized_datasets = load_and_tokenize_dataset(
-    tokenizer,
-    gen_file = "data/dnmt_gen.txt",
-    critic_file = "data/dnmt_critic.txt",
-    max_length = 512,
-    fully_masked = True,
-    full_dataset="data/dnmt_full.txt"
+generated_sequences = generate_fake_sequences(
+    generator=generator,
+    tokenizer=tokenizer,
+    num_sequences=10,
 )
-print(tokenized_datasets)
-batch_size = 4
-critic_dataloader = get_dataloaders(tokenized_datasets, batch_size) """
-print("im here")
+
+calculate_plddt_scores_and_save_pdb(
+    generated_sequences=generated_sequences,
+    folding_model=esmfold_model,
+    folding_tokenizer=esmfold_tokenizer,
+    num_sequences=10,
+)
+
+calculate_mpnn_alignment_metric(
+    generated_sequences=generated_sequences,
+) """
