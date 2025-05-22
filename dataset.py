@@ -1,5 +1,5 @@
 import torch
-from torch.utils.data import Dataset, DataLoader
+from torch.utils.data import Dataset, DataLoader, Subset
 from datasets import load_dataset
 
 def load_and_tokenize_dataset(
@@ -67,3 +67,28 @@ def get_dataloaders(tokenized_datasets, batch_size):
         return critic_dataloader
 
     return gen_dataloader, critic_dataloader
+
+
+def get_dynamic_dataloaders(tokenized_dataset, batch_size, n_critic):
+    """
+    Given a single tokenized split (e.g. the 'critic' dataset),
+    shuffle & split it so the generator sees 1/(n_critic+1) of the data
+    and the critic sees the rest.
+    """
+    full_ds = DNMTDataset(tokenized_dataset)
+    N = len(full_ds)
+    perm = torch.randperm(N).tolist()
+
+    # how many examples for gen vs. critic
+    gen_count = N // (n_critic + 1)
+    gen_idx, critic_idx = perm[:gen_count], perm[gen_count:]
+
+    gen_loader = DataLoader(Subset(full_ds, gen_idx),
+                            batch_size=batch_size,
+                            shuffle=True,
+                            drop_last=True)
+    critic_loader = DataLoader(Subset(full_ds, critic_idx),
+                               batch_size=batch_size,
+                               shuffle=True,
+                               drop_last=True)
+    return gen_loader, critic_loader

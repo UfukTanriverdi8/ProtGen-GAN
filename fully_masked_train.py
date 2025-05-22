@@ -14,7 +14,7 @@ torch.backends.cuda.matmul.allow_tf32 = True
 
 os.environ["TOKENIZERS_PARALLELISM"] = "true"
 
-model_checkpoint_path = f"../checkpoints/dynamic/saved-final-300"
+model_checkpoint_path = "../checkpoints/dynamic/saved-final-300"
 
 tokenizer = AutoTokenizer.from_pretrained(model_checkpoint_path, do_lower_case=False)
 
@@ -43,7 +43,7 @@ gen_optimizer = AdamW(generator.parameters(), lr=5e-5, betas=(0.9, 0.999), weigh
 critic_optimizer = AdamW(critic.parameters(), lr=5e-5, betas=(0.9, 0.999), weight_decay=0.01)
 
 # wandb
-run_name = "fully_masked_test"
+run_name = "fully_masked_test_8_5_5e-5"
 wandb.init(project="ProtGen GAN Training", name=run_name, mode="online")
 
 # Params

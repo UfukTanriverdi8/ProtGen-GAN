@@ -156,182 +156,145 @@ def calculate_plddt_scores_and_save_pdb(generated_sequences, folding_tokenizer, 
     return sum(plddt_scores) / len(plddt_scores)
 
 
-FOLDSEEK_API = "https://search.foldseek.com/api"
-PDB_FOLDER = "validation/pdbs/"
-M8_FOLDER = "validation/m8s/"
+# ---------- Foldseek helpers (robust version) ----------
+import os, time, tarfile, subprocess, requests
+from urllib3.exceptions import NameResolutionError
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 
-def submit_to_foldseek(pdb_file, wait_time=120):
+FOLDSEEK_API = "https://search.foldseek.com/api"
+PDB_FOLDER   = "validation/pdbs/"
+M8_FOLDER    = "validation/m8s/"
+
+# 1) one session with automatic retries on DNS + 5xx + timeouts
+retry_cfg = Retry(
+    total=5,                # retry up to 5×
+    backoff_factor=1.0,     # 1 s, 2 s, 4 s, 8 s, 16 s …
+    status_forcelist=[500, 502, 503, 504],
+    allowed_methods=["GET", "POST"]
+)
+session = requests.Session()
+session.mount("https://", HTTPAdapter(max_retries=retry_cfg))
+
+# 2) submit a PDB and get a ticket
+def submit_to_foldseek(pdb_file, wait_time=30):
     while True:
         try:
-            with open(pdb_file, 'rb') as file:
-                response = requests.post(
+            with open(pdb_file, "rb") as fh:
+                r = session.post(
                     f"{FOLDSEEK_API}/ticket",
-                    files={"q": file},
-                    data={'mode': 'tmalign', 'database[]': ['afdb50', 'afdb-swissprot', 'afdb-proteome', 'cath50']}
+                    files={"q": fh},
+                    data={
+                        "mode": "tmalign",
+                        "database[]": ["afdb50", "afdb-swissprot",
+                                       "afdb-proteome", "cath50"]
+                    },
+                    timeout=30
                 )
-            if response.status_code == 200:
-                ticket = response.json().get("id")
-                print(f"✅ Submitted {pdb_file} | Ticket ID: {ticket}")
-                return ticket
-            else:
-                print(f"❌ Submission failed for {pdb_file}: {response.text}")
-        except requests.exceptions.RequestException as e:
-            print(f"🪝 Catched the error: {e}")
-            print(f"⚠️ Error submitting: {pdb_file}")
-        print(f"⏳ Retrying in {wait_time} seconds...")
-        time.sleep(wait_time)
+            r.raise_for_status()
+            tid = r.json()["id"]
+            print(f"✅  submitted {pdb_file}  → ticket {tid}")
+            return tid
+        except (requests.ConnectionError, NameResolutionError,
+                requests.Timeout) as e:
+            print(f"⚠️  {pdb_file}: {e} – retry in {wait_time}s")
+            time.sleep(wait_time)
 
-
-
-def wait_for_completion(tickets, interval=10, max_wait=600):
-    """ Waits for all Foldseek jobs to complete. """
-    start_time = time.time()
-    pending_tickets = set(tickets)
-
-    while time.time() - start_time < max_wait and pending_tickets:
-        print(f"⏳ Checking status for {len(pending_tickets)} jobs...")
-
-        completed_tickets = []
-        for ticket in list(pending_tickets):
+# 3) poll tickets until they are COMPLETE
+def wait_for_completion(tickets, poll=10, max_wait=600):
+    start = time.time()
+    pending = set(tickets)
+    while pending and time.time() - start < max_wait:
+        for tid in list(pending):
             try:
-                response = requests.get(f"{FOLDSEEK_API}/ticket/{ticket}", timeout=10)
-                response.raise_for_status()  # Raise error for non-200 responses
-                status = response.json().get("status")
+                r = session.get(f"{FOLDSEEK_API}/ticket/{tid}", timeout=15)
+                r.raise_for_status()
+                if r.json().get("status") == "COMPLETE":
+                    print(f"🏁  {tid} done")
+                    pending.remove(tid)
+            except (requests.ConnectionError, NameResolutionError,
+                    requests.Timeout) as e:
+                print(f"⚠️  poll {tid}: {e}")
+        if pending:
+            time.sleep(poll)
+    if pending:
+        print("❌  timeout for", pending)
+    return list(set(tickets) - pending)          # completed list
 
-                if status == "COMPLETE":
-                    print(f"✅ Job {ticket} completed!")
-                    completed_tickets.append(ticket)
-                else:
-                    print(f"🔄 Job {ticket} still running...")
-            
-            except Exception as e:
-                print(f"⚠️ API error for {ticket}: {e} (Retrying in {interval*20}s)")
-                time.sleep(interval*20)  # Wait before retrying
-                continue
+# 4) download + untar results, returns list of *.m8 files
+def download_results(ticket, out_dir, max_tries=5, backoff=20):
+    url      = f"{FOLDSEEK_API}/result/download/{ticket}"
+    tar_path = os.path.join(out_dir, f"{ticket}.tar")
+    job_dir  = os.path.join(out_dir, ticket)
+    os.makedirs(job_dir, exist_ok=True)
 
-        for ticket in completed_tickets:
-            pending_tickets.remove(ticket)
-
-        if pending_tickets:
-            time.sleep(interval)
-
-    if pending_tickets:
-        print(f"❌ Timeout waiting for jobs: {pending_tickets}")
-
-    return list(set(tickets) - pending_tickets)  # Return completed tickets
-
-
-def download_results(ticket, output_folder):
-    """ Downloads and extracts Foldseek results (.m8) for the given ticket. """
-    tar_file = os.path.join(output_folder, f"{ticket}.tar")
-    ticket_folder = os.path.join(output_folder, ticket)
-    os.makedirs(ticket_folder, exist_ok=True)
-
-    response = requests.get(f"{FOLDSEEK_API}/result/download/{ticket}")
-
-    if response.status_code == 200:
-        with open(tar_file, "wb") as f:
-            f.write(response.content)
-        print(f"✅ Downloaded results for {ticket}")
-    else:
-        print(f"❌ Failed to download results for {ticket}: {response.text}")
-        return None
-
-    # Extract .tar archive
-    try:
-        with tarfile.open(tar_file, "r") as tar:
-            tar.extractall(ticket_folder)
-        print(f"📂 Extracted files for {ticket}")
-    except Exception as e:
-        print(f"❌ Error extracting .tar for {ticket}: {e}")
-        return None
-
-    # Find all .m8 files
-    m8_files = [os.path.join(ticket_folder, f) for f in os.listdir(ticket_folder) if f.endswith(".m8")]
-
-    if not m8_files:
-        print(f"❌ No .m8 files found for {ticket}!")
-        return None
-
-    return m8_files
-
-
-def extract_max_tm_score(m8_files, ticket):
-    """ Finds the highest TM-score across all extracted .m8 files for a given job (ticket). """
-    max_tm = 0.0
-
-    for m8_file in m8_files:
+    for n in range(1, max_tries + 1):
         try:
-            result = subprocess.run(
-                f"awk -F'\t' '{{print $12}}' {m8_file} | sort -nr | head -1",
+            r = session.get(url, timeout=60)
+            r.raise_for_status()
+            with open(tar_path, "wb") as fh:
+                fh.write(r.content)
+
+            with tarfile.open(tar_path, "r") as tar:
+                tar.extractall(job_dir)
+
+            m8s = [os.path.join(job_dir, f)
+                   for f in os.listdir(job_dir) if f.endswith(".m8")]
+            if not m8s:
+                print(f"❌  {ticket}: no .m8 files")
+                return None
+            print(f"📦  {ticket}: downloaded & extracted")
+            return m8s
+        except (requests.ConnectionError, NameResolutionError,
+                requests.Timeout) as e:
+            print(f"⚠️  {ticket}: {e} (retry {n}/{max_tries})")
+            time.sleep(backoff * n)
+        except Exception as e:   # tarfile or other I/O errors
+            print(f"❌  {ticket}: {e}")
+            return None
+    print(f"❌  {ticket}: gave up after {max_tries} tries")
+    return None
+
+# 5) extract highest TM‑score in a *.m8 bundle
+def extract_max_tm_score(m8_files, ticket):
+    max_tm = 0.0
+    for path in m8_files:
+        try:
+            res = subprocess.run(
+                f"awk -F'\t' '{{print $12}}' {path} | sort -nr | head -1",
                 shell=True, capture_output=True, text=True
             )
-            score = result.stdout.strip()
-            if score:
-                score = float(score)
-                if score > max_tm:
-                    max_tm = score
-            print(f"🔍 [{ticket}] {m8_file} → TM-score: {score}")
+            s = res.stdout.strip()
+            if s:
+                val = float(s)
+                max_tm = max(max_tm, val)
+            print(f"🔍  {ticket}: {os.path.basename(path)} → {s}")
         except Exception as e:
-            print(f"❌ Error extracting TM-score from {m8_file} for job {ticket}: {e}")
-
-    print(f"⭐ [{ticket}] Highest TM-score found: {max_tm}")
+            print(f"❌  {ticket}: {e}")
     return max_tm
 
-
-
+# 6) main driver – unchanged signature
 def calculate_tm_scores(num_sequences=10):
-    """ Runs Foldseek on all 10 PDBs in parallel and extracts max TM-score. """
-    pdb_files = [os.path.join(PDB_FOLDER, f"generated_protein_{i}.pdb") for i in range(num_sequences)]
+    pdbs   = [os.path.join(PDB_FOLDER, f"generated_protein_{i}.pdb")
+              for i in range(num_sequences)]
 
-    tickets = {}
-    with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
-        futures = {executor.submit(submit_to_foldseek, pdb): pdb for pdb in pdb_files}
-        for future in concurrent.futures.as_completed(futures):
-            pdb_file = futures[future]
-            ticket = future.result()
-            if ticket:
-                tickets[ticket] = pdb_file
+    # submit
+    tickets = {submit_to_foldseek(p): p for p in pdbs}
 
-    if not tickets:
-        print("❌ No jobs were successfully submitted!")
+    # wait
+    done = wait_for_completion(tickets.keys())
+    if not done:
         return None
 
-    completed_tickets = wait_for_completion(set(tickets.keys()))
+    # download results
+    all_m8 = {t: download_results(t, M8_FOLDER) for t in done}
+    all_m8 = {k: v for k, v in all_m8.items() if v}
 
-    if not completed_tickets:
-        print("❌ No jobs completed successfully!")
-        return None
+    # extract TM
+    scores = [extract_max_tm_score(v, k) for k, v in all_m8.items()]
+    return sum(scores) / len(scores) if scores else None
+# -------------------------------------------------------
 
-    all_m8_files = {}
-    with concurrent.futures.ThreadPoolExecutor() as executor:
-        futures = {executor.submit(download_results, ticket, M8_FOLDER): ticket for ticket in completed_tickets}
-        for future in concurrent.futures.as_completed(futures):
-            ticket = futures[future]
-            m8_files = future.result()
-            if m8_files:
-                all_m8_files[ticket] = m8_files  # Store m8 files grouped by ticket
-
-    if not all_m8_files:
-        print("❌ No .m8 files found!")
-        return None
-
-    max_tm_scores = []
-    with concurrent.futures.ThreadPoolExecutor() as executor:
-        futures = {executor.submit(extract_max_tm_score, m8_files, ticket): ticket for ticket, m8_files in all_m8_files.items()}
-        for future in concurrent.futures.as_completed(futures):
-            score = future.result()
-            if score is not None:
-                max_tm_scores.append(score)
-
-    if not max_tm_scores:
-        print("❌ No TM-scores extracted!")
-        return None
-
-    avg_tm_score = sum(max_tm_scores) / len(max_tm_scores)
-    print(f"📊 All Max TM-Scores: {max_tm_scores}")
-    print(f"FINAL AVERAGE MAX TM-SCORE: {avg_tm_score}")
-    return avg_tm_score
 
 
 #calculate_tm_scores()
