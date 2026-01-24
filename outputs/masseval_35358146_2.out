@@ -1,0 +1,1226 @@
+Task 2: rows [30000, 45000)
+Input:  eval_results/120k_csv/120k_eval_seqs_prefiltered.csv
+Output: eval_results/masseval_120k_part_35358146_2.csv
+Run:    masseval_120k_35358146
+Loading ESMFold model & tokenizer...
+
+=== Batch 1 | rows 30000-30015 | evaluating 16 sequences ===
+📊 Sequence lengths: [378, 352, 391, 361, 304, 392, 380, 371, 279, 319, 319, 297, 326, 302, 371, 336]
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00001/generated_protein_0.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00001/generated_protein_1.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00001/generated_protein_2.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00001/generated_protein_3.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00001/generated_protein_4.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00001/generated_protein_5.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00001/generated_protein_6.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00001/generated_protein_7.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00001/generated_protein_8.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00001/generated_protein_9.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00001/generated_protein_10.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00001/generated_protein_11.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00001/generated_protein_12.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00001/generated_protein_13.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00001/generated_protein_14.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00001/generated_protein_15.pdb
+All pLDDT scores: [0.5749570727348328, 0.7368341684341431, 0.6343212127685547, 0.7553586959838867, 0.6310747265815735, 0.7677154541015625, 0.6921278238296509, 0.7250391840934753, 0.7534981966018677, 0.7415987849235535, 0.7354647517204285, 0.7186931371688843, 0.5676456093788147, 0.7076541781425476, 0.716942310333252, 0.7714722752571106]
+Saved checkpoint eval_results/masseval_120k_part_35358146_2.csv
+
+=== Batch 2 | rows 30016-30031 | evaluating 16 sequences ===
+📊 Sequence lengths: [367, 303, 258, 334, 266, 368, 375, 279, 341, 279, 371, 327, 373, 391, 309, 371]
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00002/generated_protein_0.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00002/generated_protein_1.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00002/generated_protein_2.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00002/generated_protein_3.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00002/generated_protein_4.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00002/generated_protein_5.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00002/generated_protein_6.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00002/generated_protein_7.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00002/generated_protein_8.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00002/generated_protein_9.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00002/generated_protein_10.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00002/generated_protein_11.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00002/generated_protein_12.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00002/generated_protein_13.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00002/generated_protein_14.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00002/generated_protein_15.pdb
+All pLDDT scores: [0.6653017997741699, 0.708153486251831, 0.6712937951087952, 0.7261059880256653, 0.6789382696151733, 0.6986600160598755, 0.7452417016029358, 0.7521408796310425, 0.7883960604667664, 0.7234428524971008, 0.7138616442680359, 0.7400456666946411, 0.732151210308075, 0.6517075896263123, 0.684917151927948, 0.7728974223136902]
+Saved checkpoint eval_results/masseval_120k_part_35358146_2.csv
+
+=== Batch 3 | rows 30032-30047 | evaluating 16 sequences ===
+📊 Sequence lengths: [328, 345, 259, 321, 313, 345, 210, 331, 278, 346, 230, 340, 298, 371, 279, 279]
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00003/generated_protein_0.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00003/generated_protein_1.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00003/generated_protein_2.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00003/generated_protein_3.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00003/generated_protein_4.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00003/generated_protein_5.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00003/generated_protein_6.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00003/generated_protein_7.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00003/generated_protein_8.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00003/generated_protein_9.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00003/generated_protein_10.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00003/generated_protein_11.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00003/generated_protein_12.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00003/generated_protein_13.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00003/generated_protein_14.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00003/generated_protein_15.pdb
+All pLDDT scores: [0.7369279265403748, 0.7488665580749512, 0.8031267523765564, 0.6279784440994263, 0.7454525232315063, 0.763865053653717, 0.6627061367034912, 0.6582455635070801, 0.7545425295829773, 0.774349570274353, 0.5918874144554138, 0.7817659974098206, 0.7019534111022949, 0.7155792117118835, 0.7633902430534363, 0.7647913694381714]
+Saved checkpoint eval_results/masseval_120k_part_35358146_2.csv
+
+=== Batch 4 | rows 30048-30063 | evaluating 16 sequences ===
+📊 Sequence lengths: [364, 296, 279, 279, 290, 279, 388, 350, 278, 302, 311, 352, 292, 277, 353, 389]
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00004/generated_protein_0.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00004/generated_protein_1.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00004/generated_protein_2.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00004/generated_protein_3.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00004/generated_protein_4.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00004/generated_protein_5.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00004/generated_protein_6.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00004/generated_protein_7.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00004/generated_protein_8.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00004/generated_protein_9.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00004/generated_protein_10.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00004/generated_protein_11.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00004/generated_protein_12.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00004/generated_protein_13.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00004/generated_protein_14.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00004/generated_protein_15.pdb
+All pLDDT scores: [0.6939325928688049, 0.684451162815094, 0.7206680774688721, 0.7385367751121521, 0.6069033145904541, 0.7368191480636597, 0.677666187286377, 0.7856561541557312, 0.6492546796798706, 0.6937353014945984, 0.6620621681213379, 0.6373723745346069, 0.6601375341415405, 0.7299731373786926, 0.7600029706954956, 0.8415162563323975]
+Saved checkpoint eval_results/masseval_120k_part_35358146_2.csv
+
+=== Batch 5 | rows 30064-30079 | evaluating 16 sequences ===
+📊 Sequence lengths: [371, 375, 361, 371, 316, 317, 279, 374, 298, 315, 365, 371, 325, 293, 366, 361]
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00005/generated_protein_0.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00005/generated_protein_1.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00005/generated_protein_2.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00005/generated_protein_3.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00005/generated_protein_4.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00005/generated_protein_5.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00005/generated_protein_6.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00005/generated_protein_7.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00005/generated_protein_8.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00005/generated_protein_9.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00005/generated_protein_10.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00005/generated_protein_11.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00005/generated_protein_12.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00005/generated_protein_13.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00005/generated_protein_14.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00005/generated_protein_15.pdb
+All pLDDT scores: [0.7845388650894165, 0.6436724066734314, 0.7458548545837402, 0.7167479991912842, 0.8662611246109009, 0.7227991223335266, 0.7446845173835754, 0.7110719084739685, 0.7367375493049622, 0.7260279059410095, 0.772047221660614, 0.6878482103347778, 0.7632943391799927, 0.7588345408439636, 0.7388075590133667, 0.7637885212898254]
+Saved checkpoint eval_results/masseval_120k_part_35358146_2.csv
+
+=== Batch 6 | rows 30080-30095 | evaluating 16 sequences ===
+📊 Sequence lengths: [332, 353, 266, 279, 319, 351, 340, 322, 343, 365, 278, 279, 342, 312, 225, 339]
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00006/generated_protein_0.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00006/generated_protein_1.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00006/generated_protein_2.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00006/generated_protein_3.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00006/generated_protein_4.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00006/generated_protein_5.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00006/generated_protein_6.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00006/generated_protein_7.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00006/generated_protein_8.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00006/generated_protein_9.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00006/generated_protein_10.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00006/generated_protein_11.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00006/generated_protein_12.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00006/generated_protein_13.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00006/generated_protein_14.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00006/generated_protein_15.pdb
+All pLDDT scores: [0.789240300655365, 0.7986158132553101, 0.6389195322990417, 0.784548819065094, 0.7247732281684875, 0.8079115748405457, 0.8098315000534058, 0.7497537136077881, 0.8320847153663635, 0.7470370531082153, 0.5632447600364685, 0.7755060195922852, 0.7820225954055786, 0.7405999898910522, 0.6236815452575684, 0.7155674695968628]
+Saved checkpoint eval_results/masseval_120k_part_35358146_2.csv
+
+=== Batch 7 | rows 30096-30111 | evaluating 16 sequences ===
+📊 Sequence lengths: [386, 365, 320, 333, 359, 317, 373, 321, 344, 327, 315, 344, 371, 358, 279, 371]
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00007/generated_protein_0.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00007/generated_protein_1.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00007/generated_protein_2.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00007/generated_protein_3.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00007/generated_protein_4.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00007/generated_protein_5.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00007/generated_protein_6.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00007/generated_protein_7.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00007/generated_protein_8.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00007/generated_protein_9.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00007/generated_protein_10.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00007/generated_protein_11.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00007/generated_protein_12.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00007/generated_protein_13.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00007/generated_protein_14.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00007/generated_protein_15.pdb
+All pLDDT scores: [0.759452760219574, 0.7525345087051392, 0.7236777544021606, 0.762896716594696, 0.7346366047859192, 0.7239470481872559, 0.7596006989479065, 0.7236244082450867, 0.7821863293647766, 0.8155521154403687, 0.7448850870132446, 0.6266496181488037, 0.5244210958480835, 0.7054321765899658, 0.7647213339805603, 0.7061131000518799]
+Saved checkpoint eval_results/masseval_120k_part_35358146_2.csv
+
+=== Batch 8 | rows 30112-30127 | evaluating 16 sequences ===
+📊 Sequence lengths: [326, 312, 365, 311, 371, 290, 382, 296, 391, 342, 297, 376, 396, 320, 361, 364]
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00008/generated_protein_0.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00008/generated_protein_1.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00008/generated_protein_2.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00008/generated_protein_3.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00008/generated_protein_4.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00008/generated_protein_5.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00008/generated_protein_6.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00008/generated_protein_7.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00008/generated_protein_8.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00008/generated_protein_9.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00008/generated_protein_10.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00008/generated_protein_11.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00008/generated_protein_12.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00008/generated_protein_13.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00008/generated_protein_14.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00008/generated_protein_15.pdb
+All pLDDT scores: [0.7196276783943176, 0.7108210921287537, 0.6683651208877563, 0.6837619543075562, 0.7099859714508057, 0.6446739435195923, 0.7875108122825623, 0.7128940224647522, 0.6210665106773376, 0.7731525301933289, 0.7978436946868896, 0.7390199899673462, 0.7343592643737793, 0.6557886600494385, 0.6813784241676331, 0.6692267060279846]
+Saved checkpoint eval_results/masseval_120k_part_35358146_2.csv
+
+=== Batch 9 | rows 30128-30143 | evaluating 16 sequences ===
+📊 Sequence lengths: [365, 346, 299, 279, 294, 348, 297, 233, 371, 283, 279, 372, 279, 341, 371, 309]
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00009/generated_protein_0.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00009/generated_protein_1.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00009/generated_protein_2.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00009/generated_protein_3.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00009/generated_protein_4.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00009/generated_protein_5.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00009/generated_protein_6.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00009/generated_protein_7.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00009/generated_protein_8.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00009/generated_protein_9.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00009/generated_protein_10.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00009/generated_protein_11.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00009/generated_protein_12.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00009/generated_protein_13.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00009/generated_protein_14.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00009/generated_protein_15.pdb
+All pLDDT scores: [0.6761128902435303, 0.7923989295959473, 0.8369511365890503, 0.7656640410423279, 0.7369773387908936, 0.7121846079826355, 0.8550407886505127, 0.6331523656845093, 0.6202247738838196, 0.8143409490585327, 0.7489230036735535, 0.7685354948043823, 0.7617514133453369, 0.8099096417427063, 0.7101331949234009, 0.7183494567871094]
+Saved checkpoint eval_results/masseval_120k_part_35358146_2.csv
+
+=== Batch 10 | rows 30144-30159 | evaluating 16 sequences ===
+📊 Sequence lengths: [311, 376, 216, 279, 288, 296, 371, 279, 334, 373, 279, 279, 296, 312, 351, 368]
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00010/generated_protein_0.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00010/generated_protein_1.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00010/generated_protein_2.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00010/generated_protein_3.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00010/generated_protein_4.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00010/generated_protein_5.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00010/generated_protein_6.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00010/generated_protein_7.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00010/generated_protein_8.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00010/generated_protein_9.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00010/generated_protein_10.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00010/generated_protein_11.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00010/generated_protein_12.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00010/generated_protein_13.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00010/generated_protein_14.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00010/generated_protein_15.pdb
+All pLDDT scores: [0.6710942983627319, 0.5711840391159058, 0.6844768524169922, 0.7546445727348328, 0.7599275708198547, 0.7098367214202881, 0.7106450200080872, 0.7323060631752014, 0.7490166425704956, 0.6746642589569092, 0.7581027746200562, 0.748393177986145, 0.6586635112762451, 0.8367689251899719, 0.781135082244873, 0.6105452179908752]
+Saved checkpoint eval_results/masseval_120k_part_35358146_2.csv
+
+=== Batch 11 | rows 30160-30175 | evaluating 16 sequences ===
+📊 Sequence lengths: [366, 335, 318, 333, 337, 343, 396, 352, 298, 321, 377, 333, 326, 362, 216, 343]
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00011/generated_protein_0.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00011/generated_protein_1.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00011/generated_protein_2.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00011/generated_protein_3.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00011/generated_protein_4.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00011/generated_protein_5.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00011/generated_protein_6.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00011/generated_protein_7.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00011/generated_protein_8.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00011/generated_protein_9.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00011/generated_protein_10.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00011/generated_protein_11.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00011/generated_protein_12.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00011/generated_protein_13.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00011/generated_protein_14.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00011/generated_protein_15.pdb
+All pLDDT scores: [0.8188899755477905, 0.6234772205352783, 0.6898788809776306, 0.7162763476371765, 0.7378021478652954, 0.8425679206848145, 0.7842694520950317, 0.7005580067634583, 0.7130967378616333, 0.7002066373825073, 0.568250834941864, 0.7249029874801636, 0.6640626192092896, 0.759013295173645, 0.6625909209251404, 0.6538958549499512]
+Saved checkpoint eval_results/masseval_120k_part_35358146_2.csv
+
+=== Batch 12 | rows 30176-30191 | evaluating 16 sequences ===
+📊 Sequence lengths: [338, 305, 371, 389, 216, 235, 399, 309, 348, 337, 365, 333, 346, 334, 321, 216]
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00012/generated_protein_0.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00012/generated_protein_1.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00012/generated_protein_2.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00012/generated_protein_3.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00012/generated_protein_4.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00012/generated_protein_5.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00012/generated_protein_6.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00012/generated_protein_7.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00012/generated_protein_8.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00012/generated_protein_9.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00012/generated_protein_10.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00012/generated_protein_11.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00012/generated_protein_12.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00012/generated_protein_13.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00012/generated_protein_14.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00012/generated_protein_15.pdb
+All pLDDT scores: [0.7353306412696838, 0.571619987487793, 0.7142691612243652, 0.7249141931533813, 0.6310490965843201, 0.6410581469535828, 0.7909329533576965, 0.6597078442573547, 0.6135246753692627, 0.7703056335449219, 0.8763636946678162, 0.7540581822395325, 0.7033458352088928, 0.7274110913276672, 0.7371280193328857, 0.6772136092185974]
+Saved checkpoint eval_results/masseval_120k_part_35358146_2.csv
+
+=== Batch 13 | rows 30192-30207 | evaluating 16 sequences ===
+📊 Sequence lengths: [321, 366, 345, 309, 279, 354, 369, 354, 339, 307, 279, 389, 383, 279, 279, 315]
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00013/generated_protein_0.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00013/generated_protein_1.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00013/generated_protein_2.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00013/generated_protein_3.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00013/generated_protein_4.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00013/generated_protein_5.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00013/generated_protein_6.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00013/generated_protein_7.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00013/generated_protein_8.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00013/generated_protein_9.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00013/generated_protein_10.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00013/generated_protein_11.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00013/generated_protein_12.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00013/generated_protein_13.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00013/generated_protein_14.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00013/generated_protein_15.pdb
+All pLDDT scores: [0.7637161016464233, 0.7726422548294067, 0.8118321895599365, 0.7355459928512573, 0.7633113265037537, 0.7466256618499756, 0.7657150030136108, 0.8106929659843445, 0.6607118248939514, 0.7004513740539551, 0.7255755662918091, 0.7051704525947571, 0.7296993136405945, 0.7172749638557434, 0.7422354817390442, 0.6744065284729004]
+Saved checkpoint eval_results/masseval_120k_part_35358146_2.csv
+
+=== Batch 14 | rows 30208-30223 | evaluating 16 sequences ===
+📊 Sequence lengths: [307, 369, 279, 364, 371, 258, 331, 325, 358, 279, 329, 322, 298, 371, 390, 279]
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00014/generated_protein_0.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00014/generated_protein_1.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00014/generated_protein_2.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00014/generated_protein_3.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00014/generated_protein_4.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00014/generated_protein_5.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00014/generated_protein_6.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00014/generated_protein_7.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00014/generated_protein_8.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00014/generated_protein_9.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00014/generated_protein_10.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00014/generated_protein_11.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00014/generated_protein_12.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00014/generated_protein_13.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00014/generated_protein_14.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00014/generated_protein_15.pdb
+All pLDDT scores: [0.7185170650482178, 0.7174743413925171, 0.7549827694892883, 0.7294763922691345, 0.77179354429245, 0.6952946782112122, 0.7289623022079468, 0.7634326219558716, 0.7218202948570251, 0.7269919514656067, 0.7341263294219971, 0.7307974100112915, 0.8123311400413513, 0.7161121368408203, 0.7561062574386597, 0.7172101140022278]
+Saved checkpoint eval_results/masseval_120k_part_35358146_2.csv
+
+=== Batch 15 | rows 30224-30239 | evaluating 16 sequences ===
+📊 Sequence lengths: [368, 280, 374, 279, 365, 329, 399, 309, 278, 366, 325, 311, 381, 216, 287, 348]
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00015/generated_protein_0.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00015/generated_protein_1.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00015/generated_protein_2.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00015/generated_protein_3.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00015/generated_protein_4.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00015/generated_protein_5.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00015/generated_protein_6.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00015/generated_protein_7.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00015/generated_protein_8.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00015/generated_protein_9.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00015/generated_protein_10.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00015/generated_protein_11.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00015/generated_protein_12.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00015/generated_protein_13.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00015/generated_protein_14.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00015/generated_protein_15.pdb
+All pLDDT scores: [0.7334166169166565, 0.7305654883384705, 0.7746133804321289, 0.7283633947372437, 0.8091793656349182, 0.6395233273506165, 0.718700110912323, 0.7662814855575562, 0.6756109595298767, 0.8178818225860596, 0.7497214078903198, 0.6619025468826294, 0.6732811331748962, 0.6710799932479858, 0.7704556584358215, 0.7617617249488831]
+Saved checkpoint eval_results/masseval_120k_part_35358146_2.csv
+
+=== Batch 16 | rows 30240-30255 | evaluating 16 sequences ===
+📊 Sequence lengths: [362, 365, 298, 371, 371, 363, 279, 350, 346, 371, 288, 356, 279, 351, 313, 205]
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00016/generated_protein_0.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00016/generated_protein_1.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00016/generated_protein_2.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00016/generated_protein_3.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00016/generated_protein_4.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00016/generated_protein_5.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00016/generated_protein_6.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00016/generated_protein_7.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00016/generated_protein_8.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00016/generated_protein_9.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00016/generated_protein_10.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00016/generated_protein_11.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00016/generated_protein_12.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00016/generated_protein_13.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00016/generated_protein_14.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00016/generated_protein_15.pdb
+All pLDDT scores: [0.7515397667884827, 0.7232550978660583, 0.740028440952301, 0.7168737649917603, 0.6991324424743652, 0.7649487853050232, 0.7617494463920593, 0.8707380890846252, 0.7283080220222473, 0.7126294374465942, 0.6305171847343445, 0.6246548295021057, 0.7637454271316528, 0.7799730896949768, 0.7776945233345032, 0.6231098771095276]
+Saved checkpoint eval_results/masseval_120k_part_35358146_2.csv
+
+=== Batch 17 | rows 30256-30271 | evaluating 16 sequences ===
+📊 Sequence lengths: [330, 288, 309, 363, 387, 369, 298, 279, 340, 382, 371, 311, 366, 315, 332, 298]
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00017/generated_protein_0.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00017/generated_protein_1.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00017/generated_protein_2.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00017/generated_protein_3.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00017/generated_protein_4.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00017/generated_protein_5.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00017/generated_protein_6.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00017/generated_protein_7.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00017/generated_protein_8.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00017/generated_protein_9.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00017/generated_protein_10.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00017/generated_protein_11.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00017/generated_protein_12.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00017/generated_protein_13.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00017/generated_protein_14.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00017/generated_protein_15.pdb
+All pLDDT scores: [0.7496747374534607, 0.7355515360832214, 0.7124990224838257, 0.744665801525116, 0.7587178945541382, 0.798271894454956, 0.7009111046791077, 0.7292795181274414, 0.7091003656387329, 0.7384037971496582, 0.7090684175491333, 0.7352580428123474, 0.7777652740478516, 0.7220844626426697, 0.7656075954437256, 0.6784573793411255]
+Saved checkpoint eval_results/masseval_120k_part_35358146_2.csv
+
+=== Batch 18 | rows 30272-30287 | evaluating 16 sequences ===
+📊 Sequence lengths: [385, 386, 298, 386, 298, 371, 280, 279, 330, 359, 220, 351, 361, 314, 379, 285]
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00018/generated_protein_0.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00018/generated_protein_1.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00018/generated_protein_2.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00018/generated_protein_3.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00018/generated_protein_4.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00018/generated_protein_5.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00018/generated_protein_6.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00018/generated_protein_7.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00018/generated_protein_8.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00018/generated_protein_9.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00018/generated_protein_10.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00018/generated_protein_11.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00018/generated_protein_12.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00018/generated_protein_13.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00018/generated_protein_14.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00018/generated_protein_15.pdb
+All pLDDT scores: [0.812391459941864, 0.6787794828414917, 0.699896514415741, 0.7316850423812866, 0.8101072311401367, 0.7634730339050293, 0.7168655395507812, 0.7428303956985474, 0.7460276484489441, 0.7001135349273682, 0.6355298757553101, 0.6903095841407776, 0.7698030471801758, 0.7119988203048706, 0.652502715587616, 0.7502020001411438]
+Saved checkpoint eval_results/masseval_120k_part_35358146_2.csv
+
+=== Batch 19 | rows 30288-30303 | evaluating 16 sequences ===
+📊 Sequence lengths: [301, 333, 381, 337, 305, 398, 378, 330, 392, 260, 346, 337, 304, 368, 382, 389]
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00019/generated_protein_0.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00019/generated_protein_1.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00019/generated_protein_2.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00019/generated_protein_3.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00019/generated_protein_4.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00019/generated_protein_5.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00019/generated_protein_6.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00019/generated_protein_7.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00019/generated_protein_8.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00019/generated_protein_9.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00019/generated_protein_10.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00019/generated_protein_11.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00019/generated_protein_12.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00019/generated_protein_13.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00019/generated_protein_14.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00019/generated_protein_15.pdb
+All pLDDT scores: [0.6978937983512878, 0.7225173711776733, 0.7311781048774719, 0.6967584490776062, 0.6286625862121582, 0.656001091003418, 0.6556263566017151, 0.7007251977920532, 0.7846649885177612, 0.6505779027938843, 0.7876009941101074, 0.759894073009491, 0.7093288898468018, 0.716528594493866, 0.8064553141593933, 0.527569055557251]
+Saved checkpoint eval_results/masseval_120k_part_35358146_2.csv
+
+=== Batch 20 | rows 30304-30319 | evaluating 16 sequences ===
+📊 Sequence lengths: [348, 356, 364, 279, 337, 332, 358, 286, 252, 348, 302, 318, 370, 313, 373, 279]
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00020/generated_protein_0.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00020/generated_protein_1.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00020/generated_protein_2.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00020/generated_protein_3.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00020/generated_protein_4.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00020/generated_protein_5.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00020/generated_protein_6.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00020/generated_protein_7.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00020/generated_protein_8.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00020/generated_protein_9.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00020/generated_protein_10.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00020/generated_protein_11.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00020/generated_protein_12.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00020/generated_protein_13.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00020/generated_protein_14.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00020/generated_protein_15.pdb
+All pLDDT scores: [0.7208847403526306, 0.7561675906181335, 0.7001886963844299, 0.7676590085029602, 0.7552750110626221, 0.6680963039398193, 0.7694568634033203, 0.7953693270683289, 0.6965692043304443, 0.639866054058075, 0.7030579447746277, 0.7405509948730469, 0.7135522961616516, 0.7303712368011475, 0.7388003468513489, 0.7439963817596436]
+Saved checkpoint eval_results/masseval_120k_part_35358146_2.csv
+
+=== Batch 21 | rows 30320-30335 | evaluating 16 sequences ===
+📊 Sequence lengths: [371, 314, 320, 279, 352, 397, 381, 306, 283, 309, 303, 329, 279, 322, 380, 330]
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00021/generated_protein_0.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00021/generated_protein_1.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00021/generated_protein_2.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00021/generated_protein_3.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00021/generated_protein_4.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00021/generated_protein_5.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00021/generated_protein_6.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00021/generated_protein_7.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00021/generated_protein_8.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00021/generated_protein_9.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00021/generated_protein_10.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00021/generated_protein_11.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00021/generated_protein_12.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00021/generated_protein_13.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00021/generated_protein_14.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00021/generated_protein_15.pdb
+All pLDDT scores: [0.7159489989280701, 0.6401468515396118, 0.7054886817932129, 0.730840265750885, 0.6891767978668213, 0.6165804862976074, 0.7711232304573059, 0.6206377744674683, 0.6562314033508301, 0.6999227404594421, 0.7277392148971558, 0.770779013633728, 0.7634965181350708, 0.7732090353965759, 0.6690685749053955, 0.7307533025741577]
+Saved checkpoint eval_results/masseval_120k_part_35358146_2.csv
+
+=== Batch 22 | rows 30336-30351 | evaluating 16 sequences ===
+📊 Sequence lengths: [337, 342, 315, 395, 371, 298, 365, 279, 361, 216, 358, 311, 314, 313, 279, 249]
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00022/generated_protein_0.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00022/generated_protein_1.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00022/generated_protein_2.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00022/generated_protein_3.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00022/generated_protein_4.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00022/generated_protein_5.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00022/generated_protein_6.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00022/generated_protein_7.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00022/generated_protein_8.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00022/generated_protein_9.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00022/generated_protein_10.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00022/generated_protein_11.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00022/generated_protein_12.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00022/generated_protein_13.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00022/generated_protein_14.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00022/generated_protein_15.pdb
+All pLDDT scores: [0.7009997963905334, 0.8272371888160706, 0.8246252536773682, 0.6208343505859375, 0.7157654166221619, 0.7934171557426453, 0.6089800596237183, 0.7352312207221985, 0.6677948832511902, 0.6640764474868774, 0.6076396107673645, 0.7400816679000854, 0.7989954352378845, 0.8340409994125366, 0.778400182723999, 0.6528512835502625]
+Saved checkpoint eval_results/masseval_120k_part_35358146_2.csv
+
+=== Batch 23 | rows 30352-30367 | evaluating 16 sequences ===
+📊 Sequence lengths: [221, 366, 369, 335, 320, 323, 291, 341, 340, 394, 308, 344, 352, 210, 366, 335]
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00023/generated_protein_0.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00023/generated_protein_1.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00023/generated_protein_2.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00023/generated_protein_3.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00023/generated_protein_4.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00023/generated_protein_5.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00023/generated_protein_6.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00023/generated_protein_7.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00023/generated_protein_8.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00023/generated_protein_9.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00023/generated_protein_10.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00023/generated_protein_11.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00023/generated_protein_12.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00023/generated_protein_13.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00023/generated_protein_14.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00023/generated_protein_15.pdb
+All pLDDT scores: [0.6380841135978699, 0.7650607228279114, 0.71408611536026, 0.7416766881942749, 0.7450729608535767, 0.662680447101593, 0.5970223546028137, 0.7836411595344543, 0.803630530834198, 0.7002395987510681, 0.604303240776062, 0.789614200592041, 0.7264270186424255, 0.5510413646697998, 0.7173578143119812, 0.7095608711242676]
+Saved checkpoint eval_results/masseval_120k_part_35358146_2.csv
+
+=== Batch 24 | rows 30368-30383 | evaluating 16 sequences ===
+📊 Sequence lengths: [384, 364, 392, 241, 280, 343, 337, 333, 312, 379, 383, 355, 289, 345, 337, 384]
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00024/generated_protein_0.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00024/generated_protein_1.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00024/generated_protein_2.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00024/generated_protein_3.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00024/generated_protein_4.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00024/generated_protein_5.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00024/generated_protein_6.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00024/generated_protein_7.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00024/generated_protein_8.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00024/generated_protein_9.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00024/generated_protein_10.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00024/generated_protein_11.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00024/generated_protein_12.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00024/generated_protein_13.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00024/generated_protein_14.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00024/generated_protein_15.pdb
+All pLDDT scores: [0.7694844007492065, 0.6900280714035034, 0.5942640900611877, 0.6216269731521606, 0.7424219250679016, 0.8178724050521851, 0.7141843438148499, 0.7225997447967529, 0.7008129954338074, 0.6380844712257385, 0.6324772238731384, 0.749276876449585, 0.6246458888053894, 0.8798626065254211, 0.6480115056037903, 0.764320433139801]
+Saved checkpoint eval_results/masseval_120k_part_35358146_2.csv
+
+=== Batch 25 | rows 30384-30399 | evaluating 16 sequences ===
+📊 Sequence lengths: [315, 279, 332, 361, 341, 397, 366, 371, 320, 279, 306, 324, 303, 390, 257, 378]
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00025/generated_protein_0.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00025/generated_protein_1.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00025/generated_protein_2.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00025/generated_protein_3.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00025/generated_protein_4.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00025/generated_protein_5.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00025/generated_protein_6.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00025/generated_protein_7.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00025/generated_protein_8.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00025/generated_protein_9.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00025/generated_protein_10.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00025/generated_protein_11.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00025/generated_protein_12.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00025/generated_protein_13.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00025/generated_protein_14.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00025/generated_protein_15.pdb
+All pLDDT scores: [0.7084100842475891, 0.7368593215942383, 0.7517203092575073, 0.7577298879623413, 0.8205744624137878, 0.7768779397010803, 0.7238490581512451, 0.7159489989280701, 0.652924120426178, 0.7269161939620972, 0.6841690540313721, 0.7153204679489136, 0.679181694984436, 0.6740915775299072, 0.6516979932785034, 0.7348030209541321]
+Saved checkpoint eval_results/masseval_120k_part_35358146_2.csv
+
+=== Batch 26 | rows 30400-30415 | evaluating 16 sequences ===
+📊 Sequence lengths: [311, 351, 298, 372, 327, 349, 254, 279, 342, 354, 323, 347, 370, 329, 309, 385]
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00026/generated_protein_0.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00026/generated_protein_1.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00026/generated_protein_2.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00026/generated_protein_3.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00026/generated_protein_4.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00026/generated_protein_5.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00026/generated_protein_6.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00026/generated_protein_7.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00026/generated_protein_8.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00026/generated_protein_9.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00026/generated_protein_10.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00026/generated_protein_11.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00026/generated_protein_12.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00026/generated_protein_13.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00026/generated_protein_14.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00026/generated_protein_15.pdb
+All pLDDT scores: [0.7592371106147766, 0.7623879313468933, 0.8132832646369934, 0.7559835314750671, 0.7411983609199524, 0.6718923449516296, 0.6434987783432007, 0.7436500787734985, 0.7705290913581848, 0.8002354502677917, 0.7155600190162659, 0.7694714069366455, 0.7541577219963074, 0.7707757353782654, 0.745621919631958, 0.7168991565704346]
+Saved checkpoint eval_results/masseval_120k_part_35358146_2.csv
+
+=== Batch 27 | rows 30416-30431 | evaluating 16 sequences ===
+📊 Sequence lengths: [374, 335, 332, 367, 304, 366, 332, 381, 384, 342, 240, 321, 372, 338, 353, 326]
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00027/generated_protein_0.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00027/generated_protein_1.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00027/generated_protein_2.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00027/generated_protein_3.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00027/generated_protein_4.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00027/generated_protein_5.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00027/generated_protein_6.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00027/generated_protein_7.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00027/generated_protein_8.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00027/generated_protein_9.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00027/generated_protein_10.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00027/generated_protein_11.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00027/generated_protein_12.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00027/generated_protein_13.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00027/generated_protein_14.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00027/generated_protein_15.pdb
+All pLDDT scores: [0.6068488955497742, 0.7547487020492554, 0.7447050213813782, 0.7763452529907227, 0.6825218200683594, 0.7195630073547363, 0.7671711444854736, 0.8294256925582886, 0.7235803008079529, 0.7913139462471008, 0.7025617361068726, 0.6893297433853149, 0.7732560634613037, 0.7243632078170776, 0.7648999094963074, 0.732738196849823]
+Saved checkpoint eval_results/masseval_120k_part_35358146_2.csv
+
+=== Batch 28 | rows 30432-30447 | evaluating 16 sequences ===
+📊 Sequence lengths: [317, 306, 366, 284, 352, 325, 344, 337, 380, 316, 365, 331, 279, 242, 330, 399]
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00028/generated_protein_0.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00028/generated_protein_1.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00028/generated_protein_2.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00028/generated_protein_3.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00028/generated_protein_4.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00028/generated_protein_5.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00028/generated_protein_6.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00028/generated_protein_7.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00028/generated_protein_8.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00028/generated_protein_9.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00028/generated_protein_10.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00028/generated_protein_11.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00028/generated_protein_12.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00028/generated_protein_13.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00028/generated_protein_14.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00028/generated_protein_15.pdb
+All pLDDT scores: [0.7708213925361633, 0.7281752228736877, 0.7850212454795837, 0.6498695015907288, 0.6854473948478699, 0.789738118648529, 0.6910579204559326, 0.7091501951217651, 0.7266893982887268, 0.671825110912323, 0.6573135256767273, 0.752778947353363, 0.7385469079017639, 0.5794522166252136, 0.6308978796005249, 0.7587564587593079]
+Saved checkpoint eval_results/masseval_120k_part_35358146_2.csv
+
+=== Batch 29 | rows 30448-30463 | evaluating 16 sequences ===
+📊 Sequence lengths: [304, 315, 317, 364, 319, 338, 324, 224, 299, 365, 349, 371, 314, 371, 322, 272]
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00029/generated_protein_0.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00029/generated_protein_1.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00029/generated_protein_2.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00029/generated_protein_3.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00029/generated_protein_4.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00029/generated_protein_5.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00029/generated_protein_6.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00029/generated_protein_7.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00029/generated_protein_8.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00029/generated_protein_9.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00029/generated_protein_10.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00029/generated_protein_11.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00029/generated_protein_12.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00029/generated_protein_13.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00029/generated_protein_14.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00029/generated_protein_15.pdb
+All pLDDT scores: [0.87216717004776, 0.7825987339019775, 0.7025480270385742, 0.7600405216217041, 0.7554675936698914, 0.7177706956863403, 0.7525835633277893, 0.5718781352043152, 0.7389743328094482, 0.7565137147903442, 0.6599169373512268, 0.703400731086731, 0.7140598893165588, 0.703400731086731, 0.752562940120697, 0.6978078484535217]
+Saved checkpoint eval_results/masseval_120k_part_35358146_2.csv
+
+=== Batch 30 | rows 30464-30479 | evaluating 16 sequences ===
+📊 Sequence lengths: [357, 362, 290, 347, 260, 390, 319, 334, 300, 371, 329, 279, 331, 253, 379, 348]
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00030/generated_protein_0.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00030/generated_protein_1.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00030/generated_protein_2.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00030/generated_protein_3.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00030/generated_protein_4.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00030/generated_protein_5.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00030/generated_protein_6.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00030/generated_protein_7.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00030/generated_protein_8.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00030/generated_protein_9.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00030/generated_protein_10.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00030/generated_protein_11.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00030/generated_protein_12.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00030/generated_protein_13.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00030/generated_protein_14.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00030/generated_protein_15.pdb
+All pLDDT scores: [0.7201195955276489, 0.7710714936256409, 0.6417413949966431, 0.6920399069786072, 0.6780581474304199, 0.7513562440872192, 0.6670050621032715, 0.7234650254249573, 0.7849785685539246, 0.7344562411308289, 0.7497798204421997, 0.7279838919639587, 0.6101120114326477, 0.6472447514533997, 0.6932106614112854, 0.7279636859893799]
+Saved checkpoint eval_results/masseval_120k_part_35358146_2.csv
+
+=== Batch 31 | rows 30480-30495 | evaluating 16 sequences ===
+📊 Sequence lengths: [319, 327, 296, 279, 293, 311, 342, 347, 340, 311, 386, 349, 353, 245, 231, 361]
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00031/generated_protein_0.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00031/generated_protein_1.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00031/generated_protein_2.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00031/generated_protein_3.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00031/generated_protein_4.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00031/generated_protein_5.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00031/generated_protein_6.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00031/generated_protein_7.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00031/generated_protein_8.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00031/generated_protein_9.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00031/generated_protein_10.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00031/generated_protein_11.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00031/generated_protein_12.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00031/generated_protein_13.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00031/generated_protein_14.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00031/generated_protein_15.pdb
+All pLDDT scores: [0.624269962310791, 0.7623308897018433, 0.6667437553405762, 0.807905375957489, 0.749589741230011, 0.6047475337982178, 0.7958142161369324, 0.7519944906234741, 0.8185684084892273, 0.6915558576583862, 0.7401043176651001, 0.7805137038230896, 0.8024818897247314, 0.5201784372329712, 0.6008930802345276, 0.7654938697814941]
+Saved checkpoint eval_results/masseval_120k_part_35358146_2.csv
+
+=== Batch 32 | rows 30496-30511 | evaluating 16 sequences ===
+📊 Sequence lengths: [321, 342, 354, 318, 372, 337, 371, 324, 352, 356, 339, 389, 360, 285, 369, 326]
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00032/generated_protein_0.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00032/generated_protein_1.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00032/generated_protein_2.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00032/generated_protein_3.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00032/generated_protein_4.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00032/generated_protein_5.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00032/generated_protein_6.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00032/generated_protein_7.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00032/generated_protein_8.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00032/generated_protein_9.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00032/generated_protein_10.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00032/generated_protein_11.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00032/generated_protein_12.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00032/generated_protein_13.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00032/generated_protein_14.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00032/generated_protein_15.pdb
+All pLDDT scores: [0.7134600281715393, 0.775221049785614, 0.7656692266464233, 0.7304790616035461, 0.7016016840934753, 0.7262290120124817, 0.7212687134742737, 0.7093839645385742, 0.7495980858802795, 0.7149524092674255, 0.6793739199638367, 0.6464794278144836, 0.7099250555038452, 0.6707215905189514, 0.6545827984809875, 0.6506813168525696]
+Saved checkpoint eval_results/masseval_120k_part_35358146_2.csv
+
+=== Batch 33 | rows 30512-30527 | evaluating 16 sequences ===
+📊 Sequence lengths: [375, 315, 351, 328, 335, 327, 371, 309, 343, 376, 379, 342, 330, 379, 315, 379]
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00033/generated_protein_0.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00033/generated_protein_1.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00033/generated_protein_2.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00033/generated_protein_3.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00033/generated_protein_4.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00033/generated_protein_5.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00033/generated_protein_6.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00033/generated_protein_7.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00033/generated_protein_8.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00033/generated_protein_9.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00033/generated_protein_10.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00033/generated_protein_11.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00033/generated_protein_12.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00033/generated_protein_13.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00033/generated_protein_14.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00033/generated_protein_15.pdb
+All pLDDT scores: [0.6859299540519714, 0.7492667436599731, 0.7969853281974792, 0.7087329030036926, 0.7143451571464539, 0.6622311472892761, 0.7112807631492615, 0.7115948796272278, 0.8609514236450195, 0.7541468143463135, 0.7567785978317261, 0.7386391162872314, 0.6940655708312988, 0.6353679299354553, 0.6881421804428101, 0.7563583254814148]
+Saved checkpoint eval_results/masseval_120k_part_35358146_2.csv
+
+=== Batch 34 | rows 30528-30543 | evaluating 16 sequences ===
+📊 Sequence lengths: [366, 395, 371, 357, 380, 336, 357, 322, 282, 340, 312, 381, 393, 271, 309, 325]
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00034/generated_protein_0.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00034/generated_protein_1.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00034/generated_protein_2.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00034/generated_protein_3.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00034/generated_protein_4.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00034/generated_protein_5.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00034/generated_protein_6.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00034/generated_protein_7.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00034/generated_protein_8.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00034/generated_protein_9.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00034/generated_protein_10.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00034/generated_protein_11.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00034/generated_protein_12.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00034/generated_protein_13.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00034/generated_protein_14.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00034/generated_protein_15.pdb
+All pLDDT scores: [0.6969404816627502, 0.7491545081138611, 0.7245478630065918, 0.8042344450950623, 0.7143828272819519, 0.6803580522537231, 0.7657074332237244, 0.6581761240959167, 0.7535032033920288, 0.7745059728622437, 0.8291366100311279, 0.7025611400604248, 0.7551097869873047, 0.5741270184516907, 0.7230472564697266, 0.7088369727134705]
+Saved checkpoint eval_results/masseval_120k_part_35358146_2.csv
+
+=== Batch 35 | rows 30544-30559 | evaluating 16 sequences ===
+📊 Sequence lengths: [324, 374, 344, 393, 300, 348, 279, 329, 277, 370, 387, 311, 316, 344, 332, 355]
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00035/generated_protein_0.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00035/generated_protein_1.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00035/generated_protein_2.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00035/generated_protein_3.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00035/generated_protein_4.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00035/generated_protein_5.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00035/generated_protein_6.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00035/generated_protein_7.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00035/generated_protein_8.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00035/generated_protein_9.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00035/generated_protein_10.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00035/generated_protein_11.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00035/generated_protein_12.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00035/generated_protein_13.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00035/generated_protein_14.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00035/generated_protein_15.pdb
+All pLDDT scores: [0.6732133626937866, 0.8071309328079224, 0.7711056470870972, 0.6946160793304443, 0.6783932447433472, 0.7713518142700195, 0.7199084162712097, 0.7156320810317993, 0.6984471678733826, 0.7776455283164978, 0.7882592678070068, 0.7150662541389465, 0.7126212120056152, 0.6911702156066895, 0.7322717308998108, 0.7360967993736267]
+Saved checkpoint eval_results/masseval_120k_part_35358146_2.csv
+
+=== Batch 36 | rows 30560-30575 | evaluating 16 sequences ===
+📊 Sequence lengths: [345, 399, 340, 328, 320, 341, 325, 338, 375, 337, 305, 358, 321, 383, 302, 293]
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00036/generated_protein_0.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00036/generated_protein_1.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00036/generated_protein_2.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00036/generated_protein_3.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00036/generated_protein_4.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00036/generated_protein_5.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00036/generated_protein_6.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00036/generated_protein_7.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00036/generated_protein_8.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00036/generated_protein_9.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00036/generated_protein_10.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00036/generated_protein_11.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00036/generated_protein_12.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00036/generated_protein_13.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00036/generated_protein_14.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00036/generated_protein_15.pdb
+All pLDDT scores: [0.6784529685974121, 0.5647675395011902, 0.7991552352905273, 0.707527220249176, 0.6804681420326233, 0.7124713659286499, 0.7017072439193726, 0.7459102272987366, 0.73244309425354, 0.7219473719596863, 0.7000648975372314, 0.7450319528579712, 0.7466329336166382, 0.6452981233596802, 0.6930510997772217, 0.6603038907051086]
+Saved checkpoint eval_results/masseval_120k_part_35358146_2.csv
+
+=== Batch 37 | rows 30576-30591 | evaluating 16 sequences ===
+📊 Sequence lengths: [332, 279, 342, 296, 299, 351, 359, 373, 331, 330, 280, 380, 366, 312, 371, 371]
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00037/generated_protein_0.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00037/generated_protein_1.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00037/generated_protein_2.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00037/generated_protein_3.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00037/generated_protein_4.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00037/generated_protein_5.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00037/generated_protein_6.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00037/generated_protein_7.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00037/generated_protein_8.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00037/generated_protein_9.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00037/generated_protein_10.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00037/generated_protein_11.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00037/generated_protein_12.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00037/generated_protein_13.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00037/generated_protein_14.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00037/generated_protein_15.pdb
+All pLDDT scores: [0.7681413888931274, 0.7586443424224854, 0.7600328922271729, 0.743801474571228, 0.6974478960037231, 0.7999494671821594, 0.7801080942153931, 0.7649427652359009, 0.7555283904075623, 0.7601293325424194, 0.5693418383598328, 0.774416446685791, 0.7422360181808472, 0.7000399231910706, 0.7236757874488831, 0.70811927318573]
+Saved checkpoint eval_results/masseval_120k_part_35358146_2.csv
+
+=== Batch 38 | rows 30592-30607 | evaluating 16 sequences ===
+📊 Sequence lengths: [304, 325, 312, 349, 341, 385, 325, 298, 279, 321, 332, 304, 304, 321, 372, 273]
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00038/generated_protein_0.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00038/generated_protein_1.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00038/generated_protein_2.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00038/generated_protein_3.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00038/generated_protein_4.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00038/generated_protein_5.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00038/generated_protein_6.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00038/generated_protein_7.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00038/generated_protein_8.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00038/generated_protein_9.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00038/generated_protein_10.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00038/generated_protein_11.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00038/generated_protein_12.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00038/generated_protein_13.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00038/generated_protein_14.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00038/generated_protein_15.pdb
+All pLDDT scores: [0.682974100112915, 0.669137179851532, 0.6880866885185242, 0.7741939425468445, 0.8001265525817871, 0.7370271682739258, 0.7302575707435608, 0.6702377796173096, 0.7465820908546448, 0.8649076819419861, 0.7728740572929382, 0.7063543796539307, 0.673184871673584, 0.6709001064300537, 0.7731059193611145, 0.6985241770744324]
+Saved checkpoint eval_results/masseval_120k_part_35358146_2.csv
+
+=== Batch 39 | rows 30608-30623 | evaluating 16 sequences ===
+📊 Sequence lengths: [361, 359, 337, 339, 337, 316, 348, 390, 346, 286, 205, 332, 221, 358, 307, 382]
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00039/generated_protein_0.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00039/generated_protein_1.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00039/generated_protein_2.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00039/generated_protein_3.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00039/generated_protein_4.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00039/generated_protein_5.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00039/generated_protein_6.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00039/generated_protein_7.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00039/generated_protein_8.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00039/generated_protein_9.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00039/generated_protein_10.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00039/generated_protein_11.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00039/generated_protein_12.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00039/generated_protein_13.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00039/generated_protein_14.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00039/generated_protein_15.pdb
+All pLDDT scores: [0.7102963328361511, 0.7624335289001465, 0.7996461391448975, 0.7585896849632263, 0.7082486152648926, 0.7044290900230408, 0.7212813496589661, 0.700684130191803, 0.6861012578010559, 0.7206065654754639, 0.6160472631454468, 0.7587853670120239, 0.6538309454917908, 0.7487408518791199, 0.8039022088050842, 0.6658453941345215]
+Saved checkpoint eval_results/masseval_120k_part_35358146_2.csv
+
+=== Batch 40 | rows 30624-30639 | evaluating 16 sequences ===
+📊 Sequence lengths: [351, 279, 328, 372, 340, 367, 315, 400, 279, 305, 383, 371, 316, 318, 278, 324]
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00040/generated_protein_0.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00040/generated_protein_1.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00040/generated_protein_2.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00040/generated_protein_3.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00040/generated_protein_4.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00040/generated_protein_5.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00040/generated_protein_6.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00040/generated_protein_7.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00040/generated_protein_8.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00040/generated_protein_9.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00040/generated_protein_10.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00040/generated_protein_11.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00040/generated_protein_12.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00040/generated_protein_13.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00040/generated_protein_14.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00040/generated_protein_15.pdb
+All pLDDT scores: [0.7613726258277893, 0.717401921749115, 0.7241719365119934, 0.7300251126289368, 0.5841658711433411, 0.726473331451416, 0.7122828364372253, 0.719631016254425, 0.7465803623199463, 0.7301182150840759, 0.7435799837112427, 0.7195571660995483, 0.7560275793075562, 0.8054516315460205, 0.6484025716781616, 0.6889148950576782]
+Saved checkpoint eval_results/masseval_120k_part_35358146_2.csv
+
+=== Batch 41 | rows 30640-30655 | evaluating 16 sequences ===
+📊 Sequence lengths: [340, 318, 339, 400, 343, 279, 351, 279, 370, 279, 326, 355, 353, 341, 242, 250]
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00041/generated_protein_0.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00041/generated_protein_1.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00041/generated_protein_2.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00041/generated_protein_3.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00041/generated_protein_4.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00041/generated_protein_5.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00041/generated_protein_6.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00041/generated_protein_7.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00041/generated_protein_8.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00041/generated_protein_9.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00041/generated_protein_10.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00041/generated_protein_11.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00041/generated_protein_12.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00041/generated_protein_13.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00041/generated_protein_14.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00041/generated_protein_15.pdb
+All pLDDT scores: [0.7317120432853699, 0.7241675853729248, 0.7994518280029297, 0.7340453863143921, 0.7753719091415405, 0.7367467284202576, 0.813309371471405, 0.7346999049186707, 0.7336320877075195, 0.7697181105613708, 0.7422394156455994, 0.7575663924217224, 0.8041290640830994, 0.82112056016922, 0.6012533903121948, 0.6923843622207642]
+Saved checkpoint eval_results/masseval_120k_part_35358146_2.csv
+
+=== Batch 42 | rows 30656-30671 | evaluating 16 sequences ===
+📊 Sequence lengths: [312, 357, 314, 391, 390, 334, 339, 332, 388, 366, 216, 311, 399, 286, 372, 368]
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00042/generated_protein_0.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00042/generated_protein_1.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00042/generated_protein_2.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00042/generated_protein_3.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00042/generated_protein_4.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00042/generated_protein_5.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00042/generated_protein_6.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00042/generated_protein_7.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00042/generated_protein_8.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00042/generated_protein_9.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00042/generated_protein_10.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00042/generated_protein_11.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00042/generated_protein_12.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00042/generated_protein_13.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00042/generated_protein_14.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00042/generated_protein_15.pdb
+All pLDDT scores: [0.6288799047470093, 0.7133480310440063, 0.6281037926673889, 0.6917644739151001, 0.7617517113685608, 0.7468754649162292, 0.6748775243759155, 0.7421205639839172, 0.7791241407394409, 0.794654130935669, 0.6310491561889648, 0.6876250505447388, 0.7347280383110046, 0.687997579574585, 0.8072183728218079, 0.7142722010612488]
+Saved checkpoint eval_results/masseval_120k_part_35358146_2.csv
+
+=== Batch 43 | rows 30672-30687 | evaluating 16 sequences ===
+📊 Sequence lengths: [274, 364, 334, 391, 341, 325, 304, 366, 321, 323, 314, 371, 333, 348, 292, 337]
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00043/generated_protein_0.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00043/generated_protein_1.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00043/generated_protein_2.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00043/generated_protein_3.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00043/generated_protein_4.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00043/generated_protein_5.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00043/generated_protein_6.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00043/generated_protein_7.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00043/generated_protein_8.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00043/generated_protein_9.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00043/generated_protein_10.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00043/generated_protein_11.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00043/generated_protein_12.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00043/generated_protein_13.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00043/generated_protein_14.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00043/generated_protein_15.pdb
+All pLDDT scores: [0.6531782746315002, 0.748259961605072, 0.7490243315696716, 0.619363009929657, 0.7275785207748413, 0.7715407013893127, 0.6705788373947144, 0.7578336000442505, 0.7634947299957275, 0.7359414100646973, 0.7602687478065491, 0.7359015345573425, 0.7287017107009888, 0.8034066557884216, 0.5974431037902832, 0.7460365295410156]
+Saved checkpoint eval_results/masseval_120k_part_35358146_2.csv
+
+=== Batch 44 | rows 30688-30703 | evaluating 16 sequences ===
+📊 Sequence lengths: [321, 318, 288, 350, 371, 371, 385, 371, 341, 297, 278, 317, 313, 264, 317, 279]
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00044/generated_protein_0.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00044/generated_protein_1.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00044/generated_protein_2.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00044/generated_protein_3.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00044/generated_protein_4.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00044/generated_protein_5.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00044/generated_protein_6.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00044/generated_protein_7.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00044/generated_protein_8.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00044/generated_protein_9.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00044/generated_protein_10.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00044/generated_protein_11.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00044/generated_protein_12.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00044/generated_protein_13.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00044/generated_protein_14.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00044/generated_protein_15.pdb
+All pLDDT scores: [0.6241024136543274, 0.7226417064666748, 0.721545398235321, 0.5920277833938599, 0.7309011220932007, 0.7137017250061035, 0.7941558361053467, 0.7114809155464172, 0.7587629556655884, 0.8650280833244324, 0.6377176642417908, 0.7083026170730591, 0.7498602867126465, 0.7627205848693848, 0.7480596899986267, 0.8144763112068176]
+Saved checkpoint eval_results/masseval_120k_part_35358146_2.csv
+
+=== Batch 45 | rows 30704-30719 | evaluating 16 sequences ===
+📊 Sequence lengths: [316, 314, 280, 216, 296, 237, 332, 351, 331, 346, 316, 264, 359, 371, 279, 353]
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00045/generated_protein_0.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00045/generated_protein_1.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00045/generated_protein_2.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00045/generated_protein_3.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00045/generated_protein_4.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00045/generated_protein_5.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00045/generated_protein_6.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00045/generated_protein_7.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00045/generated_protein_8.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00045/generated_protein_9.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00045/generated_protein_10.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00045/generated_protein_11.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00045/generated_protein_12.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00045/generated_protein_13.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00045/generated_protein_14.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00045/generated_protein_15.pdb
+All pLDDT scores: [0.7216126918792725, 0.6877250075340271, 0.8148263692855835, 0.6595079898834229, 0.6726386547088623, 0.5945661067962646, 0.7497139573097229, 0.7469339370727539, 0.7097614407539368, 0.7879135608673096, 0.7258244752883911, 0.6874791383743286, 0.6892374157905579, 0.7784927487373352, 0.7661972641944885, 0.7616938948631287]
+Saved checkpoint eval_results/masseval_120k_part_35358146_2.csv
+
+=== Batch 46 | rows 30720-30735 | evaluating 16 sequences ===
+📊 Sequence lengths: [370, 216, 279, 371, 386, 294, 340, 223, 356, 328, 353, 335, 336, 323, 374, 371]
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00046/generated_protein_0.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00046/generated_protein_1.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00046/generated_protein_2.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00046/generated_protein_3.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00046/generated_protein_4.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00046/generated_protein_5.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00046/generated_protein_6.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00046/generated_protein_7.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00046/generated_protein_8.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00046/generated_protein_9.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00046/generated_protein_10.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00046/generated_protein_11.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00046/generated_protein_12.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00046/generated_protein_13.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00046/generated_protein_14.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00046/generated_protein_15.pdb
+All pLDDT scores: [0.7081736922264099, 0.6363558173179626, 0.7423132061958313, 0.7128753066062927, 0.6946191787719727, 0.617730438709259, 0.7701536417007446, 0.6427697539329529, 0.7428297400474548, 0.7403298020362854, 0.7394455671310425, 0.7543736100196838, 0.6139630079269409, 0.7436177730560303, 0.745888352394104, 0.7100867033004761]
+Saved checkpoint eval_results/masseval_120k_part_35358146_2.csv
+
+=== Batch 47 | rows 30736-30751 | evaluating 16 sequences ===
+📊 Sequence lengths: [378, 341, 309, 309, 355, 310, 387, 325, 333, 399, 372, 380, 360, 279, 363, 304]
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00047/generated_protein_0.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00047/generated_protein_1.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00047/generated_protein_2.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00047/generated_protein_3.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00047/generated_protein_4.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00047/generated_protein_5.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00047/generated_protein_6.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00047/generated_protein_7.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00047/generated_protein_8.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00047/generated_protein_9.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00047/generated_protein_10.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00047/generated_protein_11.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00047/generated_protein_12.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00047/generated_protein_13.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00047/generated_protein_14.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00047/generated_protein_15.pdb
+All pLDDT scores: [0.5417291522026062, 0.6851251721382141, 0.6876878142356873, 0.6675542593002319, 0.8026703596115112, 0.671643853187561, 0.7984082102775574, 0.7104688882827759, 0.7196388244628906, 0.7007635831832886, 0.7757628560066223, 0.7264491319656372, 0.6677731871604919, 0.7284877896308899, 0.6577456593513489, 0.7997036576271057]
+Saved checkpoint eval_results/masseval_120k_part_35358146_2.csv
+
+=== Batch 48 | rows 30752-30767 | evaluating 16 sequences ===
+📊 Sequence lengths: [238, 337, 304, 382, 336, 322, 330, 372, 319, 315, 321, 214, 327, 368, 374, 314]
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00048/generated_protein_0.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00048/generated_protein_1.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00048/generated_protein_2.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00048/generated_protein_3.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00048/generated_protein_4.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00048/generated_protein_5.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00048/generated_protein_6.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00048/generated_protein_7.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00048/generated_protein_8.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00048/generated_protein_9.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00048/generated_protein_10.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00048/generated_protein_11.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00048/generated_protein_12.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00048/generated_protein_13.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00048/generated_protein_14.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00048/generated_protein_15.pdb
+All pLDDT scores: [0.6733716130256653, 0.7861625552177429, 0.6961846351623535, 0.7393890023231506, 0.7304939031600952, 0.7456080317497253, 0.7001851201057434, 0.7366999387741089, 0.6589100956916809, 0.7527710199356079, 0.6739848256111145, 0.6213797926902771, 0.6732577085494995, 0.5974045395851135, 0.6983243823051453, 0.7487454414367676]
+Saved checkpoint eval_results/masseval_120k_part_35358146_2.csv
+
+=== Batch 49 | rows 30768-30783 | evaluating 16 sequences ===
+📊 Sequence lengths: [341, 325, 363, 371, 317, 277, 351, 371, 330, 302, 279, 348, 351, 349, 279, 364]
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00049/generated_protein_0.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00049/generated_protein_1.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00049/generated_protein_2.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00049/generated_protein_3.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00049/generated_protein_4.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00049/generated_protein_5.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00049/generated_protein_6.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00049/generated_protein_7.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00049/generated_protein_8.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00049/generated_protein_9.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00049/generated_protein_10.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00049/generated_protein_11.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00049/generated_protein_12.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00049/generated_protein_13.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00049/generated_protein_14.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00049/generated_protein_15.pdb
+All pLDDT scores: [0.7896487712860107, 0.7354273200035095, 0.6420944929122925, 0.714836061000824, 0.6636915802955627, 0.663404643535614, 0.740575909614563, 0.7070038318634033, 0.72217857837677, 0.73080974817276, 0.7767346501350403, 0.7655264139175415, 0.8337803483009338, 0.7506207823753357, 0.7731691598892212, 0.7504881620407104]
+Saved checkpoint eval_results/masseval_120k_part_35358146_2.csv
+
+=== Batch 50 | rows 30784-30799 | evaluating 16 sequences ===
+📊 Sequence lengths: [334, 264, 230, 329, 340, 283, 279, 371, 358, 360, 388, 338, 371, 218, 309, 316]
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00050/generated_protein_0.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00050/generated_protein_1.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00050/generated_protein_2.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00050/generated_protein_3.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00050/generated_protein_4.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00050/generated_protein_5.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00050/generated_protein_6.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00050/generated_protein_7.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00050/generated_protein_8.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00050/generated_protein_9.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00050/generated_protein_10.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00050/generated_protein_11.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00050/generated_protein_12.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00050/generated_protein_13.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00050/generated_protein_14.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00050/generated_protein_15.pdb
+All pLDDT scores: [0.7453111410140991, 0.7058875560760498, 0.6960858106613159, 0.7680137753486633, 0.7240291833877563, 0.6695473790168762, 0.7638060450553894, 0.7831042408943176, 0.687557578086853, 0.7487683892250061, 0.6672413945198059, 0.7935498356819153, 0.7147722244262695, 0.5722984671592712, 0.7877398729324341, 0.6902478933334351]
+Saved checkpoint eval_results/masseval_120k_part_35358146_2.csv
+
+=== Batch 51 | rows 30800-30815 | evaluating 16 sequences ===
+📊 Sequence lengths: [336, 375, 326, 306, 325, 387, 394, 351, 330, 317, 216, 279, 243, 384, 298, 396]
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00051/generated_protein_0.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00051/generated_protein_1.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00051/generated_protein_2.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00051/generated_protein_3.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00051/generated_protein_4.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00051/generated_protein_5.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00051/generated_protein_6.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00051/generated_protein_7.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00051/generated_protein_8.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00051/generated_protein_9.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00051/generated_protein_10.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00051/generated_protein_11.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00051/generated_protein_12.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00051/generated_protein_13.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00051/generated_protein_14.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00051/generated_protein_15.pdb
+All pLDDT scores: [0.7196812629699707, 0.7578372359275818, 0.685604989528656, 0.6872579455375671, 0.7180998921394348, 0.7079277634620667, 0.7245886921882629, 0.8458455801010132, 0.6432278156280518, 0.6475389003753662, 0.6365039944648743, 0.7388302683830261, 0.6561294794082642, 0.7486746311187744, 0.656325101852417, 0.712912380695343]
+Saved checkpoint eval_results/masseval_120k_part_35358146_2.csv
+
+=== Batch 52 | rows 30816-30831 | evaluating 16 sequences ===
+📊 Sequence lengths: [329, 268, 371, 352, 329, 279, 279, 284, 278, 279, 385, 329, 216, 309, 283, 243]
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00052/generated_protein_0.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00052/generated_protein_1.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00052/generated_protein_2.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00052/generated_protein_3.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00052/generated_protein_4.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00052/generated_protein_5.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00052/generated_protein_6.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00052/generated_protein_7.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00052/generated_protein_8.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00052/generated_protein_9.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00052/generated_protein_10.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00052/generated_protein_11.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00052/generated_protein_12.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00052/generated_protein_13.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00052/generated_protein_14.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00052/generated_protein_15.pdb
+All pLDDT scores: [0.8168109059333801, 0.6927787661552429, 0.5005954504013062, 0.7473813891410828, 0.6897827386856079, 0.7648633718490601, 0.7464675307273865, 0.6993299126625061, 0.7628685235977173, 0.7400846481323242, 0.5210296511650085, 0.7378053069114685, 0.6443121433258057, 0.7848902344703674, 0.7542141675949097, 0.6003069877624512]
+Saved checkpoint eval_results/masseval_120k_part_35358146_2.csv
+
+=== Batch 53 | rows 30832-30847 | evaluating 16 sequences ===
+📊 Sequence lengths: [392, 327, 341, 399, 279, 368, 345, 340, 353, 389, 316, 372, 371, 354, 390, 400]
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00053/generated_protein_0.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00053/generated_protein_1.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00053/generated_protein_2.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00053/generated_protein_3.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00053/generated_protein_4.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00053/generated_protein_5.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00053/generated_protein_6.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00053/generated_protein_7.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00053/generated_protein_8.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00053/generated_protein_9.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00053/generated_protein_10.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00053/generated_protein_11.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00053/generated_protein_12.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00053/generated_protein_13.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00053/generated_protein_14.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00053/generated_protein_15.pdb
+All pLDDT scores: [0.5612808465957642, 0.6818863749504089, 0.7831771969795227, 0.7336392998695374, 0.7368059158325195, 0.7710295915603638, 0.8065304160118103, 0.6960479617118835, 0.8013015985488892, 0.8242369890213013, 0.7104442119598389, 0.7151525616645813, 0.7427716255187988, 0.7906094193458557, 0.67756587266922, 0.762355387210846]
+Saved checkpoint eval_results/masseval_120k_part_35358146_2.csv
+
+=== Batch 54 | rows 30848-30863 | evaluating 16 sequences ===
+📊 Sequence lengths: [387, 394, 309, 369, 375, 288, 360, 279, 279, 345, 360, 369, 365, 284, 279, 312]
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00054/generated_protein_0.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00054/generated_protein_1.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00054/generated_protein_2.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00054/generated_protein_3.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00054/generated_protein_4.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00054/generated_protein_5.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00054/generated_protein_6.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00054/generated_protein_7.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00054/generated_protein_8.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00054/generated_protein_9.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00054/generated_protein_10.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00054/generated_protein_11.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00054/generated_protein_12.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00054/generated_protein_13.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00054/generated_protein_14.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00054/generated_protein_15.pdb
+All pLDDT scores: [0.8042760491371155, 0.738078236579895, 0.6123399138450623, 0.7788556814193726, 0.6087744832038879, 0.7245033979415894, 0.6921919584274292, 0.7359181046485901, 0.753694474697113, 0.7435711622238159, 0.7697064876556396, 0.7316721081733704, 0.7734630703926086, 0.6331121921539307, 0.7662127017974854, 0.8238313794136047]
+Saved checkpoint eval_results/masseval_120k_part_35358146_2.csv
+
+=== Batch 55 | rows 30864-30879 | evaluating 16 sequences ===
+📊 Sequence lengths: [216, 352, 324, 299, 314, 350, 334, 330, 356, 350, 270, 356, 328, 344, 314, 340]
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00055/generated_protein_0.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00055/generated_protein_1.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00055/generated_protein_2.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00055/generated_protein_3.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00055/generated_protein_4.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00055/generated_protein_5.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00055/generated_protein_6.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00055/generated_protein_7.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00055/generated_protein_8.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00055/generated_protein_9.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00055/generated_protein_10.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00055/generated_protein_11.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00055/generated_protein_12.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00055/generated_protein_13.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00055/generated_protein_14.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00055/generated_protein_15.pdb
+All pLDDT scores: [0.5768912434577942, 0.7128170728683472, 0.7362276911735535, 0.7406846284866333, 0.7219001054763794, 0.7723990678787231, 0.6866573691368103, 0.7970579266548157, 0.7378048300743103, 0.7024783492088318, 0.641290545463562, 0.7584720253944397, 0.7022973895072937, 0.6634421944618225, 0.7232913374900818, 0.7663463950157166]
+Saved checkpoint eval_results/masseval_120k_part_35358146_2.csv
+
+=== Batch 56 | rows 30880-30895 | evaluating 16 sequences ===
+📊 Sequence lengths: [320, 289, 213, 213, 351, 226, 339, 327, 266, 266, 226, 382, 278, 371, 346, 330]
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00056/generated_protein_0.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00056/generated_protein_1.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00056/generated_protein_2.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00056/generated_protein_3.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00056/generated_protein_4.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00056/generated_protein_5.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00056/generated_protein_6.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00056/generated_protein_7.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00056/generated_protein_8.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00056/generated_protein_9.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00056/generated_protein_10.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00056/generated_protein_11.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00056/generated_protein_12.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00056/generated_protein_13.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00056/generated_protein_14.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00056/generated_protein_15.pdb
+All pLDDT scores: [0.764011025428772, 0.6368027925491333, 0.6644753217697144, 0.48803219199180603, 0.7018675804138184, 0.6745221614837646, 0.7846357226371765, 0.651680052280426, 0.5868582725524902, 0.6129590272903442, 0.596676230430603, 0.8036375045776367, 0.7672765254974365, 0.7117698192596436, 0.7578327059745789, 0.6529759764671326]
+Saved checkpoint eval_results/masseval_120k_part_35358146_2.csv
+
+=== Batch 57 | rows 30896-30911 | evaluating 16 sequences ===
+📊 Sequence lengths: [344, 360, 310, 373, 322, 299, 353, 361, 331, 319, 322, 336, 338, 297, 366, 309]
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00057/generated_protein_0.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00057/generated_protein_1.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00057/generated_protein_2.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00057/generated_protein_3.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00057/generated_protein_4.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00057/generated_protein_5.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00057/generated_protein_6.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00057/generated_protein_7.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00057/generated_protein_8.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00057/generated_protein_9.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00057/generated_protein_10.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00057/generated_protein_11.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00057/generated_protein_12.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00057/generated_protein_13.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00057/generated_protein_14.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00057/generated_protein_15.pdb
+All pLDDT scores: [0.7207241058349609, 0.7326821684837341, 0.6057300567626953, 0.7065532803535461, 0.8677694201469421, 0.7055020332336426, 0.7627679705619812, 0.728872537612915, 0.6927959322929382, 0.7999024391174316, 0.6783173680305481, 0.8163547515869141, 0.6707954406738281, 0.6367782950401306, 0.6712875366210938, 0.6690842509269714]
+Saved checkpoint eval_results/masseval_120k_part_35358146_2.csv
+
+=== Batch 58 | rows 30912-30927 | evaluating 16 sequences ===
+📊 Sequence lengths: [390, 331, 279, 399, 371, 279, 309, 390, 387, 371, 315, 348, 288, 333, 366, 367]
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00058/generated_protein_0.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00058/generated_protein_1.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00058/generated_protein_2.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00058/generated_protein_3.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00058/generated_protein_4.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00058/generated_protein_5.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00058/generated_protein_6.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00058/generated_protein_7.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00058/generated_protein_8.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00058/generated_protein_9.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00058/generated_protein_10.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00058/generated_protein_11.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00058/generated_protein_12.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00058/generated_protein_13.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00058/generated_protein_14.pdb
+Saved PDB: ./validation/pdbs/masseval_120k_35358146_a0002_b00058/generated_protein_15.pdb
+All pLDDT scores: [0.7081687450408936, 0.7252010107040405, 0.7207324504852295, 0.5289597511291504, 0.7159193158149719, 0.7186137437820435, 0.6419441103935242, 0.7643471956253052, 0.7929359674453735, 0.712171733379364, 0.8245466947555542, 0.7606844305992126, 0.5936928987503052, 0.7866039872169495, 0.7001062631607056, 0.7635312676429749]
+Saved checkpoint eval_results/masseval_120k_part_35358146_2.csv
+
+=== Batch 59 | rows 30928-30943 | evaluating 16 sequences ===
+📊 Sequence lengths: [368, 336, 301, 388, 338, 338, 320, 341, 343, 279, 307, 237, 330, 296, 344, 348]
