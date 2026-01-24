@@ -5,3 +5,4 @@ validation/pdbs/masseval*/
 validation/pdbs/training_pdbs
 eval_results/*/
 __pycache__/
+outputs/masseval*
