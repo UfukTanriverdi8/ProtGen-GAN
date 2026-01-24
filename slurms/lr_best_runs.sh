@@ -11,7 +11,12 @@
 # ---------- environment ----------
 export HF_DATASETS_OFFLINE=1
 export HF_HUB_OFFLINE=1
-export WANDB_API_KEY=***REMOVED***
+
+# W&B key
+# you need to set your apı key from an external slurm script with the line below
+# export WANDB_API_KEY=
+# then here
+source /path/to/env.sh
 
 module load miniforge/24.3.0-0
 source activate protgen_env_conda
