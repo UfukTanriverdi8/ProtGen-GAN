@@ -6,3 +6,6 @@ validation/pdbs/training_pdbs
 eval_results/*/
 __pycache__/
 outputs/masseval*
+*.jar
+passwords.txt
+.env
