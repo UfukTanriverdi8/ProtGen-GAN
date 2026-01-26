@@ -5,3 +5,34 @@ You should probably TRAIN this model on a down-stream task to be able to use it 
   loaded_model = torch.load(trained_model_fp, map_location=device)
 /gpfs/home/hu/hu733216/protgen/gan/val_metrics.py:273: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
   checkpoint = torch.load(checkpoint_path, map_location=device)
+Traceback (most recent call last):
+  File "/gpfs/apps/MN5/ACC/MINIFORGE/24.3.0-0/envs/protgen_env_conda/lib/python3.8/site-packages/transformers/tokenization_utils_base.py", line 776, in convert_to_tensors
+    tensor = as_tensor(value)
+  File "/gpfs/apps/MN5/ACC/MINIFORGE/24.3.0-0/envs/protgen_env_conda/lib/python3.8/site-packages/transformers/tokenization_utils_base.py", line 738, in as_tensor
+    return torch.tensor(value)
+RuntimeError: Could not infer dtype of NoneType
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "./run_mass_eval.py", line 297, in <module>
+    main()
+  File "./run_mass_eval.py", line 218, in main
+    _avg_plddt, plddt_scores = calculate_plddt_scores_and_save_pdb(
+  File "/gpfs/home/hu/hu733216/protgen/gan/val_metrics.py", line 162, in calculate_plddt_scores_and_save_pdb
+    tokenized_inputs = folding_tokenizer(
+  File "/gpfs/apps/MN5/ACC/MINIFORGE/24.3.0-0/envs/protgen_env_conda/lib/python3.8/site-packages/transformers/tokenization_utils_base.py", line 3021, in __call__
+    encodings = self._call_one(text=text, text_pair=text_pair, **all_kwargs)
+  File "/gpfs/apps/MN5/ACC/MINIFORGE/24.3.0-0/envs/protgen_env_conda/lib/python3.8/site-packages/transformers/tokenization_utils_base.py", line 3109, in _call_one
+    return self.batch_encode_plus(
+  File "/gpfs/apps/MN5/ACC/MINIFORGE/24.3.0-0/envs/protgen_env_conda/lib/python3.8/site-packages/transformers/tokenization_utils_base.py", line 3311, in batch_encode_plus
+    return self._batch_encode_plus(
+  File "/gpfs/apps/MN5/ACC/MINIFORGE/24.3.0-0/envs/protgen_env_conda/lib/python3.8/site-packages/transformers/tokenization_utils.py", line 892, in _batch_encode_plus
+    batch_outputs = self._batch_prepare_for_model(
+  File "/gpfs/apps/MN5/ACC/MINIFORGE/24.3.0-0/envs/protgen_env_conda/lib/python3.8/site-packages/transformers/tokenization_utils.py", line 979, in _batch_prepare_for_model
+    batch_outputs = BatchEncoding(batch_outputs, tensor_type=return_tensors)
+  File "/gpfs/apps/MN5/ACC/MINIFORGE/24.3.0-0/envs/protgen_env_conda/lib/python3.8/site-packages/transformers/tokenization_utils_base.py", line 240, in __init__
+    self.convert_to_tensors(tensor_type=tensor_type, prepend_batch_axis=prepend_batch_axis)
+  File "/gpfs/apps/MN5/ACC/MINIFORGE/24.3.0-0/envs/protgen_env_conda/lib/python3.8/site-packages/transformers/tokenization_utils_base.py", line 792, in convert_to_tensors
+    raise ValueError(
+ValueError: Unable to create tensor, you should probably activate truncation and/or padding with 'padding=True' 'truncation=True' to have batched tensors with the same length. Perhaps your features (`input_ids` in this case) have excessive nesting (inputs type `list` where type `int` is expected).
