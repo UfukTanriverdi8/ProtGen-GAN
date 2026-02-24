@@ -1,0 +1,7 @@
+Task 4: rows [60000, 75000)
+Input:  eval_sequences/120k_eval/120k_eval_seqs_prefiltered.csv
+Output: eval_sequences/120k_eval/masseval_120k_part_36604879_4.csv
+Run:    masseval_120k_36604879
+Loading ESMFold model & tokenizer...
+
+All done 

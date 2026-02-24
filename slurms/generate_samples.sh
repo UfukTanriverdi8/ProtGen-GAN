@@ -66,7 +66,7 @@ python ./generate.py \
   --seed_file "$SEED_FILE" \
   --num_full "$num_full" \
   --num_seeded "$num_seeded" \
-  --out_dir "./results/generation_23_01_25/" \
+  --out_dir "./eval_sequences/120k_generation_output/" \
   --batch_size 64 \
   --device cuda
 

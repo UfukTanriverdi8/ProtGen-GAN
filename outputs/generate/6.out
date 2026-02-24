@@ -1,0 +1,4 @@
+[INFO] idx=5 ckpt_id=protbert_base full=10000 seeded=10000
+[base] Wrote 10000 full-mode sequences → eval_sequences/120k_generation_output/protbert_base_full.txt
+[base] Wrote 10000 seeded-10% sequences → eval_sequences/120k_generation_output/protbert_base_seeded.txt
+[DONE] protbert_base | full=10000 | seeded=10000

@@ -27,7 +27,7 @@ export LD_LIBRARY_PATH="${CONDA_PREFIX}/lib:${LD_LIBRARY_PATH:-}"
 export PROGRES_DATA_DIR=/gpfs/projects/etur29/ufuk/progres/
 
 # --- inputs ---
-CSV_IN="eval_results/120k_csv/120k_eval_seqs_prefiltered.csv"
+CSV_IN="eval_sequences/120k_eval/120k_eval_seqs_prefiltered.csv"
 
 # Each array task handles a slice of rows.
 # Tune ROWS_PER_TASK to your dataset size and desired parallelism.
@@ -37,7 +37,7 @@ START=$(( SLURM_ARRAY_TASK_ID * ROWS_PER_TASK ))
 END=$(( START + ROWS_PER_TASK ))
 
 # Unique output per task (avoid write collisions)
-OUT_CSV="eval_results/masseval_120k_part_${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}.csv"
+OUT_CSV="eval_sequences/120k_eval/masseval_120k_part_${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}.csv"
 
 # Unique run name base (your code will also append _aXXXX automatically if you added that)
 RUN_NAME="masseval_120k_${SLURM_ARRAY_JOB_ID}"

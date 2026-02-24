@@ -1,0 +1,4 @@
+[INFO] idx=4 ckpt_id=finetuned_protbert full=10000 seeded=10000
+[finetuned] Wrote 10000 full-mode sequences → eval_sequences/120k_generation_output/finetuned_protbert_full.txt
+[finetuned] Wrote 10000 seeded-10% sequences → eval_sequences/120k_generation_output/finetuned_protbert_seeded.txt
+[DONE] finetuned_protbert | full=10000 | seeded=10000

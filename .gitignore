@@ -1,11 +1,10 @@
+__pycache__/
 wandb/
 ProteinMPNN/
 validation/pdbs/60k_mass_eval_pdbs/
 validation/pdbs/masseval*/
 validation/pdbs/training_pdbs
-eval_results/*/
-__pycache__/
-outputs/masseval*
+eval_sequences/*/*_part*.csv
 *.jar
 passwords.txt
 .env

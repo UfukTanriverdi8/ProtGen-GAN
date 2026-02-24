@@ -1,0 +1,4 @@
+[INFO] idx=2 ckpt_id=full_freeze_gen_5e-5_crit_5e-4/epoch_14 full=10000 seeded=10000
+[trained] Wrote 10000 full-mode sequences → eval_sequences/120k_generation_output/full_freeze_gen_5e-5_crit_5e-4_epoch_14_full.txt
+[trained] Wrote 10000 seeded-10% sequences → eval_sequences/120k_generation_output/full_freeze_gen_5e-5_crit_5e-4_epoch_14_seeded.txt
+[DONE] full_freeze_gen_5e-5_crit_5e-4_epoch_14 | full=10000 | seeded=10000

@@ -1,0 +1,4 @@
+[INFO] idx=3 ckpt_id=full_nc8_lrgen_5e-5_lrcrit_5e-4/epoch_7 full=10000 seeded=10000
+[trained] Wrote 10000 full-mode sequences → eval_sequences/120k_generation_output/full_nc8_lrgen_5e-5_lrcrit_5e-4_epoch_7_full.txt
+[trained] Wrote 10000 seeded-10% sequences → eval_sequences/120k_generation_output/full_nc8_lrgen_5e-5_lrcrit_5e-4_epoch_7_seeded.txt
+[DONE] full_nc8_lrgen_5e-5_lrcrit_5e-4_epoch_7 | full=10000 | seeded=10000
