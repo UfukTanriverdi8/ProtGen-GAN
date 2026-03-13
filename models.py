@@ -1,7 +1,6 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from transformers.generation.utils import GenerationMixin
 
 class Generator(nn.Module):
     def __init__(self, protbert_model, cls_token_id=2, sep_token_id=3 , mask_token_id=4, pad_token_id=0):
@@ -21,6 +20,13 @@ class Generator(nn.Module):
         outputs = self.protbert(input_ids=input_ids, attention_mask=attention_mask)
         logits = outputs.logits / temperature
         probabilities = F.softmax(logits, dim=-1)
+        """
+        predicted_ids = torch.multinomial(
+            probabilities.view(-1, probabilities.size(-1)), 
+            num_samples=1
+        ).view(batch_size, seq_len)
+        confidence = probabilities.gather(-1, predicted_ids.unsqueeze(-1)).squeeze(-1)
+        """
         confidence, predicted_ids = probabilities.max(dim=-1)
 
         for i in range(batch_size):
