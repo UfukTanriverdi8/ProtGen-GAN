@@ -20,11 +20,100 @@ methylation, a key epigenetic regulator.
 
 The generative backbone is a fine-tuned ProtBERT model integrated into a GAN-like architecture.
 ProtBERT was fine-tuned in two successive stages before being used here:
+
 1. Broad pre-training on ~600k EC 2.1.1 transferase sequences
 2. Specialization on ~50k DNMT sequences (EC 2.1.1.37, IPR001525 domain)
 
 The final fine-tuned checkpoint (dynamic masking, epoch 300 of stage 2) is the backbone
 for both the generator and the critic in this repo.
+
+## Similar Paper by the same lab: DrugGEN
+
+DrugGEN is a GAN-based de novo drug design system from the same lab (Tunca Doğan's group, published in Nature Machine Intelligence 2025). It generates small drug-like molecules targeting specific proteins, representing molecules as graphs and using graph transformer-based generator and discriminator. Unlike ProtGen which iteratively fills masked protein sequences, DrugGEN generates full molecular graphs in one shot. Despite the architectural differences, several lessons transfer directly. There can be lessons learned from DrugGEN in this project so some of them are listed here:
+
+**Training stability:**
+
+- Uses WGAN-GP (gradient penalty λ=10) — the GP implementation is a known trap worth verifying in `full_train.py` and `10p_train.py`
+- AdamW optimizer with lr=1e-5 for both G and D
+- Trains discriminator first before generator joins — similar to ProtGen's first-epoch freezing rationale
+- Used early stopping based on validity/novelty metrics to catch mode collapse before it ran for months undetected
+
+**Evaluation during training:**
+
+- Tracks uniqueness and novelty throughout training, not just loss — a lightweight uniqueness check on small generated batches during training would have caught ProtGen's mode collapse much earlier
+- Multiple independent metrics rather than relying on any single one
+
+**Architecture:**
+
+- Transformer depth of 1 was optimal — higher depth hurt convergence
+- GAN training with deeper/larger backbones tends to be less stable, not more
+
+**Downstream pipeline:**
+
+- Multi-stage filtering: docking → DL-based bioactivity prediction → MD simulation → wet lab. No single metric was trusted alone. This validates ProtGen's finding that progres/scAccuracy alone are insufficient.
+
+### DrugGEN Project Repo File Structure
+
+Just for reference here is the file structure of the DrugGEN repo:
+
+```text
+├── assets/
+│   ├── (placeholder for future assets: diagrams, figures, etc.)
+├── data/
+│   ├── decoders/
+│   │   └── .gitkeep
+│   ├── encoders/
+│   │   └── .gitkeep
+│   └── .gitkeep
+├── experiments/
+│   ├── inference/
+│   │   └── .gitignore
+│   ├── logs/
+│   │   └── .gitignore
+│   ├── models/
+│   │   ├── DrugGEN-akt1/
+│   │   │   └── .gitkeep
+│   │   ├── DrugGEN-cdk2/
+│   │   │   └── .gitkeep
+│   │   └── NoTarget/
+│   │       └── .gitkeep
+│   ├── results/
+│   │   ├── .gitignore
+│   │   └── tensorboard.txt
+│   └── samples/
+│       └── .gitignore
+├── results/
+│   ├── docking/
+│   │   ├── (docking results files stored as CSVs here)
+│   ├── generated_molecules/
+│   │   ├── DrugGEN_generated_molecules_AKT1.csv
+│   │   ├── DrugGEN_generated_molecules_CDK2.csv
+│   │   └── Selected_denovo_AKT1_inhibitors.csv
+│   ├── evaluate.py
+│   └── README.md
+├── src/
+│   ├── data/
+│   │   ├── __init__.py
+│   │   ├── dataset.py
+│   │   └── utils.py
+│   ├── model/
+│   │   ├── __init__.py
+│   │   ├── layers.py
+│   │   ├── loss.py
+│   │   └── models.py
+│   ├── util/
+│   │   ├── __init__.py
+│   │   ├── smiles_cor.py
+│   │   └── utils.py
+│   └── __init__.py
+├── .gitignore
+├── environment.yml
+├── inference.py
+├── LICENSE
+├── README.md
+├── setup.sh
+└── train.py
+```
 
 ---
 
