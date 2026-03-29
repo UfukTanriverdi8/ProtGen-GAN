@@ -91,7 +91,14 @@ class Critic(nn.Module):
             )
             last_hidden_state = outputs.hidden_states[-1]
         elif input_data.dim() == 3:  # Embeddings
-            last_hidden_state = input_data
+            extended_mask = self.protbert.bert.get_extended_attention_mask(
+                attention_mask, input_data.shape[:2]
+            )
+            transformer_output = self.protbert.bert.encoder(
+                input_data,
+                attention_mask=extended_mask
+            )
+            last_hidden_state = transformer_output.last_hidden_state
 
         cls_output = last_hidden_state[:, 0, :]  # CLS token embedding
         logits = self.classifier(cls_output)
