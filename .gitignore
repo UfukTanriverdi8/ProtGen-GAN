@@ -8,3 +8,6 @@ eval_sequences/*/*_part*.csv
 *.jar
 passwords.txt
 .env
+
+# Ignore Visual Studio Code settings
+.vscode/
