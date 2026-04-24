@@ -2,6 +2,17 @@
 
 ## Commands
 
+### Environment Setup
+```bash
+# Required on every machine before running any script.
+# MN5:  add to your SLURM job script
+# Anzu: add to ~/.bashrc
+export SOURCE_DIR=/gpfs/projects/etur29/ufuk   # MN5 example
+export SOURCE_DIR=/path/to/your/models          # Anzu example
+# config.py resolves PROTBERT, ESMFold, and checkpoint paths from SOURCE_DIR.
+# MN5 hostnames are auto-detected as a fallback if SOURCE_DIR is not set.
+```
+
 ### Training (MN5 — submit via SLURM)
 ```bash
 sbatch long_10p_run.sh        # Seeded mode extended run
@@ -64,7 +75,7 @@ DrugGEN is a GAN-based de novo drug design system from the same lab (Tunca Doğa
 
 **Training stability:**
 
-- Uses WGAN-GP (gradient penalty λ=10) — ProtGen's GP had two bugs: it bypassed the full transformer and ignored padding masks. Both were fixed in `loss.py` (commit 8ebec32), but the calling code in both training scripts still uses the old (wrong) signature — see BUG 1 below.
+- Uses WGAN-GP (gradient penalty λ=10) — ProtGen's GP had two bugs: it bypassed the full transformer and ignored padding masks. Both were fixed in `loss.py` (commit 8ebec32), and the calling code in both training scripts has since been updated with the correct signature.
 - AdamW optimizer with lr=1e-5 for both G and D
 - Trains discriminator first before generator joins — similar to ProtGen's first-epoch freezing rationale
 - Used early stopping based on validity/novelty metrics to catch mode collapse before it ran for months undetected
@@ -192,36 +203,26 @@ already supports via the dim==3 branch in `models.py`).
 
 ---
 
+## ✅ FIXED — `compute_gradient_penalty` call signature (`loss.py` + both training scripts)
+
+`loss.py` was updated to add `real_mask` and `fake_mask` parameters (commit 8ebec32), and
+both training scripts have been updated to match:
+
+```python
+gp = compute_gradient_penalty(
+    critic, real_data, fake_data,
+    attn_mask_real,
+    (fake_data != tokenizer.pad_token_id).long(),
+    device
+)
+```
+
+---
+
 ## ⚠️ BUGS FOUND — Not Yet Fixed (as of 2026-04-24)
 
 These were identified by auditing the codebase after the temperature fix. Fix all of these
 before running any new training.
-
----
-
-### BUG 1 — `compute_gradient_penalty` called with wrong arguments in BOTH training scripts
-
-**Files:** `10p_train.py:328`, `fully_masked_train.py:317`
-**Severity:** CRITICAL — will crash at runtime with `TypeError`
-
-`loss.py` was updated to add `real_mask` and `fake_mask` parameters, but the calling code
-in both training scripts was never updated:
-
-```python
-# CURRENT (BROKEN) — in both training scripts:
-gp = compute_gradient_penalty(critic, real_data, fake_data, device)
-# `device` lands in the `real_mask` slot; `fake_mask` and `device` are both missing.
-```
-
-```python
-# FIXED — correct call:
-gp = compute_gradient_penalty(
-    critic, real_data, fake_data,
-    attn_mask_real,                                          # real_mask
-    (fake_data != tokenizer.pad_token_id).long(),           # fake_mask
-    device
-)
-```
 
 ---
 
@@ -391,6 +392,9 @@ gan/
 ├── # MODEL & LOSS
 ├── models.py                  Generator and Critic classes wrapping fine-tuned ProtBERT
 ├── loss.py                    Wasserstein loss + gradient penalty for WGAN training
+├── config.py                  Path resolution: reads SOURCE_DIR env var, falls back to
+│                              MN5 hostname detection. Exports PROTBERT_PATH, ESMFOLD_PATH,
+│                              CHECKPOINT_DIR, PROTBERT_BASE.
 │
 ├── # DATA
 ├── dataset.py                 PyTorch Dataset/DataLoader: tokenisation, batching,
@@ -548,8 +552,8 @@ evaluation is no longer appropriate.
 
 ## Possible Next Steps
 
-1. **Fix BUG 1 + BUG 2** — the training scripts will crash (BUG 1) and log garbage pLDDT (BUG 2).
-   These must be fixed before any new run. See bug section above.
+1. **Fix BUG 2** — training logs a tuple to wandb instead of a float; all pLDDT metrics are garbage.
+   Unpack the return value in both training scripts before any new run.
 
 2. **Implement differentiable generator-to-critic path** — the GAN has never functioned as a GAN
    because discrete token IDs break the gradient path (see Architectural Issue section).
