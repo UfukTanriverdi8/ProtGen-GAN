@@ -27,7 +27,8 @@ class Generator(nn.Module):
         ).view(batch_size, seq_len)
         confidence = probabilities.gather(-1, predicted_ids.unsqueeze(-1)).squeeze(-1)
         
-        # ☣️ NUCLEAR MISTAKE - this caused hours of trainings to be wasted because it was just picking the most confident token for each position, which is not what we want at all. 
+        # ☣️ NUCLEAR MISTAKE - this caused hours of trainings to be wasted because 
+        # it was just picking the most confident token for each position, which is not what we want at all. 
         # We want to sample from the distribution and then use those sampled tokens to determine which masked positions to fill.
         # confidence, predicted_ids = probabilities.max(dim=-1)
 

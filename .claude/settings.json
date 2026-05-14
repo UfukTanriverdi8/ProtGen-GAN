@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 -c \"import sys, json, os; d=json.loads(os.environ.get('CLAUDE_TOOL_INPUT','{}')); f=d.get('file_path',''); blocked=['.env','Conda-Environment-for-ProtGEN_mn5.yml']; matched=[b for b in blocked if b in f]; print(f'BLOCKED: {f} is protected. Edit manually if intentional.') if matched else None; sys.exit(1 if matched else 0)\"",
+            "blocking": true
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -369,13 +369,11 @@ ESMFold, ProteinMPNN, BioPython, progres, tmtools, and requests. If any dependen
 missing or broken, training crashes before a single data batch is processed. Consider
 importing only what's needed, or wrapping heavy imports inside the functions that use them.
 
-### QoL 5 — Both training scripts are ~80% duplicate code
+### QoL 5 — Both training scripts will be merged ✅ DECIDED
 
-`10p_train.py` and `fully_masked_train.py` share argument parsing, model setup, wandb
-init, ESMFold loading, `freeze_protbert()`, `run_evaluation()`, the training loop
-structure, and checkpointing. Any fix must be manually applied to both files — as seen
-with the GP bug where `loss.py` was fixed but the calling code in both scripts was not.
-Worth refactoring into a shared `train_utils.py` before the next round of changes.
+`10p_train.py` and `fully_masked_train.py` are ~80% duplicate. Decision made (2026-05-14):
+merge into a single script with a `--mode seeded|blind` flag before next training round.
+Until merged, any bug fix must be applied to both files manually.
 
 ---
 
@@ -522,6 +520,15 @@ Current standard: `n_critic = 8`, first epoch frozen.
 ---
 
 ## Infrastructure
+
+### Key Documents
+- `docs/HISTORY.md` — full project narrative: every phase, architectural decision, bug discovery, and current state. Read before suggesting experiments or evaluating what's been tried.
+- `docs/GIT_WORKFLOW.md` — complete two-remote git workflow and wandb offline sync. Includes agent-specific notes at the bottom.
+
+### Claude Code Automation (`.claude/`)
+- **Hook** — blocks edits to `.env` and `Conda-Environment-for-ProtGEN_mn5.yml`
+- **Skill: `slurm-job`** — generates MN5 SLURM scripts from run parameters
+- **Skill: `bug-fix-checklist`** — Claude-only; greps for all known unfixed bugs before touching training/eval files
 
 | Environment | Purpose |
 |-------------|---------|
