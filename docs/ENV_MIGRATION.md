@@ -15,8 +15,6 @@ Key version floor changes enforced in the new file:
 |---------|-----|-----------|-----|
 | Python | 3.8.19 | 3.12 | EOL |
 | PyTorch | 2.4.1+cu118 | 2.5.1+cu121 | CUDA 12.1 target |
-| torchvision | 0.19.1 | 0.20.1 | matches pt2.5.1 |
-| torchaudio | 2.4.1 | 2.5.1 | matches pt2.5.1 |
 | numpy | 1.24.4 | ≥1.26 | first release with Python 3.12 wheels |
 | scipy | 1.10.1 | ≥1.11 | first release with Python 3.12 wheels |
 | pillow | 9.4.0 | ≥10.0 | first release with Python 3.12 wheels |

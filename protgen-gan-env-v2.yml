@@ -18,8 +18,6 @@ dependencies:
   # pre-built wheel tier that satisfies both MN5 (driver 12.2) and Anzu
   # (driver 12.8), since CUDA is backward-compatible within a major version.
   - pytorch=2.5.1
-  - torchvision=0.20.1
-  - torchaudio=2.5.1
   - pytorch-cuda=12.1
 
   # ── Scientific computing ───────────────────────────────────────────────────
