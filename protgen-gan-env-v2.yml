@@ -1,4 +1,4 @@
-name: protgen-gan-env
+name: protgen-gan
 
 # Channel order matters here. pytorch and nvidia must come before conda-forge,
 # otherwise conda-forge can override the CUDA-aware PyTorch builds with generic
