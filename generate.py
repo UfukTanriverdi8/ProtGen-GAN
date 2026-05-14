@@ -5,7 +5,6 @@ import math
 import random
 import argparse
 from pathlib import Path
-from typing import List, Tuple
 
 import torch
 from transformers import AutoTokenizer, AutoModelForMaskedLM
@@ -16,7 +15,7 @@ CKPT_ROOT          = CHECKPOINT_DIR
 PROTBERT_FINETUNED = PROTBERT_PATH
 
 # ---------------- utils ----------------
-def load_length_distribution(dataset_path: str, max_len: int, min_len: int = 30) -> List[int]:
+def load_length_distribution(dataset_path: str, max_len: int, min_len: int = 30) -> list[int]:
     lengths = []
     with open(dataset_path, "r", encoding="utf-8") as f:
         for line in f:
@@ -30,7 +29,7 @@ def load_length_distribution(dataset_path: str, max_len: int, min_len: int = 30)
         raise ValueError(f"No sequence lengths found in range [{min_len}, {max_len}] from {dataset_path}.")
     return lengths
 
-def load_seed_sequences(seed_file: str, max_len: int, min_len: int = 30) -> List[str]:
+def load_seed_sequences(seed_file: str, max_len: int, min_len: int = 30) -> list[str]:
     seqs = []
     with open(seed_file, "r", encoding="utf-8") as f:
         for line in f:
@@ -44,10 +43,10 @@ def load_seed_sequences(seed_file: str, max_len: int, min_len: int = 30) -> List
         raise ValueError(f"No usable seed sequences in range [{min_len}, {max_len}] from {seed_file}.")
     return seqs
 
-def sample_sequence_length(lengths: List[int], rng: random.Random) -> int:
+def sample_sequence_length(lengths: list[int], rng: random.Random) -> int:
     return rng.choice(lengths)
 
-def to_token_ids(seq: str, tokenizer) -> List[int]:
+def to_token_ids(seq: str, tokenizer) -> list[int]:
     # ProtBERT expects space-separated amino acids
     return tokenizer.encode(" ".join(list(seq)), add_special_tokens=False)
 
@@ -60,7 +59,7 @@ def safe_local_from_pretrained(path: str, device: str):
     return model.to(device)
 
 # -------------- path logic --------------
-def resolve_model_path(ckpt_id: str) -> Tuple[str, str]:
+def resolve_model_path(ckpt_id: str) -> tuple[str, str]:
     """
     Returns (model_path, tag)
     tag in {"trained", "finetuned", "base"} for logging.
@@ -89,7 +88,7 @@ def derive_out_prefix(ckpt_id: str) -> str:
     return ckpt_id.replace("/", "_")
 
 # -------------- builders --------------
-def build_fully_masked_batch(batch_sizes: List[int], cls_id: int, sep_id: int, mask_id: int, pad_id: int, device) -> Tuple[torch.Tensor, torch.Tensor]:
+def build_fully_masked_batch(batch_sizes: list[int], cls_id: int, sep_id: int, mask_id: int, pad_id: int, device) -> tuple[torch.Tensor, torch.Tensor]:
     max_L = max(batch_sizes)
     B = len(batch_sizes)
     input_ids = torch.full((B, max_L + 2), pad_id, dtype=torch.long, device=device)
@@ -102,7 +101,7 @@ def build_fully_masked_batch(batch_sizes: List[int], cls_id: int, sep_id: int, m
             input_ids[i, 1 : L + 1] = mask_id
     return input_ids, attn
 
-def build_seeded_batch(seqs: List[str], tokenizer, keep_init: float, cls_id: int, sep_id: int, mask_id: int, pad_id: int, device, rng: random.Random) -> Tuple[torch.Tensor, torch.Tensor]:
+def build_seeded_batch(seqs: list[str], tokenizer, keep_init: float, cls_id: int, sep_id: int, mask_id: int, pad_id: int, device, rng: random.Random) -> tuple[torch.Tensor, torch.Tensor]:
     # tokenize each seed (no specials), then place kept tokens into the masked template
     tok_lists = [to_token_ids(s, tokenizer) for s in seqs]
     Ls = [len(toks) for toks in tok_lists]
@@ -128,9 +127,9 @@ def build_seeded_batch(seqs: List[str], tokenizer, keep_init: float, cls_id: int
 
 # -------------- generators --------------
 @torch.no_grad()
-def generate_full_mode_sequences(generator: Generator, tokenizer, num_sequences: int, length_pool: List[int],
+def generate_full_mode_sequences(generator: Generator, tokenizer, num_sequences: int, length_pool: list[int],
                                  keep_percent: float = 0.10, temperature: float = 1.0, batch_size: int = 64,
-                                 device: str = "cuda", rng_seed: int = 42) -> List[str]:
+                                 device: str = "cuda", rng_seed: int = 42) -> list[str]:
     assert 0.0 < keep_percent <= 1.0
     device = torch.device(device)
     generator.eval()
@@ -162,9 +161,9 @@ def generate_full_mode_sequences(generator: Generator, tokenizer, num_sequences:
     return out
 
 @torch.no_grad()
-def generate_seeded_mode_sequences(generator: Generator, tokenizer, num_sequences: int, seed_pool: List[str],
+def generate_seeded_mode_sequences(generator: Generator, tokenizer, num_sequences: int, seed_pool: list[str],
                                    keep_init: float = 0.10, keep_percent: float = 0.10, temperature: float = 1.0,
-                                   batch_size: int = 64, device: str = "cuda", rng_seed: int = 123) -> List[str]:
+                                   batch_size: int = 64, device: str = "cuda", rng_seed: int = 123) -> list[str]:
     """
     Seeded-10%: keep_init (~10%) real tokens, mask the rest, then iteratively fill keep_percent per step.
     """

@@ -1,0 +1,89 @@
+name: protgen-gan-env
+
+# Channel order matters here. pytorch and nvidia must come before conda-forge,
+# otherwise conda-forge can override the CUDA-aware PyTorch builds with generic
+# CPU-only variants during dependency resolution.
+channels:
+  - pytorch
+  - nvidia
+  - conda-forge
+
+dependencies:
+  # ── Core Python ────────────────────────────────────────────────────────────
+  - python=3.12
+
+  # ── PyTorch stack (CUDA 12.1) ──────────────────────────────────────────────
+  # pytorch-cuda=12.1 tells the pytorch channel which CUDA runtime to pull
+  # alongside PyTorch. CUDA 12.1 is the correct target: it is the highest
+  # pre-built wheel tier that satisfies both MN5 (driver 12.2) and Anzu
+  # (driver 12.8), since CUDA is backward-compatible within a major version.
+  - pytorch=2.5.1
+  - torchvision=0.20.1
+  - torchaudio=2.5.1
+  - pytorch-cuda=12.1
+
+  # ── Scientific computing ───────────────────────────────────────────────────
+  # Lower bounds here are the Python 3.12 compatibility floors.
+  # numpy <1.26 and scipy <1.11 have no Python 3.12 builds.
+  - numpy>=1.26
+  - scipy>=1.11
+  - pandas>=2.0
+  - pillow>=10.0    # pillow <10.0 has no Python 3.12 builds
+
+  # ── Biology ───────────────────────────────────────────────────────────────
+  - biopython>=1.83
+
+  # ── General utilities ─────────────────────────────────────────────────────
+  - tqdm
+  - pyyaml
+  # Pin pip explicitly so the pip section below uses a known-good resolver.
+  - pip>=24.0
+
+  # ── pip-only packages ─────────────────────────────────────────────────────
+  # These are either absent from conda channels or need PyPI for correct
+  # versioning. transformers is pinned tightly since the project was validated
+  # against 4.46.3 (ESMFold openfold_utils path is stable at this version).
+  - pip:
+    - transformers==4.46.3
+    - datasets>=3.1.0
+    - accelerate>=1.0.1
+    - huggingface-hub>=0.29
+    - safetensors>=0.5
+    - tokenizers>=0.20
+    - wandb>=0.16.6
+    - einops>=0.8
+    - progres>=0.2.7
+    - tmtools>=0.2.0
+    - mmtf-python>=1.1.3   # transitive dep of biopython structural features;
+                            # verify with: python -c "import mmtf" after build
+
+# ── PyTorch Geometric — install separately after env creation ──────────────
+#
+# The PyG C-extensions (scatter, sparse, cluster, spline-conv, pyg-lib) are
+# compiled against a specific PyTorch+CUDA ABI and are not available through
+# conda or standard PyPI. They must be fetched from the PyG wheel server with
+# the correct build tag AFTER the conda environment is created and activated.
+#
+# Run this one command after `conda env create -f environment.yml`:
+#
+#   pip install pyg-lib torch-scatter torch-sparse torch-cluster \
+#               torch-spline-conv torch-geometric \
+#               -f https://data.pyg.org/whl/torch-2.5.1+cu121.html
+#
+# Smoke-test the whole stack with:
+#   python -c "import torch_geometric; import progres; print('PyG OK')"
+#
+# ── MN5 deployment (air-gapped) ───────────────────────────────────────────
+#
+# MN5 has no internet access. The workflow is:
+#   1. Build and validate the env on Anzu (has internet).
+#   2. Install conda-pack into your base env: conda install conda-pack
+#   3. Pack:   conda pack -n protgen_env -o protgen_env.tar.gz
+#   4. Transfer: scp protgen_env.tar.gz ufuk@mn5:~/envs/
+#   5. On MN5:
+#        mkdir -p ~/envs/protgen_env
+#        tar -xzf protgen_env.tar.gz -C ~/envs/protgen_env
+#        source ~/envs/protgen_env/bin/activate
+#        conda-unpack
+#      conda-unpack rewrites any hardcoded Anzu paths so the env works from
+#      its new location on MN5.

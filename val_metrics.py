@@ -270,7 +270,7 @@ def get_mpnn_sequence_from_pdb(
     if cache_key in _MPNN_CACHE:
         model, checkpoint = _MPNN_CACHE[cache_key]
     else:
-        checkpoint = torch.load(checkpoint_path, map_location=device)
+        checkpoint = torch.load(checkpoint_path, map_location=device, weights_only=True)
     
     # Set model hyperparameters (should match those used during training)
     num_letters = 21
