@@ -8,6 +8,7 @@ from loss import critic_loss, generator_loss, compute_gradient_penalty
 from dataset import load_and_tokenize_dataset, get_dynamic_dataloaders
 from torch.optim import AdamW
 from val_metrics import *
+from config import PROTBERT_PATH, ESMFOLD_PATH, CHECKPOINT_DIR
 
 torch.backends.cuda.matmul.allow_tf32 = True
 os.environ["TOKENIZERS_PARALLELISM"] = "true"
@@ -46,8 +47,7 @@ args = parse_args()
 # -----------------------
 # Setup
 # -----------------------
-MAIN_FOLDER = "/gpfs/projects/etur29/ufuk/"
-model_checkpoint_path = os.path.join(MAIN_FOLDER, "dynamic-finetuned-protbert")
+model_checkpoint_path = PROTBERT_PATH
 
 tokenizer = AutoTokenizer.from_pretrained(model_checkpoint_path, do_lower_case=False)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -122,7 +122,7 @@ wandb.config.update({
 })
 
 # ESMFold Initialization
-esmfold_path = os.path.join(MAIN_FOLDER, "esmfold")
+esmfold_path = ESMFOLD_PATH
 esmfold_model = EsmForProteinFolding.from_pretrained(esmfold_path, low_cpu_mem_usage=True).to(device)
 esmfold_tokenizer = AutoTokenizer.from_pretrained(esmfold_path)
 esmfold_model.esm = esmfold_model.esm.half()
@@ -325,7 +325,12 @@ for epoch in range(n_epochs):
             ).detach()
 
             critic_optimizer.zero_grad()
-            gp          = compute_gradient_penalty(critic, real_data, fake_data, device)
+            gp          = compute_gradient_penalty(
+                critic, real_data, fake_data,
+                attn_mask_real,
+                (fake_data != tokenizer.pad_token_id).long(),
+                device
+            )
             real_scores = critic(real_data, attention_mask=attn_mask_real)
             fake_scores = critic(fake_data, attention_mask=(fake_data != tokenizer.pad_token_id).long())
             c_loss      = critic_loss(real_scores, fake_scores, gp, lambda_gp)
@@ -382,7 +387,7 @@ for epoch in range(n_epochs):
 
     # ---------- (model saving code stays unchanged) ----------
 
-    checkpoint_dir = os.path.join(MAIN_FOLDER, "gan-checkpoints")
+    checkpoint_dir = CHECKPOINT_DIR
     save_dir = f"{checkpoint_dir}/{args.run_name}/epoch_{epoch+1}"
     os.makedirs(save_dir, exist_ok=True)
 

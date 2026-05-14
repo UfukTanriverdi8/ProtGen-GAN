@@ -10,12 +10,10 @@ from typing import List, Tuple
 import torch
 from transformers import AutoTokenizer, AutoModelForMaskedLM
 from models import Generator
+from config import CHECKPOINT_DIR, PROTBERT_PATH, PROTBERT_BASE
 
-# ---- fixed paths on MN5 ----
-MAIN_FOLDER = "/gpfs/projects/etur29/ufuk/"
-CKPT_ROOT = os.path.join(MAIN_FOLDER, "gan-checkpoints")
-PROTBERT_FINETUNED = os.path.join(MAIN_FOLDER, "dynamic-finetuned-protbert")
-PROTBERT_BASE = os.path.join(MAIN_FOLDER, "protbert-base")  
+CKPT_ROOT          = CHECKPOINT_DIR
+PROTBERT_FINETUNED = PROTBERT_PATH
 
 # ---------------- utils ----------------
 def load_length_distribution(dataset_path: str, max_len: int, min_len: int = 30) -> List[int]:
