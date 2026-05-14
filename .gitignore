@@ -11,3 +11,6 @@ passwords.txt
 
 # Ignore Visual Studio Code settings
 .vscode/
+
+# Claude Code session state
+.remember/
