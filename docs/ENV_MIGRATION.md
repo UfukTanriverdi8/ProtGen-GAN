@@ -7,7 +7,8 @@ The PyG C-extensions were compiled against `pt24cu118` and break under PyTorch 2
 
 ## New environment file
 
-`protgen-gan-env-v2.yml` — replaces `Conda-Environment-for-ProtGEN_mn5.yml`.
+`protgen-gan-env-v2.yml` — supersedes `Conda-Environment-for-ProtGEN_mn5.yml`.
+The old YAML is still the active environment on MN5 until the migration is deployed there.
 
 Key version floor changes enforced in the new file:
 
@@ -65,10 +66,25 @@ pip install pyg-lib torch-scatter torch-sparse torch-cluster \
             torch-spline-conv torch-geometric \
             -f https://data.pyg.org/whl/torch-2.5.1+cu121.html
 
-# 4. Smoke test
-python -c "import torch; import progres; print('PyG+progres OK')"
-python -c "import mmtf; print('mmtf OK')"
-python -c "from val_metrics import calculate_pairwise_tm_score; print('val_metrics OK')"
+# 4. Smoke test — external deps
+python -c "
+import torch; print(f'PyTorch {torch.__version__}, CUDA avail: {torch.cuda.is_available()}')
+import transformers, numpy, scipy, pandas
+import Bio, tmtools, mmtf, wandb, einops, datasets
+import torch_scatter, torch_sparse, torch_cluster, torch_geometric
+import progres
+print('All external deps OK')
+"
+
+# 5. Smoke test — project modules (requires SOURCE_DIR set)
+export SOURCE_DIR=/path/to/your/models   # must contain: dynamic-finetuned-protbert/, protbert-base/, esmfold/, gan-checkpoints/
+python -c "
+from config import PROTBERT_PATH, ESMFOLD_PATH, CHECKPOINT_DIR
+from models import Generator, Critic
+from loss import generator_loss, critic_loss, compute_gradient_penalty
+from dataset import DNMTDataset
+print('All project modules OK')
+"
 ```
 
 ## MN5 deployment (air-gapped)

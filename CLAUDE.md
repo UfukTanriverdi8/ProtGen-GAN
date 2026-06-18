@@ -446,8 +446,9 @@ gan/
 ├── # CONFIG & DOCS
 ├── CLAUDE.md                  This file
 ├── README.md                  High-level project overview
-├── Conda-Environment-for-ProtGEN_mn5.yml  Full conda env spec (PyTorch 2.4.1,
-│                              transformers 4.46, ESMFold, ProteinMPNN, PROGRES, etc.)
+├── protgen-gan-env-v2.yml     Conda env spec (Python 3.12, PyTorch 2.5.1, CUDA 12.1)
+├── Conda-Environment-for-ProtGEN_mn5.yml  Legacy env spec (Python 3.8, PyTorch 2.4.1)
+│                              ⚠ Still active on MN5 until env is migrated there
 └── bfg-1.15.0.jar             BFG repo cleaner (git history cleanup utility)
 ```
 
@@ -526,7 +527,7 @@ Current standard: `n_critic = 8`, first epoch frozen.
 - `docs/GIT_WORKFLOW.md` — complete two-remote git workflow and wandb offline sync. Includes agent-specific notes at the bottom.
 
 ### Claude Code Automation (`.claude/`)
-- **Hook** — blocks edits to `.env` and `Conda-Environment-for-ProtGEN_mn5.yml`
+- **Hook** — blocks edits to `.env` and `protgen-gan-env-v2.yml`
 - **Skill: `slurm-job`** — generates MN5 SLURM scripts from run parameters
 - **Skill: `bug-fix-checklist`** — Claude-only; greps for all known unfixed bugs before touching training/eval files
 

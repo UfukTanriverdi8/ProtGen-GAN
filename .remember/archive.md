@@ -1,0 +1,6 @@
+# Archive
+
+## Week of 2026-05-12
+
+PyTorch 2.6+ compatibility fix: torch.load(weights_only=False) in val_metrics.py for 2.5 compat. Created protgen-gan-env-v2.yml with updated deps (numpy≥1.26, scipy≥1.11, pillow≥10, cuda=12.1, PyG pt25cu121). Added smoke test validation. Codebase clean—no torch breaks or stdlib removals.
+```
