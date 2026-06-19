@@ -1,18 +1,10 @@
-import torch
-from transformers import AutoTokenizer, AutoModelForMaskedLM, EsmForProteinFolding
-from models import Generator, Critic
-import os
-import wandb
-from loss import critic_loss, generator_loss, compute_gradient_penalty
-from dataset import load_and_tokenize_dataset, get_dataloaders
-from torch.optim import AdamW
-#from val_metrics import calculate_plddt_scores_and_save_pdb, calculate_tm_scores, clean_m8_folder, calculate_mpnn_alignment_metric, generate_fake_sequences
-
-#os.environ["CUDA_VISIBLE_DEVICES"] = "3"
-device="cuda"
-
 from tmtools.io import get_structure, get_residue_data
 from tmtools import tm_align
+# from val_metrics import calculate_plddt_scores_and_save_pdb, calculate_tm_scores, clean_m8_folder, calculate_mpnn_alignment_metric, generate_fake_sequences
+
+# os.environ["CUDA_VISIBLE_DEVICES"] = "3"
+device = "cuda"
+
 
 # Load the first protein structure and extract backbone data
 structure1 = get_structure("validation/test_pdb/generated_protein_0.pdb")
@@ -34,8 +26,6 @@ result = tm_align(coords1, coords2, seq1, seq2)
 print("TM score (chain1):", result.tm_norm_chain1)
 print("TM score (chain2):", result.tm_norm_chain2)
 print("RMSD:", result.rmsd)
-
-
 
 
 """ model_checkpoint_path = f"../checkpoints/dynamic/saved-final-300"

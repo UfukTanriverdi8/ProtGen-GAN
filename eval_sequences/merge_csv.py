@@ -12,9 +12,11 @@ all_df = pd.concat(dfs, ignore_index=True)
 if "uid" not in all_df.columns or all_df["uid"].notna().sum() == 0:
     all_df["uid"] = all_df["run_name"].astype(str) + ":" + all_df["id"].astype(str)
 
+
 def first_non_null(s):
     s2 = s.dropna()
     return s2.iloc[0] if len(s2) else np.nan
+
 
 merged = all_df.groupby("uid", as_index=False).agg(first_non_null)
 

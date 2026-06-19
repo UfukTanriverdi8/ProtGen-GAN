@@ -13,7 +13,6 @@ Build a master CSV from sequence text files.
 """
 
 import argparse
-import glob
 import os
 import random
 import re
@@ -42,12 +41,16 @@ EXPECTED_FILES = [
 
 # Regex to parse filename into (run_name, checkpoint_epoch, mode)
 # Matches both with and without _epoch_<int> part.
-FILENAME_RE = re.compile(r"""
+FILENAME_RE = re.compile(
+    r"""
     ^(?P<base>.+?)          # everything up to the optional epoch part
     (?:_epoch_(?P<epoch>\d+))?  # optional epoch_X
     _(?P<mode>full|seeded)  # mode suffix
     \.txt$
-""", re.VERBOSE)
+""",
+    re.VERBOSE,
+)
+
 
 def parse_filename(fname: str):
     """
@@ -73,6 +76,7 @@ def parse_filename(fname: str):
 
     return run_name, mode, checkpoint_epoch
 
+
 def read_sequences(path: str):
     seqs = []
     with open(path, "r", encoding="utf-8") as f:
@@ -83,21 +87,29 @@ def read_sequences(path: str):
             seqs.append(s)
     return seqs
 
+
 def main():
-    parser = argparse.ArgumentParser(description="Build master CSV from sequence files.")
+    parser = argparse.ArgumentParser(
+        description="Build master CSV from sequence files."
+    )
     parser.add_argument(
-        "--dir", default=".", help="Directory containing the .txt files (default: current dir)"
+        "--dir",
+        default=".",
+        help="Directory containing the .txt files (default: current dir)",
     )
     parser.add_argument(
         "--out", default=OUTPUT_CSV, help=f"Output CSV filename (default: {OUTPUT_CSV})"
     )
     parser.add_argument(
-        "--n", type=int, default=SAMPLE_PER_FILE,
-        help=f"Sample size per file (default: {SAMPLE_PER_FILE})"
+        "--n",
+        type=int,
+        default=SAMPLE_PER_FILE,
+        help=f"Sample size per file (default: {SAMPLE_PER_FILE})",
     )
     parser.add_argument(
-        "--strict", action="store_true",
-        help="If set, fail if any EXPECTED_FILES are missing. Otherwise, only use those that exist."
+        "--strict",
+        action="store_true",
+        help="If set, fail if any EXPECTED_FILES are missing. Otherwise, only use those that exist.",
     )
     args = parser.parse_args()
 
@@ -131,21 +143,23 @@ def main():
         # id resets per (run_name, mode, checkpoint_epoch)
         for i, idx in enumerate(sample_indices, start=1):
             seq = seqs[idx]
-            rows.append({
-                "id": i,  # 1..N within this file/case
-                "run_name": run_name,
-                "mode": mode,
-                "checkpoint_epoch": checkpoint_epoch,  # empty string if N/A
-                "sequence": seq,
-                "length": len(seq),
-                "plddt": "",         # to be filled later
-                "progres": "",       # to be filled later
-                "max_tmscore": "",   # to be filled later
-                "seq_identity": "",
-                "seq_similarity": "",
-                "sc_accuracy": "",    # to be filled later
-                "notes": "",         # optional flags later
-            })
+            rows.append(
+                {
+                    "id": i,  # 1..N within this file/case
+                    "run_name": run_name,
+                    "mode": mode,
+                    "checkpoint_epoch": checkpoint_epoch,  # empty string if N/A
+                    "sequence": seq,
+                    "length": len(seq),
+                    "plddt": "",  # to be filled later
+                    "progres": "",  # to be filled later
+                    "max_tmscore": "",  # to be filled later
+                    "seq_identity": "",
+                    "seq_similarity": "",
+                    "sc_accuracy": "",  # to be filled later
+                    "notes": "",  # optional flags later
+                }
+            )
 
     # Build DataFrame with exact column order
     columns = [
@@ -165,12 +179,14 @@ def main():
 
     # Sort (optional but nice): by run_name, mode, checkpoint, then id
     df["checkpoint_epoch_sort"] = df["checkpoint_epoch"].replace("", "-1").astype(int)
-    df = df.sort_values(by=["run_name", "mode", "checkpoint_epoch_sort", "id"]).drop(columns=["checkpoint_epoch_sort"])
+    df = df.sort_values(by=["run_name", "mode", "checkpoint_epoch_sort", "id"]).drop(
+        columns=["checkpoint_epoch_sort"]
+    )
 
     # Write CSV (UTF-8)
     df.to_csv(args.out, index=False)
     print(f"Wrote {len(df):,} rows to {args.out}")
 
+
 if __name__ == "__main__":
     main()
-

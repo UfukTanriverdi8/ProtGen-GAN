@@ -9,6 +9,7 @@ import socket
 # Add this to your SLURM job script or shell config (~/.bashrc).
 # If unset, falls back to hostname-based detection for MN5.
 
+
 def _resolve_main_folder():
     env = os.environ.get("SOURCE_DIR")
     if env:
@@ -21,8 +22,9 @@ def _resolve_main_folder():
         "Run: export SOURCE_DIR=/path/to/your/model/storage"
     )
 
-MAIN_FOLDER    = _resolve_main_folder()
-PROTBERT_PATH  = os.path.join(MAIN_FOLDER, "dynamic-finetuned-protbert")
-PROTBERT_BASE  = os.path.join(MAIN_FOLDER, "protbert-base")
-ESMFOLD_PATH   = os.path.join(MAIN_FOLDER, "esmfold")
+
+MAIN_FOLDER = _resolve_main_folder()
+PROTBERT_PATH = os.path.join(MAIN_FOLDER, "dynamic-finetuned-protbert")
+PROTBERT_BASE = os.path.join(MAIN_FOLDER, "protbert-base")
+ESMFOLD_PATH = os.path.join(MAIN_FOLDER, "esmfold")
 CHECKPOINT_DIR = os.path.join(MAIN_FOLDER, "gan-checkpoints")

@@ -1,13 +1,21 @@
 import torch
 
+
 def critic_loss(real_scores, fake_scores, gradient_penalty, lambda_gp=10):
-    return -torch.mean(real_scores) + torch.mean(fake_scores) + lambda_gp * gradient_penalty
+    return (
+        -torch.mean(real_scores)
+        + torch.mean(fake_scores)
+        + lambda_gp * gradient_penalty
+    )
+
 
 def generator_loss(fake_scores):
     return -torch.mean(fake_scores)
 
 
-def compute_gradient_penalty(critic, real_data, fake_data, real_mask, fake_mask, device):
+def compute_gradient_penalty(
+    critic, real_data, fake_data, real_mask, fake_mask, device
+):
     # OLD: def compute_gradient_penalty(critic, real_data, fake_data, device)
     # We weren't passing the real/fake attention masks at all.
     # This meant we had no way to know which positions were padding.
@@ -26,7 +34,9 @@ def compute_gradient_penalty(critic, real_data, fake_data, real_mask, fake_mask,
     # alpha is random per sample in the batch, so we get different in-between
     # points each time. This is how we sample the region between real and fake
     # to check the critic's sensitivity there.
-    interpolates = (alpha * real_embeds + (1 - alpha) * fake_embeds).requires_grad_(True)
+    interpolates = (alpha * real_embeds + (1 - alpha) * fake_embeds).requires_grad_(
+        True
+    )
 
     # OLD: attention_mask = torch.ones(interpolates.size()[:2]).to(device)
     # This told the transformer "every position is real content" for ALL sequences.
@@ -60,8 +70,7 @@ def compute_gradient_penalty(critic, real_data, fake_data, real_mask, fake_mask,
     # This is the same path the critic takes during real training,
     # so the GP is now measuring the right function.
     transformer_output = critic.protbert.bert.encoder(
-        interpolates,
-        attention_mask=extended_mask
+        interpolates, attention_mask=extended_mask
     )
     last_hidden_state = transformer_output.last_hidden_state
 

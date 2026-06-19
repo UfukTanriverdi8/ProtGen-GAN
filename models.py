@@ -2,8 +2,16 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+
 class Generator(nn.Module):
-    def __init__(self, protbert_model, cls_token_id=2, sep_token_id=3 , mask_token_id=4, pad_token_id=0):
+    def __init__(
+        self,
+        protbert_model,
+        cls_token_id=2,
+        sep_token_id=3,
+        mask_token_id=4,
+        pad_token_id=0,
+    ):
         super().__init__()
         self.protbert = protbert_model
         self.mask_token_id = mask_token_id
@@ -15,26 +23,32 @@ class Generator(nn.Module):
         outputs = self.protbert(input_ids=input_ids, attention_mask=attention_mask)
         return outputs.logits
 
-    def generate(self, input_ids, attention_mask=None, temperature=1.0, keep_percent=0.1, current_rate=None):
+    def generate(
+        self,
+        input_ids,
+        attention_mask=None,
+        temperature=1.0,
+        keep_percent=0.1,
+        current_rate=None,
+    ):
         batch_size, seq_len = input_ids.size()
         outputs = self.protbert(input_ids=input_ids, attention_mask=attention_mask)
         logits = outputs.logits / temperature
         probabilities = F.softmax(logits, dim=-1)
-        
+
         predicted_ids = torch.multinomial(
-            probabilities.view(-1, probabilities.size(-1)), 
-            num_samples=1
+            probabilities.view(-1, probabilities.size(-1)), num_samples=1
         ).view(batch_size, seq_len)
         confidence = probabilities.gather(-1, predicted_ids.unsqueeze(-1)).squeeze(-1)
-        
-        # ☣️ NUCLEAR MISTAKE - this caused hours of trainings to be wasted because 
-        # it was just picking the most confident token for each position, which is not what we want at all. 
+
+        # ☣️ NUCLEAR MISTAKE - this caused hours of trainings to be wasted because
+        # it was just picking the most confident token for each position, which is not what we want at all.
         # We want to sample from the distribution and then use those sampled tokens to determine which masked positions to fill.
         # confidence, predicted_ids = probabilities.max(dim=-1)
         # Let us pay our respects to the fallen gpu hours for a moment of silence 🪦
 
         for i in range(batch_size):
-            seq_mask_indices = (input_ids[i] == self.mask_token_id)
+            seq_mask_indices = input_ids[i] == self.mask_token_id
             if not seq_mask_indices.any():
                 continue
 
@@ -45,9 +59,9 @@ class Generator(nn.Module):
                 num_to_fill = remaining_masks
             else:
                 meaningful_seq = (
-                    (input_ids[i] != self.pad_token_id) &
-                    (input_ids[i] != self.cls_token_id) &
-                    (input_ids[i] != self.sep_token_id)
+                    (input_ids[i] != self.pad_token_id)
+                    & (input_ids[i] != self.cls_token_id)
+                    & (input_ids[i] != self.sep_token_id)
                 )
                 meaningful_count = meaningful_seq.sum().item()
                 num_to_fill = max(1, int(keep_percent * meaningful_count))
@@ -59,12 +73,10 @@ class Generator(nn.Module):
             seq_confidence[~seq_mask_indices] = 0.0
 
             topk_values, topk_positions = torch.topk(seq_confidence, num_to_fill)
-            for pos in topk_positions.cpu().tolist():     # ‹- convert to list of ints
+            for pos in topk_positions.cpu().tolist():  # ‹- convert to list of ints
                 if input_ids[i, pos] == self.mask_token_id:
                     input_ids[i, pos] = predicted_ids[i, pos]
         return input_ids
-
-
 
 
 class Critic(nn.Module):
@@ -81,7 +93,7 @@ class Critic(nn.Module):
             nn.ReLU(),
             nn.Linear(hidden_size // 4, hidden_size // 16),
             nn.ReLU(),
-            nn.Linear(hidden_size // 16, 1)
+            nn.Linear(hidden_size // 16, 1),
         )
 
     def forward(self, input_data, attention_mask=None):
@@ -97,8 +109,7 @@ class Critic(nn.Module):
                 attention_mask, input_data.shape[:2]
             )
             transformer_output = self.protbert.bert.encoder(
-                input_data,
-                attention_mask=extended_mask
+                input_data, attention_mask=extended_mask
             )
             last_hidden_state = transformer_output.last_hidden_state
 
