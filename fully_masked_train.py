@@ -1,6 +1,11 @@
 import os
 import argparse
 import torch
+
+# GP needs second-order gradients through attention; efficient/flash backends lack this
+torch.backends.cuda.enable_flash_sdp(False)
+torch.backends.cuda.enable_mem_efficient_sdp(False)
+
 from transformers import AutoTokenizer, AutoModelForMaskedLM, EsmForProteinFolding
 from models import Generator, Critic
 import wandb
