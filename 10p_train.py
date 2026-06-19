@@ -228,6 +228,8 @@ def run_evaluation(epoch_idx, batch_idx,
         device=device,
     )
 
+    unique_ratio = len(set(generated_sequences)) / len(generated_sequences)
+
     avg_plddt_score, _ = calculate_plddt_scores_and_save_pdb(
         generated_sequences, esmfold_tokenizer, esmfold_model,
         batch_size=args.eval_batch_size,
@@ -258,6 +260,7 @@ def run_evaluation(epoch_idx, batch_idx,
         "scAccuracy":       avg_scAcc,
         "progres":          avg_progres,
         "pairwise_tm":      avg_pairwise_tm_score,
+        "unique_ratio":     unique_ratio,
         "tag":              tag              # handy for filtering
     })
     clean_m8_folder()
@@ -400,7 +403,11 @@ for epoch in range(n_epochs):
     gen_dir = f"{save_dir}/generator_bert"
     generator.protbert.save_pretrained(gen_dir)
 
+    torch.save(gen_optimizer.state_dict(), f"{save_dir}/gen_optimizer.pth")
+    torch.save(critic_optimizer.state_dict(), f"{save_dir}/critic_optimizer.pth")
+
     print(f"Models saved for epoch {epoch+1}:")
     print(f" - Critic ProtBERT saved at: {critic_bert_dir}")
     print(f" - Critic Classifier saved at: {critic_classifier_path}")
     print(f" - Generator ProtBERT saved at: {gen_dir}")
+    print(f" - Optimizer states saved at: {save_dir}/")

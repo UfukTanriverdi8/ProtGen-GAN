@@ -1,5 +1,6 @@
 import random
 import os
+import functools
 import torch
 from transformers.models.esm.openfold_utils.protein import to_pdb, Protein as OFProtein
 from transformers.models.esm.openfold_utils.feats import atom14_to_atom37
@@ -45,9 +46,13 @@ def clean_m8_folder():
         print("⚠️ validation/m8s/ folder does not exist.")
 
 
-def sample_sequence_length(file_path="data/dnmt_unformatted.txt", variation=0.1):
+@functools.lru_cache(maxsize=4)
+def _load_sequence_lengths(file_path):
     with open(file_path, 'r') as file:
-        sequence_lengths = [len(line.strip()) for line in file if line.strip()]
+        return tuple(len(line.strip()) for line in file if line.strip())
+
+def sample_sequence_length(file_path="data/dnmt_unformatted.txt", variation=0.1):
+    sequence_lengths = _load_sequence_lengths(file_path)
     base_length = random.choice(sequence_lengths)
     variation_amount = int(base_length * variation)
     sampled_length = base_length + random.randint(-variation_amount, variation_amount)
