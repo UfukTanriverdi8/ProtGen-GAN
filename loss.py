@@ -48,7 +48,7 @@ def compute_gradient_penalty(
     # FIX: only keep positions that are real in BOTH sequences.
     # If position 5 is padding in either real or fake, we ignore it.
     # This way the gradient is only measured over meaningful positions.
-    joint_mask = (real_mask & fake_mask.bool()).float()
+    joint_mask = (real_mask.bool() & fake_mask.bool()).float()
 
     # OLD: critic_scores = critic(interpolates, attention_mask=attention_mask)
     # This passed the 3D interpolated embeddings directly to critic.forward().
