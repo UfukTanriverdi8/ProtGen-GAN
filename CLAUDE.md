@@ -287,48 +287,23 @@ generation quality. Used `mask_token_id` instead of `pad_token_id`.
 
 ## ⚠️ QUALITY OF LIFE — Missing Features Worth Adding
 
-### QoL 1 — Uniqueness metric missing from in-training evaluation
+### ✅ QoL 1 — Uniqueness metric added to in-training evaluation (2026-06-19)
 
 **Files:** `10p_train.py`, `fully_masked_train.py` → `run_evaluation()`
+**Fixed:** `unique_ratio` computed and logged to wandb after sequence generation.
+Cheapest mode-collapse tripwire — would have caught the argmax bug on the first run.
 
-The eval loop tracks pLDDT, scAccuracy, progres, pairwise TM-score — none of which would
-have caught mode collapse early. A simple uniqueness ratio on the eval batch would have
-caught the argmax bug on the very first run.
+### ✅ QoL 2 — Optimizer state now saved in checkpoints (2026-06-19)
 
-Add to `run_evaluation()`:
-```python
-unique_ratio = len(set(generated_sequences)) / len(generated_sequences)
-wandb.log({"unique_ratio": unique_ratio, ...})
-```
+**Files:** `10p_train.py`, `fully_masked_train.py` → checkpoint saving block
+**Fixed:** `gen_optimizer.pth` and `critic_optimizer.pth` saved alongside model weights.
+Load logic to be added when resume script is built (QoL 5).
 
-This is a 1-line addition and is the single most valuable early-warning signal.
+### ✅ QoL 3 — `sample_sequence_length` cached via `lru_cache` (2026-06-19)
 
-> Add this before implementing the gradient-flow fix, not after — it's the cheapest
-> tripwire for the mode-collapse risk flagged in `docs/GENERATOR_GRADIENT_FIX.md`.
-
-### QoL 2 — Optimizer state not saved in checkpoints
-
-**Files:** `10p_train.py:386–401`, `fully_masked_train.py:375–391`
-
-Only ProtBERT weights and the classifier head are saved. If a run crashes and is resumed,
-Adam's momentum and variance accumulators are lost, causing instability for many batches.
-
-Add to checkpoint saving:
-```python
-torch.save(gen_optimizer.state_dict(),    f"{save_dir}/gen_optimizer.pth")
-torch.save(critic_optimizer.state_dict(), f"{save_dir}/critic_optimizer.pth")
-```
-
-And add corresponding load logic at the start of any resume script.
-
-### QoL 3 — `sample_sequence_length` re-reads the full dataset file on every call
-
-**File:** `val_metrics.py:48–57`
-
-`sample_sequence_length()` opens, reads, and parses the entire dataset file from disk
-every single invocation. It is called once per generated sequence during evaluation
-(10+ calls per `run_evaluation()`). Fix: load the length list once at module level or
-pass it as an argument.
+**File:** `val_metrics.py:49–53`
+**Fixed:** File read extracted into `_load_sequence_lengths()` with `@functools.lru_cache`.
+52k-line dataset file read once, cached for all subsequent calls.
 
 ### QoL 4 — `from val_metrics import *` loads the entire evaluation stack at training startup
 
@@ -550,9 +525,7 @@ evaluation is no longer appropriate.
 
 3. ~~**Fix remaining bugs (3–6)**~~ — ✅ Fixed (2026-06-19)
 
-4. **Add the uniqueness metric (QoL 1)** — before implementing the gradient-flow fix, not
-   after. Cheapest available tripwire for the mode-collapse risk noted in
-   `docs/GENERATOR_GRADIENT_FIX.md`.
+4. ~~**Add the uniqueness metric (QoL 1)**~~ — ✅ Fixed (2026-06-19). QoL 2–3 also done.
 
 5. **Verify blind mode diversity** — run a small generation test (e.g. 1k sequences) and
    confirm unique sequence count is well above ~1 per length now that multinomial is in place.
