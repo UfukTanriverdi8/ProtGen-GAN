@@ -31,6 +31,7 @@ class Generator(nn.Module):
         # it was just picking the most confident token for each position, which is not what we want at all. 
         # We want to sample from the distribution and then use those sampled tokens to determine which masked positions to fill.
         # confidence, predicted_ids = probabilities.max(dim=-1)
+        # Let us pay our respects to the fallen gpu hours for a moment of silence 🪦
 
         for i in range(batch_size):
             seq_mask_indices = (input_ids[i] == self.mask_token_id)
