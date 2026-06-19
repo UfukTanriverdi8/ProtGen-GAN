@@ -151,6 +151,9 @@ Seeded mode was accidentally functional only because different seeds produced di
 ## ⚠️ ARCHITECTURAL ISSUE — Generator Has Never Received Adversarial Gradient
 
 **Affects:** Every training run ever. Not a one-line fix — requires architectural change.
+**Status (2026-06):** Fix plan researched and decided, not yet implemented. Full research
+synthesis and staged implementation plan live in `docs/GENERATOR_GRADIENT_FIX.md` — read
+that before touching `models.py`, `loss.py`, or either training script for this issue.
 
 ### The Problem
 
@@ -180,26 +183,36 @@ a static generator.
 This is true both with the old argmax and with the new `torch.multinomial()` — both produce
 discrete integers, neither is differentiable.
 
-### Fixes (all require architectural change)
+### Decided fix (see `docs/GENERATOR_GRADIENT_FIX.md` for full justification)
 
-- **Gumbel-Softmax relaxation:** Instead of sampling discrete tokens, use
-  `F.gumbel_softmax(logits / temperature, tau=1.0, hard=False)` to get soft
-  pseudo-one-hot vectors. Pass these as weighted sums of the embedding matrix to the critic:
-  `soft_embeds = soft_tokens @ critic.protbert.bert.embeddings.word_embeddings.weight`
-  Gradients flow through the soft approximation back into the generator.
+Soft embedding pass-through, **not** Gumbel-Softmax and **not** REINFORCE for the
+adversarial term — the critic is differentiable, so a continuous relaxation is the right
+family. Decided approach in full:
 
-- **Soft embedding pass-through (simpler):** After the generator produces logits, compute:
-  `soft_embeds = F.softmax(logits / temperature, dim=-1) @ embedding_matrix`
-  Skip the discrete sampling for the critic pass; keep sampling only for the actual
-  sequence output. Gradients flow through `softmax → embedding matrix → generator logits`.
+1. **Soft embeddings at the critic-facing step:**
+   `soft_embeds = F.softmax(logits / temperature, dim=-1) @ embedding_matrix`, replacing
+   hard token IDs only for the critic forward pass during generator updates. Hard sampling
+   stays for the actual output sequences used everywhere else (logging, FASTA, evaluation).
+2. **Embed the real sequences too, through the same matrix** — not raw IDs. Skipping this
+   lets the critic trivially separate sparse one-hot real from dense softmax fake, which
+   would turn the zero-gradient bug into a near-zero-gradient bug instead of actually
+   fixing it. This was the detail missing from the original three-candidate list.
+3. **Interpolate the WGAN-GP gradient penalty in embedding space**, not on raw integer IDs
+   — `loss.py`'s `compute_gradient_penalty` needs a corresponding rewrite.
+4. **Truncate backprop to the final refinement step only (K=1) to start**, with
+   straight-through (hard forward / soft backward) at intermediate mask-and-refill commits
+   so ProtBERT stays in-distribution at every step except the one receiving gradient.
+5. **Add a KL or MLM anchor against the frozen pretrained ProtBERT** to the generator loss.
+   Protein-specific precedent (DRAKES, ICLR 2025) showed that without this, a protein
+   generator can learn to fool its reward/critic while producing sequences that no longer
+   fold (median scRMSD 0.918 → 7.307 in their no-anchor ablation).
+6. **Validate in seeded mode before blind mode.** Blind mode's full masking combined with
+   adversarial loss is a documented mode-collapse risk in adjacent literature. Note: BUG 4
+   (blind mode's attention-mask bug, below) should also be fixed before blind mode is used
+   to test this, to avoid conflating the two issues.
 
-- **REINFORCE / policy gradient:** Treat the generator as a policy, use the critic score
-  as reward signal, apply REINFORCE gradient estimate. No differentiable path needed, but
-  higher variance — requires careful baseline tuning.
-
-The Gumbel-Softmax or soft-embedding approach is the most natural fit given the existing
-architecture. Both would require the critic to accept continuous 3D embeddings (which it
-already supports via the dim==3 branch in `models.py`).
+Full staged implementation plan (Stage 0 through Stage 5), validation criteria, failure
+tripwires, and literature references are in `docs/GENERATOR_GRADIENT_FIX.md`.
 
 ---
 
@@ -216,6 +229,10 @@ gp = compute_gradient_penalty(
     device
 )
 ```
+
+> Note: this function will need a further rewrite as part of the gradient-flow fix above —
+> the gradient penalty must interpolate in embedding space rather than on raw integer IDs
+> once soft embeddings are introduced. See `docs/GENERATOR_GRADIENT_FIX.md`, Stage 1.
 
 ---
 
@@ -283,6 +300,10 @@ Zeroing out [MASK] positions in the key/value attention mask means no token can 
 those positions as context. ProtBERT is designed to predict masked tokens — they must be
 visible as keys in bidirectional attention.
 
+> Fix this before using blind mode to validate the gradient-flow fix above (see
+> `docs/GENERATOR_GRADIENT_FIX.md`, Stage 4) — otherwise this bug and the gradient fix get
+> debugged together, which will be confusing.
+
 ---
 
 ### BUG 5 — NaN guard in `calculate_plddt_scores_and_save_pdb` is silently overwritten
@@ -335,6 +356,9 @@ wandb.log({"unique_ratio": unique_ratio, ...})
 ```
 
 This is a 1-line addition and is the single most valuable early-warning signal.
+
+> Add this before implementing the gradient-flow fix, not after — it's the cheapest
+> tripwire for the mode-collapse risk flagged in `docs/GENERATOR_GRADIENT_FIX.md`.
 
 ### QoL 2 — Optimizer state not saved in checkpoints
 
@@ -517,6 +541,9 @@ Current standard: `n_critic = 8`, first epoch frozen.
 
 > Note: all of these runs were conducted under the argmax bug. Hyperparameter behaviour
 > may change meaningfully after the `torch.multinomial()` fix. Re-validation recommended.
+> It may change again, possibly more significantly, once the gradient-flow fix in
+> `docs/GENERATOR_GRADIENT_FIX.md` is implemented and the generator actually starts
+> receiving adversarial signal for the first time.
 
 ---
 
@@ -525,6 +552,7 @@ Current standard: `n_critic = 8`, first epoch frozen.
 ### Key Documents
 - `docs/HISTORY.md` — full project narrative: every phase, architectural decision, bug discovery, and current state. Read before suggesting experiments or evaluating what's been tried.
 - `docs/GIT_WORKFLOW.md` — complete two-remote git workflow and wandb offline sync. Includes agent-specific notes at the bottom.
+- `docs/GENERATOR_GRADIENT_FIX.md` — full research synthesis and staged implementation plan for the non-differentiable-generator architectural issue (above). Read before touching `models.py`, `loss.py`, or either training script in relation to that issue.
 
 ### Claude Code Automation (`.claude/`)
 - **Hook** — blocks edits to `.env` and `protgen-gan-env-v2.yml`
@@ -563,32 +591,39 @@ evaluation is no longer appropriate.
 1. **Fix BUG 2** — training logs a tuple to wandb instead of a float; all pLDDT metrics are garbage.
    Unpack the return value in both training scripts before any new run.
 
-2. **Implement differentiable generator-to-critic path** — the GAN has never functioned as a GAN
-   because discrete token IDs break the gradient path (see Architectural Issue section).
-   Recommended approach: soft embedding pass-through using `softmax(logits) @ embedding_matrix`
-   for the critic forward pass during generator updates.
+2. **Implement the gradient-flow fix** — staged plan decided, see
+   `docs/GENERATOR_GRADIENT_FIX.md`. Summary: soft embeddings at the critic-facing step,
+   embed real sequences through the same matrix, interpolate the WGAN-GP gradient penalty
+   in embedding space, truncate backprop to the final refinement step (K=1) to start,
+   straight-through at intermediate commits, add a KL/MLM anchor against frozen ProtBERT,
+   validate in seeded mode before blind mode.
 
 3. **Fix remaining bugs (3–6)** — attention mask bug in blind mode, dead temperature code,
-   NaN guard, debug flood. All are straightforward, see bug section.
+   NaN guard, debug flood. All are straightforward, see bug section. Fix BUG 4 specifically
+   before using blind mode to validate the gradient-flow fix.
 
-4. **Verify blind mode diversity** — run a small generation test (e.g. 1k sequences) and
+4. **Add the uniqueness metric (QoL 1)** — before implementing the gradient-flow fix, not
+   after. Cheapest available tripwire for the mode-collapse risk noted in
+   `docs/GENERATOR_GRADIENT_FIX.md`.
+
+5. **Verify blind mode diversity** — run a small generation test (e.g. 1k sequences) and
    confirm unique sequence count is well above ~1 per length now that multinomial is in place.
 
-5. **Re-run the 30 AF3 error sequences** — these are unevaluated potential candidates.
+6. **Re-run the 30 AF3 error sequences** — these are unevaluated potential candidates.
 
-6. **Re-run 120k eval with relaxed filter** — drop `scaccuracy` threshold or remove entirely.
+7. **Re-run 120k eval with relaxed filter** — drop `scaccuracy` threshold or remove entirely.
    Recover the second-best candidate (5.425 Å RMSD) that was incorrectly filtered out.
 
-7. **Retrain 2-3 epochs on best hyperparams** — once the gradient path is fixed, assess whether
+8. **Retrain 2-3 epochs on best hyperparams** — once the gradient path is fixed, assess whether
    training dynamics change meaningfully before committing to a full large-scale retrain.
 
-8. **Full new large-scale generation and evaluation** — after confirming the fixes work.
+9. **Full new large-scale generation and evaluation** — after confirming the fixes work.
 
-9. **Explore uniform top-k sampling** — suggested by Gökay (lab member). Sample uniformly from
-   the top-k most probable tokens instead of proportionally from the full distribution. Similar
-   to EvoDiff. Avoids near-zero probability tokens while keeping diversity. Optionally make k
-   adaptive based on critic feedback (widen when critic says fake, narrow when it says real).
-   Worth evaluating against `torch.multinomial` after the gradient path is fixed.
+10. **Explore uniform top-k sampling** — suggested by Gökay (lab member). Sample uniformly from
+    the top-k most probable tokens instead of proportionally from the full distribution. Similar
+    to EvoDiff. Avoids near-zero probability tokens while keeping diversity. Optionally make k
+    adaptive based on critic feedback (widen when critic says fake, narrow when it says real).
+    Worth evaluating against `torch.multinomial` after the gradient path is fixed.
 
 ---
 
