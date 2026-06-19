@@ -236,106 +236,52 @@ gp = compute_gradient_penalty(
 
 ---
 
-## ⚠️ BUGS FOUND — Not Yet Fixed (as of 2026-04-24)
+## ✅ BUGS FOUND — Fixed (2026-06-19)
 
-These were identified by auditing the codebase after the temperature fix. Fix all of these
-before running any new training.
-
----
-
-### BUG 2 — `calculate_plddt_scores_and_save_pdb` returns a tuple; training scripts treat it as a scalar
-
-**Files:** `val_metrics.py:207`, `10p_train.py:231`, `fully_masked_train.py:162`
-**Severity:** CRITICAL — silently logs a tuple to wandb instead of a float; all pLDDT
-metrics in every training run are garbage
-
-`val_metrics.py` returns `(avg_plddt_score, plddt_scores)`. Both training scripts do:
-
-```python
-avg_plddt_score = calculate_plddt_scores_and_save_pdb(...)
-wandb.log({"plddt_score": avg_plddt_score, ...})
-```
-
-`avg_plddt_score` is a `(float, list)` tuple — wandb receives a tuple, not a number.
-
-Fix: unpack the return value in both training scripts:
-```python
-avg_plddt_score, _ = calculate_plddt_scores_and_save_pdb(...)
-```
+These were identified by auditing the codebase after the temperature fix.
 
 ---
 
-### BUG 3 — `generate_fake_sequences` in `val_metrics.py` ignores its own random temperature
+### ✅ BUG 2 — `calculate_plddt_scores_and_save_pdb` tuple unpacking
 
-**File:** `val_metrics.py:119–132`
-**Severity:** Significant — evaluation sequences during training always use temperature=1.0;
-the random temperature variation is computed but silently discarded
-
-```python
-fixed_temp = 1.0
-while current_masking_rate > 0:
-    random_temp = torch.empty(1).uniform_(0.8, 1.2).item()  # computed but never used
-    generated_ids = generator.generate(..., temperature=fixed_temp)  # always 1.0
-```
-
-Fix: replace `fixed_temp` with `random_temp` in the `generator.generate()` call.
+**Files:** `10p_train.py:231`, `fully_masked_train.py:160`
+**Was:** CRITICAL — silently logged a tuple to wandb instead of a float; all pLDDT
+metrics in every training run were garbage.
+**Fixed:** `avg_plddt_score, _ = calculate_plddt_scores_and_save_pdb(...)`
 
 ---
 
-### BUG 4 — `fully_masked_train.py` attention mask during generation excludes [MASK] tokens
+### ✅ BUG 3 — `generate_fake_sequences` dead temperature variable
 
-**File:** `fully_masked_train.py:224`
-**Severity:** Significant — mask tokens are invisible to the rest of the sequence during
-attention, degrading generation quality
-
-```python
-# BROKEN:
-updated_attention_mask = (final_input_ids != tokenizer.mask_token_id).long()
-
-# CORRECT (as in 10p_train.py):
-updated_attention_mask = (final_input_ids != tokenizer.pad_token_id).long()
-```
-
-Zeroing out [MASK] positions in the key/value attention mask means no token can attend to
-those positions as context. ProtBERT is designed to predict masked tokens — they must be
-visible as keys in bidirectional attention.
-
-> Fix this before using blind mode to validate the gradient-flow fix above (see
-> `docs/GENERATOR_GRADIENT_FIX.md`, Stage 4) — otherwise this bug and the gradient fix get
-> debugged together, which will be confusing.
+**File:** `val_metrics.py:119–131`
+**Was:** Significant — evaluation sequences always used temperature=1.0; the random
+temperature variation was computed but silently discarded via `fixed_temp`.
+**Fixed:** Removed `fixed_temp`, now passes `random_temp` to `generator.generate()`.
 
 ---
 
-### BUG 5 — NaN guard in `calculate_plddt_scores_and_save_pdb` is silently overwritten
+### ✅ BUG 4 — `fully_masked_train.py` attention mask excluded [MASK] tokens
 
-**File:** `val_metrics.py:200–206`
-**Severity:** Moderate — if any ESMFold pLDDT is NaN, the average logged to wandb will be NaN
-
-```python
-valid = [x for x in plddt_scores if isinstance(x, (float, int)) and not np.isnan(x)]
-avg_plddt_score = (sum(valid) / len(valid)) if valid else -1  # NaN-safe
-# Then immediately overwritten:
-if len(plddt_scores) > 0:
-    avg_plddt_score = sum(plddt_scores) / len(plddt_scores)  # NaN-unsafe
-```
-
-Fix: delete the second `if` block; keep only the NaN-filtered `valid` computation.
+**File:** `fully_masked_train.py:222`
+**Was:** Significant — mask tokens were invisible in attention, degrading blind mode
+generation quality. Used `mask_token_id` instead of `pad_token_id`.
+**Fixed:** `updated_attention_mask = (final_input_ids != tokenizer.pad_token_id).long()`
 
 ---
 
-### BUG 6 — `generate_fake_batch` in `fully_masked_train.py` defaults `debug=True`
+### ✅ BUG 5 — NaN guard in `calculate_plddt_scores_and_save_pdb` overwritten
 
-**File:** `fully_masked_train.py:199`
-**Severity:** Quality of life — floods SLURM logs with per-position mask counts on every
-single training batch across every epoch
+**File:** `val_metrics.py:200`
+**Was:** Moderate — NaN-safe average was immediately overwritten by unsafe `sum/len`.
+**Fixed:** Deleted the unsafe second `if` block.
 
-```python
-# BROKEN:
-def generate_fake_batch(..., debug=True):
+---
 
-# FIXED:
-def generate_fake_batch(..., debug=False):
-```
+### ✅ BUG 6 — `generate_fake_batch` defaulted `debug=True`
+
+**File:** `fully_masked_train.py:197`
+**Was:** QoL — flooded SLURM logs with per-position mask counts on every batch.
+**Fixed:** Changed default to `debug=False`.
 
 ---
 
@@ -593,8 +539,7 @@ evaluation is no longer appropriate.
 
 ## Possible Next Steps
 
-1. **Fix BUG 2** — training logs a tuple to wandb instead of a float; all pLDDT metrics are garbage.
-   Unpack the return value in both training scripts before any new run.
+1. ~~**Fix BUG 2**~~ — ✅ Fixed (2026-06-19)
 
 2. **Implement the gradient-flow fix** — staged plan decided, see
    `docs/GENERATOR_GRADIENT_FIX.md`. Summary: soft embeddings at the critic-facing step,
@@ -603,9 +548,7 @@ evaluation is no longer appropriate.
    straight-through at intermediate commits, add a KL/MLM anchor against frozen ProtBERT,
    validate in seeded mode before blind mode.
 
-3. **Fix remaining bugs (3–6)** — attention mask bug in blind mode, dead temperature code,
-   NaN guard, debug flood. All are straightforward, see bug section. Fix BUG 4 specifically
-   before using blind mode to validate the gradient-flow fix.
+3. ~~**Fix remaining bugs (3–6)**~~ — ✅ Fixed (2026-06-19)
 
 4. **Add the uniqueness metric (QoL 1)** — before implementing the gradient-flow fix, not
    after. Cheapest available tripwire for the mode-collapse risk noted in

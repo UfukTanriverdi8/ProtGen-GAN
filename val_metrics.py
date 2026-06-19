@@ -116,19 +116,18 @@ def generate_fake_sequences(generator, tokenizer, num_sequences, device="cuda"):
         fully_masked_input[0, 0] = tokenizer.cls_token_id  # [CLS]
         fully_masked_input[0, -1] = tokenizer.sep_token_id  # [SEP]
         attention_mask = torch.ones_like(fully_masked_input).to(device)
-        fixed_temp = 1.0 
         # Iteratively fill the sequence
         current_masking_rate = 1.0
         iteration_fill_rate = 0.1
         while current_masking_rate > 0:
-            random_temp = torch.empty(1).uniform_(0.8, 1.2).item()  # Random temperature
+            random_temp = torch.empty(1).uniform_(0.8, 1.2).item()
             with torch.no_grad():
                 generated_ids = generator.generate(
                     fully_masked_input,
                     attention_mask,
                     keep_percent=iteration_fill_rate,
                     current_rate=current_masking_rate,
-                    temperature=fixed_temp
+                    temperature=random_temp
                 )
             fully_masked_input = generated_ids.clone()
             current_masking_rate = max(0, current_masking_rate - iteration_fill_rate)
@@ -199,11 +198,6 @@ def calculate_plddt_scores_and_save_pdb(generated_sequences, folding_tokenizer, 
     
     valid = [x for x in plddt_scores if isinstance(x, (float, int)) and not np.isnan(x)]
     avg_plddt_score = (sum(valid) / len(valid)) if valid else -1
-    # Return the average pLDDT score across all sequences
-    if len(plddt_scores) > 0:
-        avg_plddt_score = sum(plddt_scores) / len(plddt_scores)
-    else:
-        avg_plddt_score = -1
     return avg_plddt_score, plddt_scores
 
 

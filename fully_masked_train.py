@@ -157,7 +157,7 @@ def run_evaluation(epoch_idx, batch_idx,
         device=device,
     )
 
-    avg_plddt_score = calculate_plddt_scores_and_save_pdb(
+    avg_plddt_score, _ = calculate_plddt_scores_and_save_pdb(
         generated_sequences, esmfold_tokenizer, esmfold_model,
         batch_size=args.eval_batch_size,
         num_sequences=args.num_eval_sequences,
@@ -194,7 +194,7 @@ def run_evaluation(epoch_idx, batch_idx,
 
 def generate_fake_batch(generator, tokenizer, batch_size_local, sample_file,
                         initial_masking_rate, iteration_fill_rate,
-                        min_temp, max_temp, max_len, device, debug=True):
+                        min_temp, max_temp, max_len, device, debug=False):
     """
     Generate a fake batch by sampling sequence lengths and iteratively filling tokens.
     If debug is True, prints debug info.
@@ -219,7 +219,7 @@ def generate_fake_batch(generator, tokenizer, batch_size_local, sample_file,
     current_masking_rate = initial_masking_rate
     while current_masking_rate > 0:
         iteration_count += 1
-        updated_attention_mask = (final_input_ids != tokenizer.mask_token_id).long()
+        updated_attention_mask = (final_input_ids != tokenizer.pad_token_id).long()
         temperature = min_temp + torch.rand(1).item() * (max_temp - min_temp)
         final_input_ids = generator.generate(
             final_input_ids,

@@ -228,7 +228,7 @@ def run_evaluation(epoch_idx, batch_idx,
         device=device,
     )
 
-    avg_plddt_score = calculate_plddt_scores_and_save_pdb(
+    avg_plddt_score, _ = calculate_plddt_scores_and_save_pdb(
         generated_sequences, esmfold_tokenizer, esmfold_model,
         batch_size=args.eval_batch_size,
         num_sequences=args.num_eval_sequences,
