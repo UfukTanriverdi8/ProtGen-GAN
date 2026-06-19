@@ -553,11 +553,16 @@ Current standard: `n_critic = 8`, first epoch frozen.
 - `docs/HISTORY.md` — full project narrative: every phase, architectural decision, bug discovery, and current state. Read before suggesting experiments or evaluating what's been tried.
 - `docs/GIT_WORKFLOW.md` — complete two-remote git workflow and wandb offline sync. Includes agent-specific notes at the bottom.
 - `docs/GENERATOR_GRADIENT_FIX.md` — full research synthesis and staged implementation plan for the non-differentiable-generator architectural issue (above). Read before touching `models.py`, `loss.py`, or either training script in relation to that issue.
+- `docs/GRADIENT_FIX_EXPLAINED.md` — conceptual companion to the above; explains the gradient problem, soft embeddings, KL anchor, and related concepts from first principles. No implementation details — read for understanding.
 
 ### Claude Code Automation (`.claude/`)
-- **Hook** — blocks edits to `.env` and `protgen-gan-env-v2.yml`
+- **Hook: file protection** — blocks edits to `.env` and `protgen-gan-env-v2.yml`
+- **Hook: ruff auto-lint** — runs `ruff check` on every `.py` file after Edit/Write
+- **Hook: mn5 push guard** — requires confirmation for `git push mn5` or force-push
 - **Skill: `slurm-job`** — generates MN5 SLURM scripts from run parameters
 - **Skill: `bug-fix-checklist`** — Claude-only; greps for all known unfixed bugs before touching training/eval files
+- **Skill: `pre-submit`** — validates codebase state (bugs, env, wandb) before SLURM submission
+- **Skill: `wandb-sync`** — guides MN5 → Anzu → wandb cloud offline run sync
 
 | Environment | Purpose |
 |-------------|---------|

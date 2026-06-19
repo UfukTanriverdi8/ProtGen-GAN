@@ -9,6 +9,26 @@
             "command": "python3 -c \"import sys, json, os; d=json.loads(os.environ.get('CLAUDE_TOOL_INPUT','{}')); f=d.get('file_path',''); blocked=['.env','protgen-gan-env-v2.yml']; matched=[b for b in blocked if b in f]; print(f'BLOCKED: {f} is protected. Edit manually if intentional.') if matched else None; sys.exit(1 if matched else 0)\""
           }
         ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 -c \"import sys, json, os; cmd=json.loads(os.environ.get('CLAUDE_TOOL_INPUT','{}')).get('command',''); is_push='git push' in cmd or 'git push' in cmd.replace('  ',' '); is_mn5='mn5' in cmd; is_force='--force' in cmd or ' -f ' in cmd or cmd.endswith(' -f'); exit_code=2 if (is_push and (is_mn5 or is_force)) else 0; print('⚠ Push to mn5 or force-push detected. Confirm?') if exit_code==2 else None; sys.exit(exit_code)\""
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 -c \"import sys, json, os; d=json.loads(os.environ.get('CLAUDE_TOOL_INPUT','{}')); f=d.get('file_path',''); sys.exit(0) if not f.endswith('.py') else os.system('/home/ufuk/miniconda3/envs/protgen-gan/bin/ruff check ' + f)\""
+          }
+        ]
       }
     ]
   },
