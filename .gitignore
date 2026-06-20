@@ -12,5 +12,9 @@ passwords.txt
 # Ignore Visual Studio Code settings
 .vscode/
 
-# Claude Code session state
-.remember/
+# Claude Code session state (volatile, machine-local)
+.remember/now.md
+.remember/today-*.md
+.remember/recent.md
+.remember/tmp/
+.remember/logs/

@@ -151,6 +151,9 @@ Seeded mode was accidentally functional only because different seeds produced di
 ## ⚠️ ARCHITECTURAL ISSUE — Generator Has Never Received Adversarial Gradient
 
 **Affects:** Every training run ever. Not a one-line fix — requires architectural change.
+**Status (2026-06):** Fix plan researched and decided, not yet implemented. Full research
+synthesis and staged implementation plan live in `docs/GENERATOR_GRADIENT_FIX.md` — read
+that before touching `models.py`, `loss.py`, or either training script for this issue.
 
 ### The Problem
 
@@ -180,26 +183,36 @@ a static generator.
 This is true both with the old argmax and with the new `torch.multinomial()` — both produce
 discrete integers, neither is differentiable.
 
-### Fixes (all require architectural change)
+### Decided fix (see `docs/GENERATOR_GRADIENT_FIX.md` for full justification)
 
-- **Gumbel-Softmax relaxation:** Instead of sampling discrete tokens, use
-  `F.gumbel_softmax(logits / temperature, tau=1.0, hard=False)` to get soft
-  pseudo-one-hot vectors. Pass these as weighted sums of the embedding matrix to the critic:
-  `soft_embeds = soft_tokens @ critic.protbert.bert.embeddings.word_embeddings.weight`
-  Gradients flow through the soft approximation back into the generator.
+Soft embedding pass-through, **not** Gumbel-Softmax and **not** REINFORCE for the
+adversarial term — the critic is differentiable, so a continuous relaxation is the right
+family. Decided approach in full:
 
-- **Soft embedding pass-through (simpler):** After the generator produces logits, compute:
-  `soft_embeds = F.softmax(logits / temperature, dim=-1) @ embedding_matrix`
-  Skip the discrete sampling for the critic pass; keep sampling only for the actual
-  sequence output. Gradients flow through `softmax → embedding matrix → generator logits`.
+1. **Soft embeddings at the critic-facing step:**
+   `soft_embeds = F.softmax(logits / temperature, dim=-1) @ embedding_matrix`, replacing
+   hard token IDs only for the critic forward pass during generator updates. Hard sampling
+   stays for the actual output sequences used everywhere else (logging, FASTA, evaluation).
+2. **Embed the real sequences too, through the same matrix** — not raw IDs. Skipping this
+   lets the critic trivially separate sparse one-hot real from dense softmax fake, which
+   would turn the zero-gradient bug into a near-zero-gradient bug instead of actually
+   fixing it. This was the detail missing from the original three-candidate list.
+3. **Interpolate the WGAN-GP gradient penalty in embedding space**, not on raw integer IDs
+   — `loss.py`'s `compute_gradient_penalty` needs a corresponding rewrite.
+4. **Truncate backprop to the final refinement step only (K=1) to start**, with
+   straight-through (hard forward / soft backward) at intermediate mask-and-refill commits
+   so ProtBERT stays in-distribution at every step except the one receiving gradient.
+5. **Add a KL or MLM anchor against the frozen pretrained ProtBERT** to the generator loss.
+   Protein-specific precedent (DRAKES, ICLR 2025) showed that without this, a protein
+   generator can learn to fool its reward/critic while producing sequences that no longer
+   fold (median scRMSD 0.918 → 7.307 in their no-anchor ablation).
+6. **Validate in seeded mode before blind mode.** Blind mode's full masking combined with
+   adversarial loss is a documented mode-collapse risk in adjacent literature. Note: BUG 4
+   (blind mode's attention-mask bug, below) should also be fixed before blind mode is used
+   to test this, to avoid conflating the two issues.
 
-- **REINFORCE / policy gradient:** Treat the generator as a policy, use the critic score
-  as reward signal, apply REINFORCE gradient estimate. No differentiable path needed, but
-  higher variance — requires careful baseline tuning.
-
-The Gumbel-Softmax or soft-embedding approach is the most natural fit given the existing
-architecture. Both would require the critic to accept continuous 3D embeddings (which it
-already supports via the dim==3 branch in `models.py`).
+Full staged implementation plan (Stage 0 through Stage 5), validation criteria, failure
+tripwires, and literature references are in `docs/GENERATOR_GRADIENT_FIX.md`.
 
 ---
 
@@ -217,148 +230,80 @@ gp = compute_gradient_penalty(
 )
 ```
 
----
-
-## ⚠️ BUGS FOUND — Not Yet Fixed (as of 2026-04-24)
-
-These were identified by auditing the codebase after the temperature fix. Fix all of these
-before running any new training.
+> Note: this function will need a further rewrite as part of the gradient-flow fix above —
+> the gradient penalty must interpolate in embedding space rather than on raw integer IDs
+> once soft embeddings are introduced. See `docs/GENERATOR_GRADIENT_FIX.md`, Stage 1.
 
 ---
 
-### BUG 2 — `calculate_plddt_scores_and_save_pdb` returns a tuple; training scripts treat it as a scalar
+## ✅ BUGS FOUND — Fixed (2026-06-19)
 
-**Files:** `val_metrics.py:207`, `10p_train.py:231`, `fully_masked_train.py:162`
-**Severity:** CRITICAL — silently logs a tuple to wandb instead of a float; all pLDDT
-metrics in every training run are garbage
-
-`val_metrics.py` returns `(avg_plddt_score, plddt_scores)`. Both training scripts do:
-
-```python
-avg_plddt_score = calculate_plddt_scores_and_save_pdb(...)
-wandb.log({"plddt_score": avg_plddt_score, ...})
-```
-
-`avg_plddt_score` is a `(float, list)` tuple — wandb receives a tuple, not a number.
-
-Fix: unpack the return value in both training scripts:
-```python
-avg_plddt_score, _ = calculate_plddt_scores_and_save_pdb(...)
-```
+These were identified by auditing the codebase after the temperature fix.
 
 ---
 
-### BUG 3 — `generate_fake_sequences` in `val_metrics.py` ignores its own random temperature
+### ✅ BUG 2 — `calculate_plddt_scores_and_save_pdb` tuple unpacking
 
-**File:** `val_metrics.py:119–132`
-**Severity:** Significant — evaluation sequences during training always use temperature=1.0;
-the random temperature variation is computed but silently discarded
-
-```python
-fixed_temp = 1.0
-while current_masking_rate > 0:
-    random_temp = torch.empty(1).uniform_(0.8, 1.2).item()  # computed but never used
-    generated_ids = generator.generate(..., temperature=fixed_temp)  # always 1.0
-```
-
-Fix: replace `fixed_temp` with `random_temp` in the `generator.generate()` call.
+**Files:** `10p_train.py:231`, `fully_masked_train.py:160`
+**Was:** CRITICAL — silently logged a tuple to wandb instead of a float; all pLDDT
+metrics in every training run were garbage.
+**Fixed:** `avg_plddt_score, _ = calculate_plddt_scores_and_save_pdb(...)`
 
 ---
 
-### BUG 4 — `fully_masked_train.py` attention mask during generation excludes [MASK] tokens
+### ✅ BUG 3 — `generate_fake_sequences` dead temperature variable
 
-**File:** `fully_masked_train.py:224`
-**Severity:** Significant — mask tokens are invisible to the rest of the sequence during
-attention, degrading generation quality
-
-```python
-# BROKEN:
-updated_attention_mask = (final_input_ids != tokenizer.mask_token_id).long()
-
-# CORRECT (as in 10p_train.py):
-updated_attention_mask = (final_input_ids != tokenizer.pad_token_id).long()
-```
-
-Zeroing out [MASK] positions in the key/value attention mask means no token can attend to
-those positions as context. ProtBERT is designed to predict masked tokens — they must be
-visible as keys in bidirectional attention.
+**File:** `val_metrics.py:119–131`
+**Was:** Significant — evaluation sequences always used temperature=1.0; the random
+temperature variation was computed but silently discarded via `fixed_temp`.
+**Fixed:** Removed `fixed_temp`, now passes `random_temp` to `generator.generate()`.
 
 ---
 
-### BUG 5 — NaN guard in `calculate_plddt_scores_and_save_pdb` is silently overwritten
+### ✅ BUG 4 — `fully_masked_train.py` attention mask excluded [MASK] tokens
 
-**File:** `val_metrics.py:200–206`
-**Severity:** Moderate — if any ESMFold pLDDT is NaN, the average logged to wandb will be NaN
-
-```python
-valid = [x for x in plddt_scores if isinstance(x, (float, int)) and not np.isnan(x)]
-avg_plddt_score = (sum(valid) / len(valid)) if valid else -1  # NaN-safe
-# Then immediately overwritten:
-if len(plddt_scores) > 0:
-    avg_plddt_score = sum(plddt_scores) / len(plddt_scores)  # NaN-unsafe
-```
-
-Fix: delete the second `if` block; keep only the NaN-filtered `valid` computation.
+**File:** `fully_masked_train.py:222`
+**Was:** Significant — mask tokens were invisible in attention, degrading blind mode
+generation quality. Used `mask_token_id` instead of `pad_token_id`.
+**Fixed:** `updated_attention_mask = (final_input_ids != tokenizer.pad_token_id).long()`
 
 ---
 
-### BUG 6 — `generate_fake_batch` in `fully_masked_train.py` defaults `debug=True`
+### ✅ BUG 5 — NaN guard in `calculate_plddt_scores_and_save_pdb` overwritten
 
-**File:** `fully_masked_train.py:199`
-**Severity:** Quality of life — floods SLURM logs with per-position mask counts on every
-single training batch across every epoch
+**File:** `val_metrics.py:200`
+**Was:** Moderate — NaN-safe average was immediately overwritten by unsafe `sum/len`.
+**Fixed:** Deleted the unsafe second `if` block.
 
-```python
-# BROKEN:
-def generate_fake_batch(..., debug=True):
+---
 
-# FIXED:
-def generate_fake_batch(..., debug=False):
-```
+### ✅ BUG 6 — `generate_fake_batch` defaulted `debug=True`
+
+**File:** `fully_masked_train.py:197`
+**Was:** QoL — flooded SLURM logs with per-position mask counts on every batch.
+**Fixed:** Changed default to `debug=False`.
 
 ---
 
 ## ⚠️ QUALITY OF LIFE — Missing Features Worth Adding
 
-### QoL 1 — Uniqueness metric missing from in-training evaluation
+### ✅ QoL 1 — Uniqueness metric added to in-training evaluation (2026-06-19)
 
 **Files:** `10p_train.py`, `fully_masked_train.py` → `run_evaluation()`
+**Fixed:** `unique_ratio` computed and logged to wandb after sequence generation.
+Cheapest mode-collapse tripwire — would have caught the argmax bug on the first run.
 
-The eval loop tracks pLDDT, scAccuracy, progres, pairwise TM-score — none of which would
-have caught mode collapse early. A simple uniqueness ratio on the eval batch would have
-caught the argmax bug on the very first run.
+### ✅ QoL 2 — Optimizer state now saved in checkpoints (2026-06-19)
 
-Add to `run_evaluation()`:
-```python
-unique_ratio = len(set(generated_sequences)) / len(generated_sequences)
-wandb.log({"unique_ratio": unique_ratio, ...})
-```
+**Files:** `10p_train.py`, `fully_masked_train.py` → checkpoint saving block
+**Fixed:** `gen_optimizer.pth` and `critic_optimizer.pth` saved alongside model weights.
+Load logic to be added when resume script is built (QoL 5).
 
-This is a 1-line addition and is the single most valuable early-warning signal.
+### ✅ QoL 3 — `sample_sequence_length` cached via `lru_cache` (2026-06-19)
 
-### QoL 2 — Optimizer state not saved in checkpoints
-
-**Files:** `10p_train.py:386–401`, `fully_masked_train.py:375–391`
-
-Only ProtBERT weights and the classifier head are saved. If a run crashes and is resumed,
-Adam's momentum and variance accumulators are lost, causing instability for many batches.
-
-Add to checkpoint saving:
-```python
-torch.save(gen_optimizer.state_dict(),    f"{save_dir}/gen_optimizer.pth")
-torch.save(critic_optimizer.state_dict(), f"{save_dir}/critic_optimizer.pth")
-```
-
-And add corresponding load logic at the start of any resume script.
-
-### QoL 3 — `sample_sequence_length` re-reads the full dataset file on every call
-
-**File:** `val_metrics.py:48–57`
-
-`sample_sequence_length()` opens, reads, and parses the entire dataset file from disk
-every single invocation. It is called once per generated sequence during evaluation
-(10+ calls per `run_evaluation()`). Fix: load the length list once at module level or
-pass it as an argument.
+**File:** `val_metrics.py:49–53`
+**Fixed:** File read extracted into `_load_sequence_lengths()` with `@functools.lru_cache`.
+52k-line dataset file read once, cached for all subsequent calls.
 
 ### QoL 4 — `from val_metrics import *` loads the entire evaluation stack at training startup
 
@@ -446,8 +391,9 @@ gan/
 ├── # CONFIG & DOCS
 ├── CLAUDE.md                  This file
 ├── README.md                  High-level project overview
-├── Conda-Environment-for-ProtGEN_mn5.yml  Full conda env spec (PyTorch 2.4.1,
-│                              transformers 4.46, ESMFold, ProteinMPNN, PROGRES, etc.)
+├── protgen-gan-env-v2.yml     Conda env spec (Python 3.12, PyTorch 2.5.1, CUDA 12.1)
+├── Conda-Environment-for-ProtGEN_mn5.yml  Legacy env spec (Python 3.8, PyTorch 2.4.1)
+│                              ⚠ Still active on MN5 until env is migrated there
 └── bfg-1.15.0.jar             BFG repo cleaner (git history cleanup utility)
 ```
 
@@ -516,6 +462,9 @@ Current standard: `n_critic = 8`, first epoch frozen.
 
 > Note: all of these runs were conducted under the argmax bug. Hyperparameter behaviour
 > may change meaningfully after the `torch.multinomial()` fix. Re-validation recommended.
+> It may change again, possibly more significantly, once the gradient-flow fix in
+> `docs/GENERATOR_GRADIENT_FIX.md` is implemented and the generator actually starts
+> receiving adversarial signal for the first time.
 
 ---
 
@@ -524,11 +473,17 @@ Current standard: `n_critic = 8`, first epoch frozen.
 ### Key Documents
 - `docs/HISTORY.md` — full project narrative: every phase, architectural decision, bug discovery, and current state. Read before suggesting experiments or evaluating what's been tried.
 - `docs/GIT_WORKFLOW.md` — complete two-remote git workflow and wandb offline sync. Includes agent-specific notes at the bottom.
+- `docs/GENERATOR_GRADIENT_FIX.md` — full research synthesis and staged implementation plan for the non-differentiable-generator architectural issue (above). Read before touching `models.py`, `loss.py`, or either training script in relation to that issue.
+- `docs/GRADIENT_FIX_EXPLAINED.md` — conceptual companion to the above; explains the gradient problem, soft embeddings, KL anchor, and related concepts from first principles. No implementation details — read for understanding.
 
 ### Claude Code Automation (`.claude/`)
-- **Hook** — blocks edits to `.env` and `Conda-Environment-for-ProtGEN_mn5.yml`
+- **Hook: file protection** — blocks edits to `.env` and `protgen-gan-env-v2.yml`
+- **Hook: ruff auto-lint** — runs `ruff check` on every `.py` file after Edit/Write
+- **Hook: mn5 push guard** — requires confirmation for `git push mn5` or force-push
 - **Skill: `slurm-job`** — generates MN5 SLURM scripts from run parameters
 - **Skill: `bug-fix-checklist`** — Claude-only; greps for all known unfixed bugs before touching training/eval files
+- **Skill: `pre-submit`** — validates codebase state (bugs, env, wandb) before SLURM submission
+- **Skill: `wandb-sync`** — guides MN5 → Anzu → wandb cloud offline run sync
 
 | Environment | Purpose |
 |-------------|---------|
@@ -559,35 +514,37 @@ evaluation is no longer appropriate.
 
 ## Possible Next Steps
 
-1. **Fix BUG 2** — training logs a tuple to wandb instead of a float; all pLDDT metrics are garbage.
-   Unpack the return value in both training scripts before any new run.
+1. ~~**Fix BUG 2**~~ — ✅ Fixed (2026-06-19)
 
-2. **Implement differentiable generator-to-critic path** — the GAN has never functioned as a GAN
-   because discrete token IDs break the gradient path (see Architectural Issue section).
-   Recommended approach: soft embedding pass-through using `softmax(logits) @ embedding_matrix`
-   for the critic forward pass during generator updates.
+2. **Implement the gradient-flow fix** — staged plan decided, see
+   `docs/GENERATOR_GRADIENT_FIX.md`. Summary: soft embeddings at the critic-facing step,
+   embed real sequences through the same matrix, interpolate the WGAN-GP gradient penalty
+   in embedding space, truncate backprop to the final refinement step (K=1) to start,
+   straight-through at intermediate commits, add a KL/MLM anchor against frozen ProtBERT,
+   validate in seeded mode before blind mode.
 
-3. **Fix remaining bugs (3–6)** — attention mask bug in blind mode, dead temperature code,
-   NaN guard, debug flood. All are straightforward, see bug section.
+3. ~~**Fix remaining bugs (3–6)**~~ — ✅ Fixed (2026-06-19)
 
-4. **Verify blind mode diversity** — run a small generation test (e.g. 1k sequences) and
+4. ~~**Add the uniqueness metric (QoL 1)**~~ — ✅ Fixed (2026-06-19). QoL 2–3 also done.
+
+5. **Verify blind mode diversity** — run a small generation test (e.g. 1k sequences) and
    confirm unique sequence count is well above ~1 per length now that multinomial is in place.
 
-5. **Re-run the 30 AF3 error sequences** — these are unevaluated potential candidates.
+6. **Re-run the 30 AF3 error sequences** — these are unevaluated potential candidates.
 
-6. **Re-run 120k eval with relaxed filter** — drop `scaccuracy` threshold or remove entirely.
+7. **Re-run 120k eval with relaxed filter** — drop `scaccuracy` threshold or remove entirely.
    Recover the second-best candidate (5.425 Å RMSD) that was incorrectly filtered out.
 
-7. **Retrain 2-3 epochs on best hyperparams** — once the gradient path is fixed, assess whether
+8. **Retrain 2-3 epochs on best hyperparams** — once the gradient path is fixed, assess whether
    training dynamics change meaningfully before committing to a full large-scale retrain.
 
-8. **Full new large-scale generation and evaluation** — after confirming the fixes work.
+9. **Full new large-scale generation and evaluation** — after confirming the fixes work.
 
-9. **Explore uniform top-k sampling** — suggested by Gökay (lab member). Sample uniformly from
-   the top-k most probable tokens instead of proportionally from the full distribution. Similar
-   to EvoDiff. Avoids near-zero probability tokens while keeping diversity. Optionally make k
-   adaptive based on critic feedback (widen when critic says fake, narrow when it says real).
-   Worth evaluating against `torch.multinomial` after the gradient path is fixed.
+10. **Explore uniform top-k sampling** — suggested by Gökay (lab member). Sample uniformly from
+    the top-k most probable tokens instead of proportionally from the full distribution. Similar
+    to EvoDiff. Avoids near-zero probability tokens while keeping diversity. Optionally make k
+    adaptive based on critic feedback (widen when critic says fake, narrow when it says real).
+    Worth evaluating against `torch.multinomial` after the gradient path is fixed.
 
 ---
 

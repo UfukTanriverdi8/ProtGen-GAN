@@ -1,4 +1,3 @@
-import os
 import glob
 from collections import Counter
 
@@ -12,7 +11,7 @@ if not txt_files:
 print(f"Found {len(txt_files)} txt files\n")
 
 for path in txt_files:
-    seqs = [l.strip().upper() for l in open(path) if l.strip()]
+    seqs = [line.strip().upper() for line in open(path) if line.strip()]
     total = len(seqs)
     unique = len(set(seqs))
     suspect_count = seqs.count(COLLAPSE_SEQ)
@@ -21,5 +20,5 @@ for path in txt_files:
     print(f"--- {path} ---")
     print(f"  Total: {total} | Unique: {unique} | Duplicates: {total - unique}")
     print(f"  Suspect seq: {suspect_count} times")
-    print(f"  Top 3 most common: {[(count, seq[:40]+'...') for seq, count in top]}")
+    print(f"  Top 3 most common: {[(count, seq[:40] + '...') for seq, count in top]}")
     print()
