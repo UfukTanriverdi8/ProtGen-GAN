@@ -2,9 +2,6 @@ import os
 import argparse
 import torch
 
-# GP needs second-order gradients through attention; efficient/flash backends lack this
-torch.backends.cuda.enable_flash_sdp(False)
-torch.backends.cuda.enable_mem_efficient_sdp(False)
 
 from transformers import AutoTokenizer, AutoModelForMaskedLM, EsmForProteinFolding
 from models import Generator, Critic
@@ -25,6 +22,10 @@ from val_metrics import (
 )
 from torch.nn.utils.rnn import pad_sequence
 from config import PROTBERT_PATH, ESMFOLD_PATH, CHECKPOINT_DIR
+
+# GP needs second-order gradients through attention; efficient/flash backends lack this
+torch.backends.cuda.enable_flash_sdp(False)
+torch.backends.cuda.enable_mem_efficient_sdp(False)
 
 torch.backends.cuda.matmul.allow_tf32 = True
 os.environ["TOKENIZERS_PARALLELISM"] = "true"
