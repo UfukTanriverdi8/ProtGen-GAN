@@ -447,6 +447,16 @@ for epoch in range(n_epochs):
         fake_scores = critic(fake_data, attention_mask=attn_mask_fake)
         g_loss = generator_loss(fake_scores)
         g_loss.backward()
+
+        # Stage 0 sanity check: should be ≈0 before the gradient-flow fix,
+        # nonzero after soft embeddings are wired in (Stage 1).
+        gen_grad_norm = sum(
+            p.grad.norm().item() ** 2
+            for p in generator.protbert.parameters()
+            if p.grad is not None
+        ) ** 0.5
+        wandb.log({"gen_grad_norm": gen_grad_norm})
+
         gen_optimizer.step()
 
         # Logging and debugging.
