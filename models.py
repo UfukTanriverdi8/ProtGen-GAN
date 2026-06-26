@@ -116,3 +116,17 @@ class Critic(nn.Module):
         cls_output = last_hidden_state[:, 0, :]  # CLS token embedding
         logits = self.classifier(cls_output)
         return logits
+
+
+def compute_soft_embeds(generator, critic, input_ids, attn_mask, min_temp, max_temp):
+    """One generator forward pass → continuous embeddings for the critic (K=1 backprop path).
+
+    Gradient flows: critic(soft_embeds) → loss → backward → probs → logits → generator.protbert.
+    The iterative fill loop that produced input_ids is NOT in this graph — only this call is.
+    """
+    temperature = min_temp + torch.rand(1).item() * (max_temp - min_temp)
+    logits = generator(input_ids, attn_mask)                              # [B, L, V]
+    probs = F.softmax(logits / temperature, dim=-1)                       # [B, L, V]
+    word_weight = critic.protbert.bert.embeddings.word_embeddings.weight  # [V, H]
+    soft_word = probs @ word_weight                                       # [B, L, H]
+    return critic.protbert.bert.embeddings(inputs_embeds=soft_word)       # [B, L, H]

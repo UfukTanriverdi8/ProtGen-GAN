@@ -4,7 +4,7 @@ import torch
 
 
 from transformers import AutoTokenizer, AutoModelForMaskedLM, EsmForProteinFolding
-from models import Generator, Critic
+from models import Generator, Critic, compute_soft_embeds
 import wandb
 from loss import critic_loss, generator_loss, compute_gradient_penalty
 from dataset import load_and_tokenize_dataset, get_dataloaders
@@ -405,20 +405,24 @@ for epoch in range(n_epochs):
                 max_len=512,
                 device=device,
             )
-            # Detach fake_data for critic updates.
             fake_data_critic = fake_data.detach()
+            fake_mask_critic = (fake_data_critic != tokenizer.pad_token_id).long()
+
+            # Both real and fake through the same embedding layer — identical format
+            # so the critic cannot distinguish real from fake by embedding sparsity.
+            real_embeds = critic.protbert.bert.embeddings(input_ids=real_data)
+            fake_embeds_hard = critic.protbert.bert.embeddings(input_ids=fake_data_critic)
 
             gradient_penalty = compute_gradient_penalty(
                 critic,
-                real_data,
-                fake_data_critic,
+                real_embeds,
+                fake_embeds_hard,
                 attn_mask_real,
-                (fake_data_critic != tokenizer.pad_token_id).long(),
+                fake_mask_critic,
                 device,
             )
-            real_scores = critic(real_data, attention_mask=attn_mask_real)
-            attn_mask_fake = (fake_data_critic != tokenizer.pad_token_id).long()
-            fake_scores = critic(fake_data_critic, attention_mask=attn_mask_fake)
+            real_scores = critic(real_embeds, attention_mask=attn_mask_real)
+            fake_scores = critic(fake_embeds_hard, attention_mask=fake_mask_critic)
             c_loss = critic_loss(real_scores, fake_scores, gradient_penalty, lambda_gp)
             c_loss.backward()
             critic_optimizer.step()
@@ -444,7 +448,14 @@ for epoch in range(n_epochs):
             device=device,
         )
         attn_mask_fake = (fake_data != tokenizer.pad_token_id).long()
-        fake_scores = critic(fake_data, attention_mask=attn_mask_fake)
+
+        # Soft path: one generator forward pass builds the gradient graph (K=1).
+        # The iterative fill loop above is NOT in this graph.
+        soft_embeds = compute_soft_embeds(
+            generator, critic, fake_data, attn_mask_fake, min_temp, max_temp
+        )
+
+        fake_scores = critic(soft_embeds, attention_mask=attn_mask_fake)
         g_loss = generator_loss(fake_scores)
         g_loss.backward()
 
