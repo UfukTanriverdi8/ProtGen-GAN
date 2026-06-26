@@ -472,18 +472,19 @@ for epoch in range(n_epochs):
         fake_scores = critic(soft_embeds, attention_mask=attn_mask_fake)
         g_loss = generator_loss(fake_scores) + lambda_kl * kl_loss
         wandb.log({"kl_loss": kl_loss.item()})
-        g_loss.backward()
 
-        # Stage 0 sanity check: should be ≈0 before the gradient-flow fix,
-        # nonzero after soft embeddings are wired in (Stage 1).
-        gen_grad_norm = sum(
-            p.grad.norm().item() ** 2
-            for p in generator.protbert.parameters()
-            if p.grad is not None
-        ) ** 0.5
-        wandb.log({"gen_grad_norm": gen_grad_norm})
-
-        gen_optimizer.step()
+        if not (torch.isnan(g_loss) or torch.isinf(g_loss)):
+            g_loss.backward()
+            gen_grad_norm = sum(
+                p.grad.norm().item() ** 2
+                for p in generator.protbert.parameters()
+                if p.grad is not None
+            ) ** 0.5
+            wandb.log({"gen_grad_norm": gen_grad_norm})
+            torch.nn.utils.clip_grad_norm_(generator.protbert.parameters(), max_norm=1.0)
+            gen_optimizer.step()
+        else:
+            wandb.log({"gen_grad_norm": 0.0})
 
         # Logging and debugging.
         epoch_c_loss_sum += critic_loss_val

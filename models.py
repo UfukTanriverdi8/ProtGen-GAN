@@ -145,5 +145,6 @@ def compute_kl_anchor(gen_probs, ref_protbert, input_ids, attn_mask, temperature
     with torch.no_grad():
         ref_logits = ref_protbert(input_ids=input_ids, attention_mask=attn_mask).logits
         ref_log_probs = F.log_softmax(ref_logits / temperature, dim=-1)  # [B, L, V]
-    # F.kl_div(log_Q, P) = KL(P || Q); reduction='batchmean' divides by batch size
-    return F.kl_div(ref_log_probs, gen_probs, reduction="batchmean", log_target=False)
+    # Clamp before kl_div: F.kl_div computes log(gen_probs) internally; without the
+    # clamp, near-zero probs → log(~0) ≈ -87 → giant gradients → weight explosion.
+    return F.kl_div(ref_log_probs, gen_probs.clamp(min=1e-8), reduction="batchmean", log_target=False)
