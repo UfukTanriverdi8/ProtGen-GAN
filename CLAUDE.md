@@ -148,12 +148,13 @@ Seeded mode was accidentally functional only because different seeds produced di
 
 ---
 
-## ⚠️ ARCHITECTURAL ISSUE — Generator Has Never Received Adversarial Gradient
+## ⚠️ IN PROGRESS — Generator Gradient Flow Fix (Stages 0–1 Done, Stage 3 Remaining)
 
 **Affects:** Every training run ever. Not a one-line fix — requires architectural change.
-**Status (2026-06):** Fix plan researched and decided, not yet implemented. Full research
-synthesis and staged implementation plan live in `docs/GENERATOR_GRADIENT_FIX.md` — read
-that before touching `models.py`, `loss.py`, or either training script for this issue.
+**Status (2026-06-26):** Stage 0 (gen_grad_norm instrumentation) and Stage 1 (soft
+embeddings) implemented. gen_grad_norm confirmed ≈0 before fix. Stage 3 (KL anchor)
+still required before a real training run. Read `docs/GENERATOR_GRADIENT_FIX.md` before
+touching `models.py`, `loss.py`, or either training script for this issue.
 
 ### The Problem
 
@@ -189,20 +190,23 @@ Soft embedding pass-through, **not** Gumbel-Softmax and **not** REINFORCE for th
 adversarial term — the critic is differentiable, so a continuous relaxation is the right
 family. Decided approach in full:
 
-1. **Soft embeddings at the critic-facing step:**
+1. ✅ **Soft embeddings at the critic-facing step:**
    `soft_embeds = F.softmax(logits / temperature, dim=-1) @ embedding_matrix`, replacing
-   hard token IDs only for the critic forward pass during generator updates. Hard sampling
-   stays for the actual output sequences used everywhere else (logging, FASTA, evaluation).
-2. **Embed the real sequences too, through the same matrix** — not raw IDs. Skipping this
+   hard token IDs only for the critic forward pass during generator updates. Implemented
+   via `compute_soft_embeds()` in `models.py` — one extra generator forward pass on the
+   completed sequence; the iterative fill loop is NOT in the gradient graph (this is K=1
+   truncated backprop, achieved naturally with no extra code).
+2. ✅ **Embed the real sequences too, through the same matrix** — not raw IDs. Skipping this
    lets the critic trivially separate sparse one-hot real from dense softmax fake, which
    would turn the zero-gradient bug into a near-zero-gradient bug instead of actually
    fixing it. This was the detail missing from the original three-candidate list.
-3. **Interpolate the WGAN-GP gradient penalty in embedding space**, not on raw integer IDs
-   — `loss.py`'s `compute_gradient_penalty` needs a corresponding rewrite.
-4. **Truncate backprop to the final refinement step only (K=1) to start**, with
-   straight-through (hard forward / soft backward) at intermediate mask-and-refill commits
-   so ProtBERT stays in-distribution at every step except the one receiving gradient.
-5. **Add a KL or MLM anchor against the frozen pretrained ProtBERT** to the generator loss.
+3. ✅ **Interpolate the WGAN-GP gradient penalty in embedding space**, not on raw integer IDs
+   — `compute_gradient_penalty` now accepts pre-computed `[B,L,H]` embedding tensors;
+   callers embed real and fake before calling.
+4. ✅ **Truncate backprop to the final refinement step only (K=1)** — achieved naturally:
+   `compute_soft_embeds()` runs after the iterative loop, so only that one forward pass
+   is gradient-connected. No straight-through bookkeeping needed.
+5. ⚠️ **Add a KL or MLM anchor against the frozen pretrained ProtBERT** to the generator loss.
    Protein-specific precedent (DRAKES, ICLR 2025) showed that without this, a protein
    generator can learn to fool its reward/critic while producing sequences that no longer
    fold (median scRMSD 0.918 → 7.307 in their no-anchor ablation).
@@ -216,23 +220,19 @@ tripwires, and literature references are in `docs/GENERATOR_GRADIENT_FIX.md`.
 
 ---
 
-## ✅ FIXED — `compute_gradient_penalty` call signature (`loss.py` + both training scripts)
+## ✅ FIXED — `compute_gradient_penalty` (`loss.py` + both training scripts)
 
-`loss.py` was updated to add `real_mask` and `fake_mask` parameters (commit 8ebec32), and
-both training scripts have been updated to match:
+Now accepts pre-computed `real_embeds` and `fake_embeds` (`[B,L,H]` float tensors).
+Callers embed real and fake before calling. Signature:
 
 ```python
 gp = compute_gradient_penalty(
-    critic, real_data, fake_data,
+    critic, real_embeds, fake_embeds_hard,
     attn_mask_real,
-    (fake_data != tokenizer.pad_token_id).long(),
+    fake_mask,
     device
 )
 ```
-
-> Note: this function will need a further rewrite as part of the gradient-flow fix above —
-> the gradient penalty must interpolate in embedding space rather than on raw integer IDs
-> once soft embeddings are introduced. See `docs/GENERATOR_GRADIENT_FIX.md`, Stage 1.
 
 ---
 
@@ -516,12 +516,10 @@ evaluation is no longer appropriate.
 
 1. ~~**Fix BUG 2**~~ — ✅ Fixed (2026-06-19)
 
-2. **Implement the gradient-flow fix** — staged plan decided, see
-   `docs/GENERATOR_GRADIENT_FIX.md`. Summary: soft embeddings at the critic-facing step,
-   embed real sequences through the same matrix, interpolate the WGAN-GP gradient penalty
-   in embedding space, truncate backprop to the final refinement step (K=1) to start,
-   straight-through at intermediate commits, add a KL/MLM anchor against frozen ProtBERT,
-   validate in seeded mode before blind mode.
+2. ~~**Gradient-flow fix Stages 0–1**~~ — ✅ Done (2026-06-26). Stages 0 (gen_grad_norm
+   instrumentation) and 1 (soft embeddings + GP rewrite + embed-the-real) implemented.
+   **Remaining: Stage 3** — add KL or MLM anchor against frozen ProtBERT before a real
+   training run. Watch `gen_grad_norm` in wandb (should be > 0 after Stage 1 fix).
 
 3. ~~**Fix remaining bugs (3–6)**~~ — ✅ Fixed (2026-06-19)
 
