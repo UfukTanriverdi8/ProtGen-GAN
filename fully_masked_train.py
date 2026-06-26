@@ -134,7 +134,7 @@ generator = Generator(
 critic = Critic(protbert_model=critic_protbert).to(device)
 
 # Frozen reference model for KL anchor — never updated, keeps generator from reward-hacking.
-ref_protbert = AutoModelForMaskedLM.from_pretrained(model_checkpoint_path).to(device)
+ref_protbert = AutoModelForMaskedLM.from_pretrained(model_checkpoint_path).to(device).half()
 ref_protbert.eval()
 for p in ref_protbert.parameters():
     p.requires_grad_(False)

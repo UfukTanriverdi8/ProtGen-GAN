@@ -143,7 +143,7 @@ def compute_kl_anchor(gen_probs, ref_protbert, input_ids, attn_mask, temperature
     ref_protbert must be frozen (requires_grad=False, eval mode) — never updated.
     """
     with torch.no_grad():
-        ref_logits = ref_protbert(input_ids=input_ids, attention_mask=attn_mask).logits
+        ref_logits = ref_protbert(input_ids=input_ids, attention_mask=attn_mask).logits.float()
         ref_log_probs = F.log_softmax(ref_logits / temperature, dim=-1)  # [B, L, V]
     # Clamp before kl_div: F.kl_div computes log(gen_probs) internally; without the
     # clamp, near-zero probs → log(~0) ≈ -87 → giant gradients → weight explosion.
