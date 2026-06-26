@@ -123,10 +123,27 @@ def compute_soft_embeds(generator, critic, input_ids, attn_mask, min_temp, max_t
 
     Gradient flows: critic(soft_embeds) → loss → backward → probs → logits → generator.protbert.
     The iterative fill loop that produced input_ids is NOT in this graph — only this call is.
+
+    Returns (soft_embeds, probs, temperature). probs and temperature are needed by the KL anchor
+    so the reference model can be evaluated at the same temperature without a second gen forward pass.
     """
     temperature = min_temp + torch.rand(1).item() * (max_temp - min_temp)
     logits = generator(input_ids, attn_mask)                              # [B, L, V]
     probs = F.softmax(logits / temperature, dim=-1)                       # [B, L, V]
     word_weight = critic.protbert.bert.embeddings.word_embeddings.weight  # [V, H]
     soft_word = probs @ word_weight                                       # [B, L, H]
-    return critic.protbert.bert.embeddings(inputs_embeds=soft_word)       # [B, L, H]
+    soft_embeds = critic.protbert.bert.embeddings(inputs_embeds=soft_word)  # [B, L, H]
+    return soft_embeds, probs, temperature
+
+
+def compute_kl_anchor(gen_probs, ref_protbert, input_ids, attn_mask, temperature):
+    """KL(generator || frozen_reference) — prevents the generator from reward-hacking.
+
+    Uses the same temperature as compute_soft_embeds so both distributions are comparable.
+    ref_protbert must be frozen (requires_grad=False, eval mode) — never updated.
+    """
+    with torch.no_grad():
+        ref_logits = ref_protbert(input_ids=input_ids, attention_mask=attn_mask).logits
+        ref_log_probs = F.log_softmax(ref_logits / temperature, dim=-1)  # [B, L, V]
+    # F.kl_div(log_Q, P) = KL(P || Q); reduction='batchmean' divides by batch size
+    return F.kl_div(ref_log_probs, gen_probs, reduction="batchmean", log_target=False)

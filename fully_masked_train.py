@@ -4,7 +4,7 @@ import torch
 
 
 from transformers import AutoTokenizer, AutoModelForMaskedLM, EsmForProteinFolding
-from models import Generator, Critic, compute_soft_embeds
+from models import Generator, Critic, compute_soft_embeds, compute_kl_anchor
 import wandb
 from loss import critic_loss, generator_loss, compute_gradient_penalty
 from dataset import load_and_tokenize_dataset, get_dataloaders
@@ -44,6 +44,9 @@ def parse_args():
     )
     parser.add_argument(
         "--lambda_gp", type=float, default=5.0, help="Gradient penalty weight"
+    )
+    parser.add_argument(
+        "--lambda_kl", type=float, default=0.01, help="KL anchor weight (generator loss)"
     )
     parser.add_argument(
         "--lr_gen",
@@ -127,6 +130,12 @@ generator = Generator(
 ).to(device)
 critic = Critic(protbert_model=critic_protbert).to(device)
 
+# Frozen reference model for KL anchor — never updated, keeps generator from reward-hacking.
+ref_protbert = AutoModelForMaskedLM.from_pretrained(model_checkpoint_path).to(device)
+ref_protbert.eval()
+for p in ref_protbert.parameters():
+    p.requires_grad_(False)
+
 gen_optimizer = AdamW(
     generator.parameters(), lr=args.lr_gen, betas=(0.9, 0.999), weight_decay=args.wd_gen
 )
@@ -143,6 +152,7 @@ critic_optimizer = AdamW(
 n_epochs = args.n_epochs
 n_critic = args.n_critic
 lambda_gp = args.lambda_gp
+lambda_kl = args.lambda_kl
 initial_masking_rate = 0.9
 iteration_fill_rate = 0.1
 min_temp = 0.8
@@ -159,6 +169,7 @@ wandb.config.update(
     {
         "n_critic": args.n_critic,
         "lambda_gp": args.lambda_gp,
+        "lambda_kl": args.lambda_kl,
         "lr_gen": args.lr_gen,
         "lr_critic": args.lr_critic,
         "wd_gen": args.wd_gen,
@@ -451,12 +462,16 @@ for epoch in range(n_epochs):
 
         # Soft path: one generator forward pass builds the gradient graph (K=1).
         # The iterative fill loop above is NOT in this graph.
-        soft_embeds = compute_soft_embeds(
+        soft_embeds, gen_probs, temperature = compute_soft_embeds(
             generator, critic, fake_data, attn_mask_fake, min_temp, max_temp
+        )
+        kl_loss = compute_kl_anchor(
+            gen_probs, ref_protbert, fake_data, attn_mask_fake, temperature
         )
 
         fake_scores = critic(soft_embeds, attention_mask=attn_mask_fake)
-        g_loss = generator_loss(fake_scores)
+        g_loss = generator_loss(fake_scores) + lambda_kl * kl_loss
+        wandb.log({"kl_loss": kl_loss.item()})
         g_loss.backward()
 
         # Stage 0 sanity check: should be ≈0 before the gradient-flow fix,
