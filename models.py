@@ -128,10 +128,10 @@ def compute_soft_embeds(generator, critic, input_ids, attn_mask, min_temp, max_t
     so the reference model can be evaluated at the same temperature without a second gen forward pass.
     """
     temperature = min_temp + torch.rand(1).item() * (max_temp - min_temp)
-    logits = generator(input_ids, attn_mask)                              # [B, L, V]
-    probs = F.softmax(logits / temperature, dim=-1)                       # [B, L, V]
+    logits = generator(input_ids, attn_mask)  # [B, L, V]
+    probs = F.softmax(logits / temperature, dim=-1)  # [B, L, V]
     word_weight = critic.protbert.bert.embeddings.word_embeddings.weight  # [V, H]
-    soft_word = probs @ word_weight                                       # [B, L, H]
+    soft_word = probs @ word_weight  # [B, L, H]
     soft_embeds = critic.protbert.bert.embeddings(inputs_embeds=soft_word)  # [B, L, H]
     return soft_embeds, probs, temperature
 
@@ -147,4 +147,9 @@ def compute_kl_anchor(gen_probs, ref_protbert, input_ids, attn_mask, temperature
         ref_log_probs = F.log_softmax(ref_logits / temperature, dim=-1)  # [B, L, V]
     # Clamp before kl_div: F.kl_div computes log(gen_probs) internally; without the
     # clamp, near-zero probs → log(~0) ≈ -87 → giant gradients → weight explosion.
-    return F.kl_div(ref_log_probs, gen_probs.clamp(min=1e-8), reduction="batchmean", log_target=False)
+    return F.kl_div(
+        ref_log_probs,
+        gen_probs.clamp(min=1e-8),
+        reduction="batchmean",
+        log_target=False,
+    )

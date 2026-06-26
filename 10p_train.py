@@ -42,7 +42,10 @@ def parse_args():
         "--lambda_gp", type=float, default=5.0, help="Gradient penalty weight"
     )
     parser.add_argument(
-        "--lambda_kl", type=float, default=0.01, help="KL anchor weight (generator loss)"
+        "--lambda_kl",
+        type=float,
+        default=0.01,
+        help="KL anchor weight (generator loss)",
     )
     parser.add_argument(
         "--lr_gen",
@@ -466,13 +469,18 @@ for epoch in range(n_epochs):
 
         if not (torch.isnan(g_loss) or torch.isinf(g_loss)):
             g_loss.backward()
-            gen_grad_norm = sum(
-                p.grad.norm().item() ** 2
-                for p in generator.protbert.parameters()
-                if p.grad is not None
-            ) ** 0.5
+            gen_grad_norm = (
+                sum(
+                    p.grad.norm().item() ** 2
+                    for p in generator.protbert.parameters()
+                    if p.grad is not None
+                )
+                ** 0.5
+            )
             wandb.log({"gen_grad_norm": gen_grad_norm})
-            torch.nn.utils.clip_grad_norm_(generator.protbert.parameters(), max_norm=1.0)
+            torch.nn.utils.clip_grad_norm_(
+                generator.protbert.parameters(), max_norm=1.0
+            )
             gen_optimizer.step()
         else:
             wandb.log({"gen_grad_norm": 0.0})
