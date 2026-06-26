@@ -227,6 +227,8 @@ def run_evaluation(epoch_idx, batch_idx, critic_loss_val, gen_loss_val, tag="eva
     Logs structural metrics + current losses to W&B.
     Assumes generator, tokenizer, esmfold_model … are in scope.
     """
+    if args.num_eval_sequences == 0:
+        return
     print("=" * 20)
     print(f"[{tag}] Epoch {epoch_idx + 1}  Batch {batch_idx} ")
 
