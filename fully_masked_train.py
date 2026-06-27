@@ -151,7 +151,9 @@ critic = Critic(protbert_model=critic_protbert).to(device)
 
 # Frozen reference model for KL anchor — only loaded when lambda_kl > 0 (saves ~840MB VRAM).
 if args.lambda_kl > 0:
-    ref_protbert = AutoModelForMaskedLM.from_pretrained(model_checkpoint_path).to(device).half()
+    ref_protbert = (
+        AutoModelForMaskedLM.from_pretrained(model_checkpoint_path).to(device).half()
+    )
     ref_protbert.eval()
     for p in ref_protbert.parameters():
         p.requires_grad_(False)
