@@ -185,14 +185,18 @@ wandb.config.update(
 )
 
 
-# ESMFold Initialization
+# ESMFold Initialization — skip when structural eval is disabled (saves ~2.8GB VRAM)
 esmfold_path = ESMFOLD_PATH
-esmfold_model = EsmForProteinFolding.from_pretrained(
-    esmfold_path, low_cpu_mem_usage=True
-).to(device)  # type: ignore[arg-type]
-esmfold_tokenizer = AutoTokenizer.from_pretrained(esmfold_path)
-esmfold_model.esm = esmfold_model.esm.half()
-esmfold_model.eval()
+if args.num_eval_sequences > 0:
+    esmfold_model = EsmForProteinFolding.from_pretrained(
+        esmfold_path, low_cpu_mem_usage=True
+    ).to(device)  # type: ignore[arg-type]
+    esmfold_tokenizer = AutoTokenizer.from_pretrained(esmfold_path)
+    esmfold_model.esm = esmfold_model.esm.half()
+    esmfold_model.eval()
+else:
+    esmfold_model = None
+    esmfold_tokenizer = None
 
 
 # ------------------------------------------------------------
@@ -224,11 +228,20 @@ unfreeze_done = False
 # ------------------------------------------------------------
 def run_evaluation(epoch_idx, batch_idx, critic_loss_val, gen_loss_val, tag="eval"):
     """
-    Logs structural metrics + current losses to W&B.
-    Assumes generator, tokenizer, esmfold_model … are in scope.
+    Always logs losses. Runs structural eval only when num_eval_sequences > 0.
     """
+    log_dict = {
+        "epoch": epoch_idx + 1,
+        "batch": batch_idx,
+        "critic_loss": critic_loss_val,
+        "generator_loss": gen_loss_val,
+        "tag": tag,
+    }
+
     if args.num_eval_sequences == 0:
+        wandb.log(log_dict)
         return
+
     print("=" * 20)
     print(f"[{tag}] Epoch {epoch_idx + 1}  Batch {batch_idx} ")
 
@@ -265,20 +278,16 @@ def run_evaluation(epoch_idx, batch_idx, critic_loss_val, gen_loss_val, tag="eva
         run_name=args.run_name, num_sequences=args.num_eval_sequences
     )
 
-    wandb.log(
+    log_dict.update(
         {
-            "epoch": epoch_idx + 1,
-            "batch": batch_idx,
-            "critic_loss": critic_loss_val,
-            "generator_loss": gen_loss_val,
             "plddt_score": avg_plddt_score,
             "scAccuracy": avg_scAcc,
             "progres": avg_progres,
             "pairwise_tm": avg_pairwise_tm_score,
             "unique_ratio": unique_ratio,
-            "tag": tag,  # handy for filtering
         }
     )
+    wandb.log(log_dict)
     clean_m8_folder()
 
 
