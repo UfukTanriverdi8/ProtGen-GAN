@@ -459,6 +459,9 @@ def compute_average_progres_score(
 
     for i in range(num_sequences):
         gen_file = f"{pdb_folder}/generated_protein_{i}.pdb"
+        if not os.path.exists(gen_file):
+            print(f"[WARN] progres: PDB not found, skipping sequence {i}")
+            continue
         score = pg.progres_score(reference_pdb, gen_file)
         scores.append(score)
 
@@ -475,6 +478,7 @@ def calculate_pairwise_tm_score(run_name="default_run_name", num_sequences=10):
     pdb_files = [
         os.path.join(pdb_folder, f"generated_protein_{i}.pdb")
         for i in range(num_sequences)
+        if os.path.exists(os.path.join(pdb_folder, f"generated_protein_{i}.pdb"))
     ]
     tm_scores = []
 
