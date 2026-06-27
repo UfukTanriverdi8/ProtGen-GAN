@@ -201,15 +201,19 @@ family. Decided approach in full:
 Confirmed ≈0 before fix (proves the bug). Should be > 0 after Stage 1.
 
 **Stage 1 ✅** — Soft embeddings + embed-the-real + GP in embedding space:
-- `compute_soft_embeds()` in `models.py`: one generator forward pass on the completed
-  sequence → `softmax(logits/T) @ critic_word_weight` → full embeds via `inputs_embeds`.
-  The iterative fill loop is NOT in the gradient graph (K=1 truncated backprop, natural).
+- `compute_soft_embeds()` in `models.py`: re-masks 50% of the completed sequence (excluding
+  special tokens), runs one generator forward pass on that masked input →
+  `softmax(logits/T) @ critic_word_weight`, then blends soft embeds at the remasked positions
+  with hard original-token embeds elsewhere → full embeds via `inputs_embeds`. Gradient reaches
+  the generator only through the remasked slots. The iterative fill loop is NOT in the gradient
+  graph (K=1 truncated backprop, natural).
 - Both real and fake embedded via `critic.protbert.bert.embeddings()` before critic update
   so critic cannot distinguish real/fake by embedding sparsity.
 - `compute_gradient_penalty()` now accepts pre-computed `[B,L,H]` embedding tensors.
 
 **Stage 2 ✅** — KL anchor against frozen reference ProtBERT:
-- `compute_kl_anchor()` in `models.py`: `KL(generator || frozen_ref)` at same temperature.
+- `compute_kl_anchor()` in `models.py`: `KL(generator || frozen_ref)` at same temperature,
+  computed only at the remasked positions — both models see the identical masked input.
 - `ref_protbert` loaded from `PROTBERT_PATH`, frozen, eval — never updated.
 - `g_loss = -critic(soft_embeds).mean() + lambda_kl * KL(gen || ref)` (default `lambda_kl=0.01`).
 - `kl_loss` logged to wandb. Tune `--lambda_kl` if generator drifts too fast or too slow.
@@ -218,14 +222,17 @@ Confirmed ≈0 before fix (proves the bug). Should be > 0 after Stage 1.
 exploding), and `unique_ratio` (not collapsing). Blind mode has mode-collapse risk —
 test seeded first. Full validation criteria in `docs/GENERATOR_GRADIENT_FIX.md`.
 
-**⚠️ KNOWN ISSUE — KL anchor computed on completed sequences (2026-06-27):**
-`compute_soft_embeds` (and thus `compute_kl_anchor`) receives `fake_data` after the
-iterative fill loop — fully revealed, zero [MASK] tokens. ProtBERT is MLM-trained and
-has never seen fully-revealed input; logits are uncalibrated in this regime. Result:
-even with `gen_probs.clamp(min=1e-8)` and `clip_grad_norm_(max_norm=1.0)`, `kl_loss`
-oscillates 89–1236 throughout training. Fix: pass a partially masked input to
-`compute_soft_embeds` instead of the completed sequence, so ProtBERT stays in-distribution.
-Not yet implemented. Use `--lambda_kl 0.0` to bypass until fixed.
+**✅ FIXED — KL anchor / soft embeds now computed on a re-masked input (2026-06-27):**
+Previously `compute_soft_embeds` (and thus `compute_kl_anchor`) received `fake_data` after
+the iterative fill loop — fully revealed, zero [MASK] tokens. ProtBERT is MLM-trained and
+had never seen fully-revealed input; logits were uncalibrated in that regime, and `kl_loss`
+oscillated 89–1236 throughout training even with `gen_probs.clamp(min=1e-8)` and
+`clip_grad_norm_(max_norm=1.0)`. Fix (commit `c18c89a`): `compute_soft_embeds` now re-masks
+50% of the completed sequence and runs the generator on that, so ProtBERT stays
+in-distribution; `compute_kl_anchor` evaluates the frozen reference on the same masked input
+and scores KL only at the remasked positions. Applied to both training scripts. `--lambda_kl`
+can now be left at its default; `--lambda_kl 0.0` remains available for clean adversarial-only
+runs. Watch `kl_loss` on the next seeded run to confirm it no longer oscillates.
 
 ---
 

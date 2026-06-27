@@ -136,11 +136,15 @@ before/after sanity check.
 
 **Stage 1 ✅ — Soft embeddings + embed-the-real + K=1 truncated backprop.**
 (Note: the original plan split this into Stage 1 and Stage 2. They were implemented
-together — K=1 is implicit in `compute_soft_embeds`, which does one forward pass on the
-completed sequence and does not backprop through the iterative fill loop.)
-- `compute_soft_embeds()` in `models.py`: one generator forward pass →
-  `softmax(logits/T) @ critic_word_weight` → full embeds via `inputs_embeds`. K=1 by
-  design — the fill loop that produced `input_ids` is not in this graph.
+together — K=1 is implicit in `compute_soft_embeds`, which does one forward pass on a
+re-masked copy of the completed sequence and does not backprop through the iterative
+fill loop.)
+- `compute_soft_embeds()` in `models.py`: re-masks 50% of the completed sequence
+  (special tokens excluded), runs one generator forward pass on that masked input →
+  `softmax(logits/T) @ critic_word_weight`, then blends soft embeds at the remasked
+  positions with hard original-token embeds elsewhere → full embeds via `inputs_embeds`.
+  Gradient reaches the generator only through the remasked slots. K=1 by design — the
+  fill loop that produced `input_ids` is not in this graph.
 - Both real and fake embedded via `critic.protbert.bert.embeddings()` before critic
   update so the critic cannot distinguish real/fake by embedding sparsity.
 - `compute_gradient_penalty()` now accepts pre-computed `[B,L,H]` embedding tensors
@@ -152,34 +156,36 @@ signal. `unique_ratio` held at 1.0. Training stable.
 
 **Stage 2 ✅ — KL anchor against frozen reference ProtBERT.**
 `compute_kl_anchor()` in `models.py`: `KL(generator || frozen_ref)` at same temperature
-as `compute_soft_embeds`. `ref_protbert` loaded fp16, frozen, eval mode — never updated.
-`g_loss = -critic(soft_embeds).mean() + lambda_kl * KL(gen || ref)` (default
-`lambda_kl=0.01`). `kl_loss` logged to wandb.
+as `compute_soft_embeds`, scored only at the remasked positions where the generator made
+a genuine prediction. `ref_protbert` loaded fp16, frozen, eval mode — never updated, and
+fed the *same* masked input the generator saw. `g_loss = -critic(soft_embeds).mean() +
+lambda_kl * KL(gen || ref)` (default `lambda_kl=0.01`). `kl_loss` logged to wandb.
 
 *Observed (2026-06-27, run ouqv9wox, 5 epochs):* `gen_grad_norm` > 0 confirmed again.
-However, `kl_loss` oscillates wildly 89–1236 throughout training (not stable). Root
-cause identified — see **Known Issue** below. Use `--lambda_kl 0.0` to bypass until
-fixed.
+`kl_loss` oscillated wildly 89–1236 — root cause was the out-of-distribution input, now
+fixed (see below). Re-validate on the next seeded run.
 
-**⚠️ Known Issue — KL anchor computed on completed sequences (2026-06-27):**
-`compute_soft_embeds` receives `fake_data` after the iterative fill loop — fully
-revealed, zero [MASK] tokens. ProtBERT is MLM-trained and has never seen fully-revealed
-input during training; its logits are uncalibrated in this regime. Even small adversarial
-weight updates cause large logit swings on this out-of-distribution input → KL explodes.
+**✅ FIXED — KL anchor now computed on a re-masked input (2026-06-27, commit `c18c89a`):**
+The old `compute_soft_embeds` received `fake_data` after the iterative fill loop — fully
+revealed, zero [MASK] tokens. ProtBERT is MLM-trained and had never seen fully-revealed
+input, so its logits were uncalibrated; even small adversarial weight updates caused large
+logit swings on that out-of-distribution input → KL exploded. The clamp
+(`gen_probs.clamp(min=1e-8)`) and `clip_grad_norm_(max_norm=1.0)` prevented NaN crashes and
+weight blow-up but could not stabilise the loss itself.
 
-The clamp (`gen_probs.clamp(min=1e-8)`) prevents log(0) → NaN crashes but cannot prevent
-genuine distribution divergence. `clip_grad_norm_(max_norm=1.0)` prevents weight
-explosion but does not stabilise KL.
-
-**Fix (not yet implemented):** pass a partially masked input to `compute_soft_embeds`
-instead of the completed sequence — e.g. capture `input_ids` midway through the fill
-loop when ~50% of positions are still masked. ProtBERT stays in-distribution, logits are
-calibrated, KL changes smoothly under weight updates.
+**The fix:** `compute_soft_embeds` now re-masks 50% of the completed sequence (special
+tokens excluded) and runs the generator on that masked input, so ProtBERT stays
+in-distribution. The soft path feeds the critic only at the remasked positions (hard
+original-token embeds elsewhere); `compute_kl_anchor` evaluates the frozen reference on the
+identical masked input and scores KL only over those remasked positions. Both training
+scripts updated. Expectation: `kl_loss` changes smoothly under weight updates — confirm on
+the next seeded run.
 
 **Stage 3 — Validate in seeded mode before blind mode.**
-(Originally Stage 4.) Seeded mode partially validated (ouqv9wox). BUG 4 (attention mask
-excluding [MASK] tokens in blind mode) was fixed separately — no longer a blocker.
-Full validation requires stable KL dynamics, which requires the fix above.
+(Originally Stage 4.) Seeded mode partially validated (ouqv9wox), but under the OOD KL bug.
+BUG 4 (attention mask excluding [MASK] tokens in blind mode) was fixed separately — no
+longer a blocker. With the KL fix in place, re-run seeded mode and confirm stable
+`kl_loss` before promoting to blind mode.
 
 **Stage 4 (only if needed) — Non-differentiable reward via PPO/REINFORCE.**
 If a non-differentiable signal is added later (e.g. an external structure or function
@@ -198,10 +204,10 @@ on top of the differentiable critic term — don't replace the critic term with 
 - **Critic real/fake logit gap stays near-saturated** → real and fake still look
   different in kind to the critic; check that real sequences are being embedded
   through the same matrix, not passed as raw IDs.
-- **kl_loss oscillates wildly (89–1236 range observed in ouqv9wox)** → this is the
-  known out-of-distribution input issue. The clamp and clip prevent a crash but do not
-  fix the root cause. Use `--lambda_kl 0.0` to isolate clean adversarial dynamics, or
-  fix `compute_soft_embeds` to operate on masked inputs.
+- **kl_loss oscillates wildly (89–1236 range observed in ouqv9wox)** → this was the
+  out-of-distribution input issue, fixed in `c18c89a` (`compute_soft_embeds` now operates
+  on a re-masked input). If oscillation persists on a post-fix run, fall back to
+  `--lambda_kl 0.0` to isolate clean adversarial dynamics and investigate further.
 - **Oscillating critic loss / generator collapsing (unique_ratio < 1.0)** → confirm
   KL anchor is active (or increase lambda_kl), reduce n_critic, or fall back to seeded
   mode if testing blind mode.
