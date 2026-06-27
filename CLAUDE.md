@@ -21,6 +21,14 @@ sbatch lr_full_run.sh         # Blind mode LR grid search
 # Direct invocation (Anzu / local debugging)
 python 10p_train.py --run_name debug_run --n_epochs 2 --batch_size 4
 python fully_masked_train.py --run_name debug_run --n_epochs 2 --batch_size 4
+
+# Fast test run (10k seqs, no ESMFold load, clean adversarial dynamics)
+python 10p_train.py --run_name test-run --n_epochs 3 --batch_size 4 --n_critic 4 \
+  --num_eval_sequences 20 --max_train_seqs 10000 --lambda_kl 0.0
+# --num_eval_sequences 0  → skips ESMFold load entirely (~2.8GB VRAM saved); losses still log.
+# --max_train_seqs N      → caps dataset to N sequences for faster epoch cycles.
+# --iteration_fill_rate F → fraction filled per generation step (default 0.1 = 10 steps).
+# --lambda_kl 0.0         → disables KL anchor; use for clean adversarial-only test runs.
 ```
 
 ### Generation (MN5)
@@ -209,6 +217,15 @@ Confirmed ≈0 before fix (proves the bug). Should be > 0 after Stage 1.
 **Next: validate in seeded mode.** Watch `gen_grad_norm` (> 0), `kl_loss` (stable, not
 exploding), and `unique_ratio` (not collapsing). Blind mode has mode-collapse risk —
 test seeded first. Full validation criteria in `docs/GENERATOR_GRADIENT_FIX.md`.
+
+**⚠️ KNOWN ISSUE — KL anchor computed on completed sequences (2026-06-27):**
+`compute_soft_embeds` (and thus `compute_kl_anchor`) receives `fake_data` after the
+iterative fill loop — fully revealed, zero [MASK] tokens. ProtBERT is MLM-trained and
+has never seen fully-revealed input; logits are uncalibrated in this regime. Result:
+even with `gen_probs.clamp(min=1e-8)` and `clip_grad_norm_(max_norm=1.0)`, `kl_loss`
+oscillates 89–1236 throughout training. Fix: pass a partially masked input to
+`compute_soft_embeds` instead of the completed sequence, so ProtBERT stays in-distribution.
+Not yet implemented. Use `--lambda_kl 0.0` to bypass until fixed.
 
 ---
 
