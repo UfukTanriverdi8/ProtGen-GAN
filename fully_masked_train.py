@@ -167,7 +167,7 @@ debug_seq = "TIALRPDRLTQVLGTEVPTDEGTRLLGAIGFDVEAGEDALHCTVPTWRPDVSIEEDLIEEVA"
 # --------------------------
 # WandB Initialization
 # --------------------------
-wandb.init(project="ProtGen GAN Training", name=args.run_name, mode="online")
+wandb.init(project="protgen-gan", name=args.run_name, mode="online")
 wandb.config.update(
     {
         "n_critic": args.n_critic,

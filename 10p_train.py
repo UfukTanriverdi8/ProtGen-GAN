@@ -161,7 +161,7 @@ max_temp = 1.2
 # -----------------------
 # W&B Initialization
 # -----------------------
-wandb.init(project="ProtGen GAN Training", name=args.run_name, mode="online")
+wandb.init(project="protgen-gan", name=args.run_name, mode="online")
 wandb.config.update(
     {
         "n_critic": args.n_critic,
