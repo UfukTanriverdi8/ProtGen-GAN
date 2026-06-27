@@ -149,11 +149,14 @@ generator = Generator(
 ).to(device)
 critic = Critic(protbert_model=critic_protbert).to(device)
 
-# Frozen reference model for KL anchor — never updated, keeps generator from reward-hacking.
-ref_protbert = AutoModelForMaskedLM.from_pretrained(model_checkpoint_path).to(device).half()
-ref_protbert.eval()
-for p in ref_protbert.parameters():
-    p.requires_grad_(False)
+# Frozen reference model for KL anchor — only loaded when lambda_kl > 0 (saves ~840MB VRAM).
+if args.lambda_kl > 0:
+    ref_protbert = AutoModelForMaskedLM.from_pretrained(model_checkpoint_path).to(device).half()
+    ref_protbert.eval()
+    for p in ref_protbert.parameters():
+        p.requires_grad_(False)
+else:
+    ref_protbert = None
 
 gen_optimizer = AdamW(
     generator.parameters(), lr=args.lr_gen, betas=(0.9, 0.999), weight_decay=args.wd_gen
@@ -201,15 +204,17 @@ wandb.config.update(
 )
 
 
-# ESMFold Initialization — skip when structural eval is disabled (saves ~2.8GB VRAM)
+# ESMFold Initialization — loaded on CPU, moved to GPU only during eval (saves ~2.8GB VRAM
+# during training). Transfer adds ~10-20s per eval checkpoint.
 esmfold_path = ESMFOLD_PATH
 if args.num_eval_sequences > 0:
     esmfold_model = EsmForProteinFolding.from_pretrained(
         esmfold_path, low_cpu_mem_usage=True
-    ).to(device)  # type: ignore[arg-type]
+    )
     esmfold_tokenizer = AutoTokenizer.from_pretrained(esmfold_path)
     esmfold_model.esm = esmfold_model.esm.half()
     esmfold_model.eval()
+    # stays on CPU until run_evaluation moves it to device
 else:
     esmfold_model = None
     esmfold_tokenizer = None
@@ -270,6 +275,7 @@ def run_evaluation(epoch_idx, batch_idx, critic_loss_val, gen_loss_val, tag="eva
 
     unique_ratio = len(set(generated_sequences)) / len(generated_sequences)
 
+    esmfold_model.to(device)
     avg_plddt_score, _ = calculate_plddt_scores_and_save_pdb(
         generated_sequences,
         esmfold_tokenizer,
@@ -279,6 +285,9 @@ def run_evaluation(epoch_idx, batch_idx, critic_loss_val, gen_loss_val, tag="eva
         run_name=args.run_name,
         device=device,
     )
+    esmfold_model.to("cpu")
+    torch.cuda.empty_cache()
+
     avg_scAcc = calculate_mpnn_alignment_metric(
         generated_sequences=generated_sequences,
         num_sequences=args.num_eval_sequences,
@@ -497,13 +506,16 @@ for epoch in range(n_epochs):
         soft_embeds, gen_probs, temperature = compute_soft_embeds(
             generator, critic, fake_data, attn_mask_fake, min_temp, max_temp
         )
-        kl_loss = compute_kl_anchor(
-            gen_probs, ref_protbert, fake_data, attn_mask_fake, temperature
-        )
 
         fake_scores = critic(soft_embeds, attention_mask=attn_mask_fake)
-        g_loss = generator_loss(fake_scores) + lambda_kl * kl_loss
-        wandb.log({"kl_loss": kl_loss.item()})
+        if lambda_kl > 0:
+            kl_loss = compute_kl_anchor(
+                gen_probs, ref_protbert, fake_data, attn_mask_fake, temperature
+            )
+            g_loss = generator_loss(fake_scores) + lambda_kl * kl_loss
+            wandb.log({"kl_loss": kl_loss.item()})
+        else:
+            g_loss = generator_loss(fake_scores)
 
         if not (torch.isnan(g_loss) or torch.isinf(g_loss)):
             g_loss.backward()
