@@ -1,0 +1,6 @@
+# Generated PDB outputs are throwaway eval/test artifacts — don't track them.
+# Keep only the reference DNMT structure, which the eval pipeline needs.
+*
+!.gitignore
+!reference/
+!reference/**

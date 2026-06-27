@@ -118,40 +118,96 @@ class Critic(nn.Module):
         return logits
 
 
-def compute_soft_embeds(generator, critic, input_ids, attn_mask, min_temp, max_temp):
-    """One generator forward pass → continuous embeddings for the critic (K=1 backprop path).
-
-    Gradient flows: critic(soft_embeds) → loss → backward → probs → logits → generator.protbert.
-    The iterative fill loop that produced input_ids is NOT in this graph — only this call is.
-
-    Returns (soft_embeds, probs, temperature). probs and temperature are needed by the KL anchor
-    so the reference model can be evaluated at the same temperature without a second gen forward pass.
-    """
+def compute_soft_embeds(generator, critic, input_ids, attn_mask, min_temp, max_temp,
+                        tokenizer, remask_frac=0.5):
+    # TODO: Random temperature sampling can be discussed in the future and there can be a better way to do this.
     temperature = min_temp + torch.rand(1).item() * (max_temp - min_temp)
-    logits = generator(input_ids, attn_mask)  # [B, L, V]
-    probs = F.softmax(logits / temperature, dim=-1)  # [B, L, V]
-    word_weight = critic.protbert.bert.embeddings.word_embeddings.weight  # [V, H]
-    soft_word = probs @ word_weight  # [B, L, H]
-    soft_embeds = critic.protbert.bert.embeddings(inputs_embeds=soft_word)  # [B, L, H]
-    return soft_embeds, probs, temperature
+
+    # -- Phase 1: Saving the positions that will be REMASKED later
+    # We are saving them from now on so that we can use them before the critic and also for the KL anchor computation
+    # TODO: remask_frac is fixed 0.5 currently, but we can explore the idea of using the same prob distribution that we used during finetuning
+    remask_positions = torch.rand_like(input_ids, dtype=torch.float) < remask_frac
+    # don't mask padding or special tokens (CLS/SEP/PAD)
+    special = (input_ids == tokenizer.pad_token_id) | \
+              (input_ids == tokenizer.cls_token_id) | \
+              (input_ids == tokenizer.sep_token_id)
+    remask_positions = remask_positions & ~special  # [Batch, Length] bool: True = blanked
+
+    # -- Phase 2: Creating the masked input for the generator and running it through the generator
+
+    # masking happens here, we apply it to the copy of the input_ids
+    masked_input = input_ids.clone()
+    masked_input[remask_positions] = tokenizer.mask_token_id
+
+    # Throwing the masked input through the generator to get the logits and probabilities for the masked positions
+    logits = generator(masked_input, attn_mask)    # [Batch, Length, VocabSize], real choices at masked positions, garbage elsewhere
+    probs = F.softmax(logits / temperature, dim=-1)
+    word_weight = critic.protbert.bert.embeddings.word_embeddings.weight 
+    soft_sequence = probs @ word_weight  # [Batch, Length, HiddenSize], every aminoacid is now a weighted sum of the embeddings
+    # since every aminoacid is soft now, we have to cherry-pick the actual choices for the masked positions
+    # and use the hard embeddings for the unmasked positions 
+
+    # -- Phase 3: Blending the soft amino acid embeddings with the original embeddings for unmasked positions
+    
+    # Settled sequence stands for the original embeddings of the sequence, without no softening
+    settled_sequence = critic.protbert.bert.embeddings.word_embeddings(input_ids)  # [Batch, Length, HiddenSize]
+    # We had the remask_positions as [Batch, Length] bool, we need to unsqueeze it to [Batch, Length, 1] to broadcast over the HiddenSize dimension
+    remasked_aminoacids = remask_positions.unsqueeze(-1)    # [Batch, Length, 1] to broadcast over HiddenSize
+    # Blend happens here. Wherever remasked_aminoacids is True, we take the soft_sequence, otherwise we take the settled_sequence
+    # Means that for the positions that were chosen to be remasked, we take the soft amino acid embeddings, 
+    # and for the positions that were not chosen to be remasked, we take the original embeddings of the amino acids 
+    blended_sequence = torch.where(remasked_aminoacids, soft_sequence, settled_sequence)
+    # Adding the positional information to the blended_sequence, and finalizing the sequence that can be read by the critic
+    soft_embeds = critic.protbert.bert.embeddings(inputs_embeds=blended_sequence)
+    # returning the soft embeddings, probs of generator, temperature used, remask positions and the masked input for KL anchor computation
+    return soft_embeds, probs, temperature, remask_positions, masked_input
 
 
-def compute_kl_anchor(gen_probs, ref_protbert, input_ids, attn_mask, temperature):
-    """KL(generator || frozen_reference) — prevents the generator from reward-hacking.
+def compute_kl_anchor(gen_probs, ref_protbert, masked_input, attn_mask,
+                      temperature, remask_positions):
+    """KL(generator || reference_finetuned_protbert), computed ONLY at remasked positions.
 
-    Uses the same temperature as compute_soft_embeds so both distributions are comparable.
-    ref_protbert must be frozen (requires_grad=False, eval mode) — never updated.
+    Once the generator finally gets gradient, it will chase whatever
+    fools the critic, including garbage sequences. This anchors it to the frozen
+    pretrained ProtBERT so it can't drift into nonsense (the collapse we see from the DRAKES paper(ICLR, 2025)).
+
+    F.kl_div(input, target) computes KL(target || input).
+    We pass input = ref_log_probs, target = gen_probs  ->  KL(gen || ref). Forward KL.
+    "target is the distribution being measured, input is the reference."
+
+    masked_input: the SAME masked input compute_soft_embeds fed the generator. The
+      reference MUST see the identical input, otherwise the two distributions are
+      answering different questions and the KL is meaningless.
+    remask_positions: [Batch, Length] bool, True where a real prediction happened.
+      Only these slots enter the KL. Kept slots are echo logits and would pollute it.
     """
+    # -- Phase 1: run the frozen reference finetuned protbert on the SAME masked input
     with torch.no_grad():
         ref_logits = ref_protbert(
-            input_ids=input_ids, attention_mask=attn_mask
+            input_ids=masked_input, attention_mask=attn_mask
         ).logits.float()
-        ref_log_probs = F.log_softmax(ref_logits / temperature, dim=-1)  # [B, L, V]
-    # Clamp before kl_div: F.kl_div computes log(gen_probs) internally; without the
-    # clamp, near-zero probs → log(~0) ≈ -87 → giant gradients → weight explosion.
+        # same temperature as the generator's softmax, so the two are comparable
+        # using log_softmax here because F.kl_div expects log-probs for the input!
+        ref_log_probs = F.log_softmax(ref_logits / temperature, dim=-1)  # [Batch, Length, VocabSize]
+
+    # -- Phase 2: keep only the remasked slots, flatten [Batch, Length, VocabSize] -> [N_masked, VocabSize]
+    # remask_positions picks out the rows where either model actually predicted something
+    generator_selected_probs = gen_probs[remask_positions]                 # [N_masked, VocabSize]
+    ref_selected_probs = ref_log_probs[remask_positions]            # [N_masked, VocabSize]
+
+    # if a batch happened to mask zero real positions, there is nothing to anchor.
+    # return a real zero (not NaN) so g_loss stays clean and the step isn't silently skipped.
+    if generator_selected_probs.numel() == 0:
+        return torch.zeros((), device=gen_probs.device, dtype=gen_probs.dtype)
+
+    # -- Phase 3: forward KL over the masked positions
+    # clamping is needed because F.kl_div internally does target * log(target); near-zero probs would
+    # make log(~0) blow up. clamp floors the prob so the log stays finite.
+    # batchmean here divides by N_masked (dim 0 is now masked-position count), giving
+    # per-masked-position KL, whcih is stable no matter how many positions got masked.
     return F.kl_div(
-        ref_log_probs,
-        gen_probs.clamp(min=1e-8),
+        ref_selected_probs,                       # input: log-probs of the reference
+        generator_selected_probs.clamp(min=1e-8),       # target: probs of the generator
         reduction="batchmean",
         log_target=False,
     )
