@@ -92,6 +92,18 @@ def parse_args():
         default=4,
         help="Batch size for evaluation during training",
     )
+    parser.add_argument(
+        "--max_train_seqs",
+        type=int,
+        default=None,
+        help="Cap dataset size (e.g. 10000 for fast test runs). None = full dataset.",
+    )
+    parser.add_argument(
+        "--iteration_fill_rate",
+        type=float,
+        default=0.1,
+        help="Fraction of masked positions filled per generation step (default 0.1 = 10 steps).",
+    )
     return parser.parse_args()
 
 
@@ -111,6 +123,10 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 tokenized_full_dataset = load_and_tokenize_dataset(
     tokenizer, full_dataset="data/dnmt_full.txt", fully_masked=True, max_length=512
 )["critic"]
+if args.max_train_seqs is not None:
+    tokenized_full_dataset = tokenized_full_dataset.select(
+        range(min(args.max_train_seqs, len(tokenized_full_dataset)))
+    )
 
 
 # -----------------------
@@ -153,7 +169,7 @@ n_critic = args.n_critic
 lambda_gp = args.lambda_gp
 lambda_kl = args.lambda_kl
 initial_masking_rate = 0.9
-iteration_fill_rate = 0.1
+iteration_fill_rate = args.iteration_fill_rate
 min_temp = 0.8
 max_temp = 1.2
 
