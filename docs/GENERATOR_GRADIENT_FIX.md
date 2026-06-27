@@ -129,67 +129,87 @@ sequences correctly.
 
 ## Staged implementation plan
 
-**Stage 0 — Instrument before touching anything.**
+**Stage 0 ✅ — Instrument before touching anything.**
 Log the generator's ProtBERT gradient norm immediately after `g_loss.backward()` in
-both training scripts. Should currently print ≈0. This is the before/after sanity
-check — confirms the bug, and later confirms the fix.
+both training scripts. Confirmed ≈0 before fix across all prior runs. This is the
+before/after sanity check.
 
-**Stage 1 — Soft embeddings + embed-the-real.**
-- `models.py` / `generate_fakes_for_batch`: add a critic-facing path that returns
-  `soft_embeds = F.softmax(logits / T, dim=-1) @ critic.embedding_matrix` instead of
-  hard IDs. Keep hard sampling for the actual output sequences used everywhere else
-  (logging, FASTA export, validity checks, evaluation).
-- Critic: route **real sequences** through the same embedding matrix instead of raw
-  IDs, using the existing 3D-embedding branch already present in `models.py`.
-- `loss.py` `compute_gradient_penalty`: interpolate in embedding space —
-  `x_hat = alpha * real_embeds + (1 - alpha) * soft_embeds`, penalize
-  `(||grad_{x_hat} critic(x_hat)||_2 - 1) ** 2`.
-- Generator loss: `g_loss = -critic(soft_embeds).mean()`.
-- Start temperature near T=1; watch the real/fake critic-logit gap. If the critic
-  still separates trivially after this stage, the input-mismatch fix is incomplete.
+**Stage 1 ✅ — Soft embeddings + embed-the-real + K=1 truncated backprop.**
+(Note: the original plan split this into Stage 1 and Stage 2. They were implemented
+together — K=1 is implicit in `compute_soft_embeds`, which does one forward pass on the
+completed sequence and does not backprop through the iterative fill loop.)
+- `compute_soft_embeds()` in `models.py`: one generator forward pass →
+  `softmax(logits/T) @ critic_word_weight` → full embeds via `inputs_embeds`. K=1 by
+  design — the fill loop that produced `input_ids` is not in this graph.
+- Both real and fake embedded via `critic.protbert.bert.embeddings()` before critic
+  update so the critic cannot distinguish real/fake by embedding sparsity.
+- `compute_gradient_penalty()` now accepts pre-computed `[B,L,H]` embedding tensors
+  and interpolates in embedding space.
 
-**Stage 2 — Truncate backprop to K=1.**
-Only the final refinement step gets gradient initially. Intermediate commits stay
-straight-through (hard forward / soft backward) so ProtBERT stays in-distribution.
-Increase K only if the adversarial signal proves too weak, adding gradient
-checkpointing if memory becomes a problem.
+*Observed (2026-06-26, run koqatr9h):* `gen_grad_norm` confirmed > 0 in epoch 2+
+for the first time across all training history. Generator is receiving adversarial
+signal. `unique_ratio` held at 1.0. Training stable.
 
-**Stage 3 — Add the anchor.**
-A KL term against the frozen pretrained ProtBERT, or a simpler MLM cross-entropy
-penalty, weighted into the generator loss. This is the direct mitigation for the
-DRAKES no-KL collapse (scRMSD 0.918 → 7.307).
+**Stage 2 ✅ — KL anchor against frozen reference ProtBERT.**
+`compute_kl_anchor()` in `models.py`: `KL(generator || frozen_ref)` at same temperature
+as `compute_soft_embeds`. `ref_protbert` loaded fp16, frozen, eval mode — never updated.
+`g_loss = -critic(soft_embeds).mean() + lambda_kl * KL(gen || ref)` (default
+`lambda_kl=0.01`). `kl_loss` logged to wandb.
 
-**Stage 4 — Validate in seeded mode before blind mode.**
-Confirm the fix produces sane training dynamics in seeded mode first. Blind mode also
-still has BUG 4 (attention mask excludes `[MASK]` tokens) unfixed as of this writing —
-fix that before testing blind mode with the new gradient path, or the two issues will
-be tangled together in any debugging.
+*Observed (2026-06-27, run ouqv9wox, 5 epochs):* `gen_grad_norm` > 0 confirmed again.
+However, `kl_loss` oscillates wildly 89–1236 throughout training (not stable). Root
+cause identified — see **Known Issue** below. Use `--lambda_kl 0.0` to bypass until
+fixed.
 
-**Stage 5 (only if needed) — Non-differentiable reward via PPO/REINFORCE.**
+**⚠️ Known Issue — KL anchor computed on completed sequences (2026-06-27):**
+`compute_soft_embeds` receives `fake_data` after the iterative fill loop — fully
+revealed, zero [MASK] tokens. ProtBERT is MLM-trained and has never seen fully-revealed
+input during training; its logits are uncalibrated in this regime. Even small adversarial
+weight updates cause large logit swings on this out-of-distribution input → KL explodes.
+
+The clamp (`gen_probs.clamp(min=1e-8)`) prevents log(0) → NaN crashes but cannot prevent
+genuine distribution divergence. `clip_grad_norm_(max_norm=1.0)` prevents weight
+explosion but does not stabilise KL.
+
+**Fix (not yet implemented):** pass a partially masked input to `compute_soft_embeds`
+instead of the completed sequence — e.g. capture `input_ids` midway through the fill
+loop when ~50% of positions are still masked. ProtBERT stays in-distribution, logits are
+calibrated, KL changes smoothly under weight updates.
+
+**Stage 3 — Validate in seeded mode before blind mode.**
+(Originally Stage 4.) Seeded mode partially validated (ouqv9wox). BUG 4 (attention mask
+excluding [MASK] tokens in blind mode) was fixed separately — no longer a blocker.
+Full validation requires stable KL dynamics, which requires the fix above.
+
+**Stage 4 (only if needed) — Non-differentiable reward via PPO/REINFORCE.**
 If a non-differentiable signal is added later (e.g. an external structure or function
-oracle that can't be backpropagated through), add it as a *separate* PPO-style term
-with its own baseline and KL constraint, on top of the differentiable critic term —
-don't replace the critic term with it.
+oracle), add it as a *separate* PPO-style term with its own baseline and KL constraint,
+on top of the differentiable critic term — don't replace the critic term with it.
 
 ---
 
 ## Validation criteria / failure tripwires
 
 - **Generator gradient norm stays ≈0 after Stage 1** → the soft-embedding path isn't
-  actually wired into the differentiable graph; check that `fake_data` used for the
-  critic call is the soft-embeds path, not the hard-sampled path.
+  wired into the differentiable graph; check that the critic call in the generator
+  update step uses `soft_embeds`, not hard-sampled `fake_data`.
+  *Observed: gen_grad_norm confirmed > 0 (epoch 2+) in both koqatr9h and ouqv9wox.
+  Early zeros at epoch 1 are expected — ProtBERT is frozen then.*
 - **Critic real/fake logit gap stays near-saturated** → real and fake still look
   different in kind to the critic; check that real sequences are being embedded
   through the same matrix, not passed as raw IDs.
-- **Oscillating critic loss / generator collapsing to a handful of sequences** → slow
-  the temperature annealing, confirm the Stage 3 anchor is active, consider reducing
-  the critic update ratio, or fall back to seeded mode if testing blind mode.
-- **Memory blows up when K is increased** → add gradient checkpointing; if still
-  infeasible, stay at K=1.
+- **kl_loss oscillates wildly (89–1236 range observed in ouqv9wox)** → this is the
+  known out-of-distribution input issue. The clamp and clip prevent a crash but do not
+  fix the root cause. Use `--lambda_kl 0.0` to isolate clean adversarial dynamics, or
+  fix `compute_soft_embeds` to operate on masked inputs.
+- **Oscillating critic loss / generator collapsing (unique_ratio < 1.0)** → confirm
+  KL anchor is active (or increase lambda_kl), reduce n_critic, or fall back to seeded
+  mode if testing blind mode.
+- **Memory blows up** → stay at K=1; add gradient checkpointing only if K is increased.
 - **Sequences score well against the critic but fail structural/biophysical checks
-  downstream** (the protein analogue of the DRAKES scRMSD blow-up) → this is reward
-  hacking, not a gradient-flow problem. Strengthen the anchor, don't touch the
-  gradient path.
+  downstream** (the protein analogue of the DRAKES scRMSD blow-up) → reward hacking,
+  not a gradient-flow problem. Strengthen the KL anchor (increase lambda_kl), don't
+  touch the gradient path.
 
 ---
 

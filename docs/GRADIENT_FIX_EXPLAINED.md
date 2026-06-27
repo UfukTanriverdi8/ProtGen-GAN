@@ -360,6 +360,27 @@ An alternative to KL divergence is a simpler **MLM cross-entropy anchor**: run t
 masked input through the frozen ProtBERT, and penalize the generator for disagreeing with
 its predictions. Same idea, slightly different math.
 
+### ⚠️ Current implementation issue (2026-06-27)
+
+The KL anchor is implemented and running, but `compute_soft_embeds` — which feeds
+input to both the soft-embedding path AND the KL computation — receives **fully completed
+sequences** (zero [MASK] tokens) after the fill loop finishes. ProtBERT is an MLM model
+trained exclusively on masked inputs. Its logits on fully-revealed sequences are
+uncalibrated extrapolations, not well-trained predictions.
+
+In practice: even small adversarial weight updates cause large logit swings on this
+out-of-distribution input, which in turn cause the KL to explode (observed: 89–1236
+oscillation across a 5-epoch run). The clamp (`gen_probs.clamp(min=1e-8)`) prevents
+log(0) crashes but not genuine divergence. `clip_grad_norm_` limits parameter-level
+damage but does not stabilise the KL value itself.
+
+**The fix**: pass a partially masked sequence to `compute_soft_embeds` instead of the
+completed sequence. This keeps ProtBERT in-distribution (predicting masked positions,
+which is what it was trained for), makes the KL anchor compute a meaningful comparison
+between two calibrated distributions, and means adversarial weight updates affect
+logits in a smooth, predictable way. Until this is fixed, use `--lambda_kl 0.0` for
+test runs to bypass the unstable term.
+
 ---
 
 ## 8. The Gradient Penalty in Embedding Space
