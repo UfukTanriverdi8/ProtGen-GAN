@@ -58,8 +58,8 @@ def sample_sequence_length(file_path="data/dnmt_unformatted.txt", variation=0.1)
     variation_amount = int(base_length * variation)
     sampled_length = base_length + random.randint(-variation_amount, variation_amount)
     sampled_length = max(1, sampled_length)
-    if sampled_length > 500:
-        sampled_length = 500
+    if sampled_length > 350:
+        sampled_length = 350
     return sampled_length
 
 
