@@ -236,6 +236,36 @@ on top of the differentiable critic term — don't replace the critic term with 
   tokens in NLP literature), which should make relaxation easier here, not harder,
   but this is an inference from vocabulary size rather than a directly verified
   protein-specific result.
+- **Confidence-inflation shortcut, not fully closed by the KL anchor (2026-07-03).**
+  The critic only ever trains on hard (fully discrete) embeddings — both real and fake
+  — via the embed-the-real fix. At generator-update time it's asked to score a blend
+  that's 50% hard / 50% soft (`compute_soft_embeds`, `models.py:159`), where the soft
+  half is a probability-weighted average over the embedding matrix. The cheapest way
+  for the generator to raise its critic score isn't necessarily "produce a more
+  DNMT-like sequence" — it's to make its own output logits more peaked/confident at
+  the remasked positions, which mechanically pulls `soft_sequence` closer to a hard
+  one-hot embedding regardless of *which* token it's confident about. This is a
+  distribution-shift/reward-hacking risk distinct from the DRAKES-style collapse the
+  KL anchor already targets.
+  - The KL anchor (`compute_kl_anchor`) partially guards against this: sharpening
+    *away* from the frozen reference's distribution at a remasked position raises KL
+    and is penalized. But where the frozen reference is already confident at a given
+    position (common for MLM models on "easy" positions), sharpening toward that same
+    peak costs ~0 KL — so the exploit isn't blocked exactly where it would be
+    cheapest to pull off.
+  - **This failure mode is quiet.** Unlike gradient instability (NaNs, exploding
+    losses) or KL oscillation, confidence inflation wouldn't spike any metric
+    currently logged (`kl_loss`, `gen_grad_norm`, `unique_ratio`). It would just
+    slowly waste generator capacity on looking-more-certain rather than being-more-real.
+  - **Proposed diagnostic (not yet implemented):** log the average max-probability
+    (or entropy) of `gen_probs` at the remasked positions returned by
+    `compute_soft_embeds`, per generator-update step, in both training scripts. A
+    climbing average max-probability / falling entropy over training **without** a
+    corresponding improvement in downstream quality metrics (pLDDT, scAccuracy,
+    unique_ratio) would be the signature of this exploit. If observed, the fallback is
+    the same one already named for the input-type mismatch: switch to a
+    straight-through estimator at the critic-facing step (hard forward pass, soft
+    gradient backward) so the critic never scores a blurred input to begin with.
 
 ---
 
