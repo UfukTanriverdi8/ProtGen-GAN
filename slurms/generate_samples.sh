@@ -21,8 +21,8 @@ export TOKENIZERS_PARALLELISM=true
 export TORCH_USE_CUDA_DSA=0
 export CUDA_LAUNCH_BLOCKING=0
 
-module load miniforge/24.3.0-0
-source activate protgen_env_conda
+export SOURCE_DIR=/gpfs/projects/etur29/ufuk
+source /gpfs/projects/etur29/ufuk/envs/protgen-gan/bin/activate
 
 # --- parameters ---
 # ckpt_id must match generate.py:
