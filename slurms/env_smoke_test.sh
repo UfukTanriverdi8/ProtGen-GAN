@@ -3,7 +3,7 @@
 #SBATCH --output=outputs/env_smoke_test_%j.out
 #SBATCH --error=outputs/env_smoke_test_%j.err
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=8
+#SBATCH --cpus-per-task=20
 #SBATCH --gres=gpu:1
 #SBATCH --time=00:20:00
 
