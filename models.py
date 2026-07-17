@@ -118,8 +118,16 @@ class Critic(nn.Module):
         return logits
 
 
-def compute_soft_embeds(generator, critic, input_ids, attn_mask, min_temp, max_temp,
-                        tokenizer, remask_frac=0.5):
+def compute_soft_embeds(
+    generator,
+    critic,
+    input_ids,
+    attn_mask,
+    min_temp,
+    max_temp,
+    tokenizer,
+    remask_frac=0.5,
+):
     # TODO: Random temperature sampling can be discussed in the future and there can be a better way to do this.
     temperature = min_temp + torch.rand(1).item() * (max_temp - min_temp)
 
@@ -128,10 +136,14 @@ def compute_soft_embeds(generator, critic, input_ids, attn_mask, min_temp, max_t
     # TODO: remask_frac is fixed 0.5 currently, but we can explore the idea of using the same prob distribution that we used during finetuning
     remask_positions = torch.rand_like(input_ids, dtype=torch.float) < remask_frac
     # don't mask padding or special tokens (CLS/SEP/PAD)
-    special = (input_ids == tokenizer.pad_token_id) | \
-              (input_ids == tokenizer.cls_token_id) | \
-              (input_ids == tokenizer.sep_token_id)
-    remask_positions = remask_positions & ~special  # [Batch, Length] bool: True = blanked
+    special = (
+        (input_ids == tokenizer.pad_token_id)
+        | (input_ids == tokenizer.cls_token_id)
+        | (input_ids == tokenizer.sep_token_id)
+    )
+    remask_positions = (
+        remask_positions & ~special
+    )  # [Batch, Length] bool: True = blanked
 
     # -- Phase 2: Creating the masked input for the generator and running it through the generator
 
@@ -140,22 +152,30 @@ def compute_soft_embeds(generator, critic, input_ids, attn_mask, min_temp, max_t
     masked_input[remask_positions] = tokenizer.mask_token_id
 
     # Throwing the masked input through the generator to get the logits and probabilities for the masked positions
-    logits = generator(masked_input, attn_mask)    # [Batch, Length, VocabSize], real choices at masked positions, garbage elsewhere
+    logits = generator(
+        masked_input, attn_mask
+    )  # [Batch, Length, VocabSize], real choices at masked positions, garbage elsewhere
     probs = F.softmax(logits / temperature, dim=-1)
-    word_weight = critic.protbert.bert.embeddings.word_embeddings.weight 
-    soft_sequence = probs @ word_weight  # [Batch, Length, HiddenSize], every aminoacid is now a weighted sum of the embeddings
+    word_weight = critic.protbert.bert.embeddings.word_embeddings.weight
+    soft_sequence = (
+        probs @ word_weight
+    )  # [Batch, Length, HiddenSize], every aminoacid is now a weighted sum of the embeddings
     # since every aminoacid is soft now, we have to cherry-pick the actual choices for the masked positions
-    # and use the hard embeddings for the unmasked positions 
+    # and use the hard embeddings for the unmasked positions
 
     # -- Phase 3: Blending the soft amino acid embeddings with the original embeddings for unmasked positions
-    
+
     # Settled sequence stands for the original embeddings of the sequence, without no softening
-    settled_sequence = critic.protbert.bert.embeddings.word_embeddings(input_ids)  # [Batch, Length, HiddenSize]
+    settled_sequence = critic.protbert.bert.embeddings.word_embeddings(
+        input_ids
+    )  # [Batch, Length, HiddenSize]
     # We had the remask_positions as [Batch, Length] bool, we need to unsqueeze it to [Batch, Length, 1] to broadcast over the HiddenSize dimension
-    remasked_aminoacids = remask_positions.unsqueeze(-1)    # [Batch, Length, 1] to broadcast over HiddenSize
+    remasked_aminoacids = remask_positions.unsqueeze(
+        -1
+    )  # [Batch, Length, 1] to broadcast over HiddenSize
     # Blend happens here. Wherever remasked_aminoacids is True, we take the soft_sequence, otherwise we take the settled_sequence
-    # Means that for the positions that were chosen to be remasked, we take the soft amino acid embeddings, 
-    # and for the positions that were not chosen to be remasked, we take the original embeddings of the amino acids 
+    # Means that for the positions that were chosen to be remasked, we take the soft amino acid embeddings,
+    # and for the positions that were not chosen to be remasked, we take the original embeddings of the amino acids
     blended_sequence = torch.where(remasked_aminoacids, soft_sequence, settled_sequence)
     # Adding the positional information to the blended_sequence, and finalizing the sequence that can be read by the critic
     soft_embeds = critic.protbert.bert.embeddings(inputs_embeds=blended_sequence)
@@ -163,8 +183,9 @@ def compute_soft_embeds(generator, critic, input_ids, attn_mask, min_temp, max_t
     return soft_embeds, probs, temperature, remask_positions, masked_input
 
 
-def compute_kl_anchor(gen_probs, ref_protbert, masked_input, attn_mask,
-                      temperature, remask_positions):
+def compute_kl_anchor(
+    gen_probs, ref_protbert, masked_input, attn_mask, temperature, remask_positions
+):
     """KL(generator || reference_finetuned_protbert), computed ONLY at remasked positions.
 
     Once the generator finally gets gradient, it will chase whatever
@@ -188,12 +209,14 @@ def compute_kl_anchor(gen_probs, ref_protbert, masked_input, attn_mask,
         ).logits.float()
         # same temperature as the generator's softmax, so the two are comparable
         # using log_softmax here because F.kl_div expects log-probs for the input!
-        ref_log_probs = F.log_softmax(ref_logits / temperature, dim=-1)  # [Batch, Length, VocabSize]
+        ref_log_probs = F.log_softmax(
+            ref_logits / temperature, dim=-1
+        )  # [Batch, Length, VocabSize]
 
     # -- Phase 2: keep only the remasked slots, flatten [Batch, Length, VocabSize] -> [N_masked, VocabSize]
     # remask_positions picks out the rows where either model actually predicted something
-    generator_selected_probs = gen_probs[remask_positions]                 # [N_masked, VocabSize]
-    ref_selected_probs = ref_log_probs[remask_positions]            # [N_masked, VocabSize]
+    generator_selected_probs = gen_probs[remask_positions]  # [N_masked, VocabSize]
+    ref_selected_probs = ref_log_probs[remask_positions]  # [N_masked, VocabSize]
 
     # if a batch happened to mask zero real positions, there is nothing to anchor.
     # return a real zero (not NaN) so g_loss stays clean and the step isn't silently skipped.
@@ -206,8 +229,8 @@ def compute_kl_anchor(gen_probs, ref_protbert, masked_input, attn_mask,
     # batchmean here divides by N_masked (dim 0 is now masked-position count), giving
     # per-masked-position KL, whcih is stable no matter how many positions got masked.
     return F.kl_div(
-        ref_selected_probs,                       # input: log-probs of the reference
-        generator_selected_probs.clamp(min=1e-8),       # target: probs of the generator
+        ref_selected_probs,  # input: log-probs of the reference
+        generator_selected_probs.clamp(min=1e-8),  # target: probs of the generator
         reduction="batchmean",
         log_target=False,
     )

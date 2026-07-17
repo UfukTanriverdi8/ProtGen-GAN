@@ -119,6 +119,10 @@ model_checkpoint_path = PROTBERT_PATH
 tokenizer = AutoTokenizer.from_pretrained(model_checkpoint_path, do_lower_case=False)
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+if device.type == "cuda":
+    # Forces the CUDA context to exist on the main thread before the backward pass's
+    # separate thread hits its first cuBLAS call, avoiding a harmless but noisy warning.
+    torch.cuda.init()
 
 
 tokenized_datasets = load_and_tokenize_dataset(
@@ -189,7 +193,9 @@ debug_seq = "TIALRPDRLTQVLGTEVPTDEGTRLLGAIGFDVEAGEDALHCTVPTWRPDVSIEEDLIEEVA"
 # WandB Initialization
 # --------------------------
 wandb.init(
-    project="protgen-gan", name=args.run_name, mode=os.environ.get("WANDB_MODE", "online")
+    project="protgen-gan",
+    name=args.run_name,
+    mode=os.environ.get("WANDB_MODE", "online"),
 )
 wandb.config.update(
     {
@@ -507,14 +513,27 @@ for epoch in range(n_epochs):
 
         # Soft path: one generator forward pass builds the gradient graph (K=1).
         # The iterative fill loop above is NOT in this graph.
-        soft_embeds, gen_probs, temperature, remask_positions, masked_input = compute_soft_embeds(
-            generator, critic, fake_data, attn_mask_fake, min_temp, max_temp, tokenizer
+        soft_embeds, gen_probs, temperature, remask_positions, masked_input = (
+            compute_soft_embeds(
+                generator,
+                critic,
+                fake_data,
+                attn_mask_fake,
+                min_temp,
+                max_temp,
+                tokenizer,
+            )
         )
 
         fake_scores = critic(soft_embeds, attention_mask=attn_mask_fake)
         if lambda_kl > 0:
             kl_loss = compute_kl_anchor(
-                gen_probs, ref_protbert, masked_input, attn_mask_fake, temperature, remask_positions
+                gen_probs,
+                ref_protbert,
+                masked_input,
+                attn_mask_fake,
+                temperature,
+                remask_positions,
             )
             g_loss = generator_loss(fake_scores) + lambda_kl * kl_loss
             wandb.log({"kl_loss": kl_loss.item()})
