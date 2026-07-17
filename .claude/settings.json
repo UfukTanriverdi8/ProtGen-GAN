@@ -5,7 +5,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 -c \"import socket; h=socket.gethostname(); msg={'Zenbook': 'Machine: zenbook (local laptop). No external GPU present — training runs are impossible here. Use this session for dev, edits, review, and small local checks only.', 'anzu': 'Machine: Anzu (BioDataSciLab GPU server). Can run eval, debugging, and smaller experiments here. Full-scale GAN training happens on MN5.'}.get(h, f'Machine: unknown hostname ({h}). Ask the user to confirm which machine this is (zenbook, Anzu, or something else) before assuming GPU/training availability.'); print(msg); print('Reminder: MN5 (BSC supercomputer) has no internet access and cannot run Claude Code sessions — if the user mentions MN5 commands, they are running them manually themselves; file transfer only via scp/sftp.')\""
+            "command": "python3 -c \"import socket; h=socket.gethostname(); msg={'Zenbook': 'Machine: zenbook (local laptop). No external GPU present — training runs are impossible here. Use this session for dev, edits, review, and small local checks only.', 'anzu': 'Machine: Anzu (BioDataSciLab GPU server, shared multi-user — be considerate of other users\\' processes/GPUs). Can run eval, debugging, and smaller experiments here. Full-scale GAN training happens on MN5.'}.get(h, f'Machine: unknown hostname ({h}). Ask the user to confirm which machine this is (zenbook, Anzu, or something else) before assuming GPU/training availability.'); print(msg); print('Reminder: MN5 (BSC supercomputer) has no internet access and cannot run Claude Code sessions — if the user mentions MN5 commands, they are running them manually themselves; file transfer only via scp/sftp.')\""
           }
         ]
       }
