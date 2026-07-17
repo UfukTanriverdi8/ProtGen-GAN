@@ -12,7 +12,7 @@ machine; this doc has the actual hardware numbers.
 
 ## Anzu (BioDataSciLab GPU server)
 
-Shared multi-user server — not dedicated to this project. Specs as of 2026-07-17:
+Shared multi-user server — not dedicated only to this project. Specs as of 2026-07-17:
 
 - **GPUs (7 total, heterogeneous):**
   - 3× NVIDIA RTX 5000 Ada Generation — 32760 MiB (~32GB) each
@@ -22,6 +22,8 @@ Shared multi-user server — not dedicated to this project. Specs as of 2026-07-
 - **CPU/RAM:** 64 cores (`nproc`), 251GiB total RAM, 12GiB swap
 - **OS:** Ubuntu 20.04.6 LTS, kernel 5.4.0-216-generic
 - **`SOURCE_DIR`:** `/media/ubuntu/8TB/ufuk/protgen-gan/models` (see `config.py`)
+
+**Shared server caveat:** Anzu is a shared server, so GPU availability is not guaranteed. If you need to run a large job, check the current GPU usage with `nvidia-smi`. Try to be considerate of other users and avoid hogging resources. Do not use more than one GPU at a time unless I give you the explicit permission to do so.
 
 **VRAM ceiling caveat:** the current GAN architecture sometimes exceeds 48GB VRAM
 during training. The A6000 (49GB) is the *only* card on Anzu that fits it, and
