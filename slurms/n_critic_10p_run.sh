@@ -12,15 +12,15 @@
 export HF_DATASETS_OFFLINE=1
 export HF_HUB_OFFLINE=1
 
-# W&B key
-# you need to set your apı key from an external slurm script with the line below
-# export WANDB_API_KEY=
-# then here
-source /path/to/env.sh
+# Load secrets (WANDB_API_KEY, etc.) from the repo's .env file — gitignored, never committed.
+if [ -f "$SLURM_SUBMIT_DIR/.env" ]; then
+    set -a
+    source "$SLURM_SUBMIT_DIR/.env"
+    set +a
+fi
 
 # Your Conda + PROGRES settings
 export SOURCE_DIR=/gpfs/projects/etur29/ufuk
-export WANDB_MODE=offline   # MN5 compute nodes have no internet — sync later from Anzu
 source /gpfs/projects/etur29/ufuk/envs/protgen-gan/bin/activate
 export PROGRES_DATA_DIR=/gpfs/projects/etur29/ufuk/progres/
 

@@ -22,7 +22,6 @@ export TORCH_USE_CUDA_DSA=0
 export CUDA_LAUNCH_BLOCKING=0
 
 export SOURCE_DIR=/gpfs/projects/etur29/ufuk
-export WANDB_MODE=offline   # MN5 compute nodes have no internet — sync later from Anzu
 source /gpfs/projects/etur29/ufuk/envs/protgen-gan/bin/activate
 
 # --- parameters ---

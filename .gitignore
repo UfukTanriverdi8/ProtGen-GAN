@@ -7,7 +7,11 @@ validation/pdbs/training_pdbs
 eval_sequences/*/*_part*.csv
 *.jar
 passwords.txt
+
+# Ignore local environment files
 .env
+.env.dev
+.env.local
 
 # Ignore Visual Studio Code settings
 .vscode/
