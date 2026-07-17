@@ -517,6 +517,16 @@ MN5 has no internet access, so it cannot push/pull directly to GitHub. The local
 Typical flow: develop locally → push to `origin` (GitHub) and/or push to `mn5` directly.
 To sync MN5 with GitHub, pull from `origin` locally then push to `mn5`, or vice versa.
 
+**Commit messages:** never add a `Co-Authored-By: Claude` (or any Anthropic/Claude attribution)
+trailer to commits in this repo, regardless of default tooling conventions.
+
+### Secrets (`.env`)
+Copy `.env.example` to `.env` and fill in real values (`WANDB_API_KEY`, `WANDB_MODE`). `.env` is
+gitignored and never committed — it must exist independently on every machine that runs training
+(Anzu, MN5), since `git push`/`pull` won't carry it. SLURM scripts load it via
+`set -a; source "$SLURM_SUBMIT_DIR/.env"; set +a`, which auto-exports every var without needing
+any parsing library.
+
 ### wandb Workflow on MN5
 MN5 has no internet. wandb runs are logged offline, then:
 1. Download wandb run directory via SFTP to Anzu
