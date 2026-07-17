@@ -188,7 +188,9 @@ debug_seq = "TIALRPDRLTQVLGTEVPTDEGTRLLGAIGFDVEAGEDALHCTVPTWRPDVSIEEDLIEEVA"
 # --------------------------
 # WandB Initialization
 # --------------------------
-wandb.init(project="protgen-gan", name=args.run_name, mode="online")
+wandb.init(
+    project="protgen-gan", name=args.run_name, mode=os.environ.get("WANDB_MODE", "online")
+)
 wandb.config.update(
     {
         "n_critic": args.n_critic,
