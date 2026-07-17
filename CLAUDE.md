@@ -487,6 +487,7 @@ Current standard: `n_critic = 8`, first epoch frozen.
 ## Infrastructure
 
 ### Key Documents
+- `docs/INFRASTRUCTURE.md` — hardware specs for each machine (Anzu GPU inventory/VRAM ceiling, RAM/CPU, OS). Read before suggesting batch sizes or configs for a specific machine, especially Anzu where VRAM varies 24-48GB across its 7 GPUs.
 - `docs/HISTORY.md` — full project narrative: every phase, architectural decision, bug discovery, and current state. Read before suggesting experiments or evaluating what's been tried.
 - `docs/GIT_WORKFLOW.md` — complete two-remote git workflow and wandb offline sync. Includes agent-specific notes at the bottom.
 - `docs/GENERATOR_GRADIENT_FIX.md` — full research synthesis and staged implementation plan for the non-differentiable-generator architectural issue (above). Read before touching `models.py`, `loss.py`, or either training script in relation to that issue.

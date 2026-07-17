@@ -4,7 +4,7 @@ import socket
 # Set SOURCE_DIR to your model storage directory before running.
 #
 #   MN5:  export SOURCE_DIR=/gpfs/projects/etur29/ufuk
-#   Anzu: export SOURCE_DIR=/path/to/models
+#   Anzu: export SOURCE_DIR=/media/ubuntu/8TB/ufuk/protgen-gan/models
 #
 # Add this to your SLURM job script or shell config (~/.bashrc).
 # If unset, falls back to hostname-based detection for MN5.

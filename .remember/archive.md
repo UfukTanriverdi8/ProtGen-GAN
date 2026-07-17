@@ -1,5 +1,8 @@
 # Archive
 
+## Week of 2026-06-29
+Audited ProtGen GAN (13 critical issues: transformer skip, non-diff generator, diversity gaps, training dupes, hardcoded paths); rejected conda→uv; added .claude/ hooks (.env/.yml/slurm); documented soft-embed train/eval mismatch & updated memory.
+
 ## Week of 2026-06-16
 Dev infrastructure & training stabilization. Resolved PyG C-ext, RTK setup, wandb shadowing. Fixed training bugs (pLDDT, masking, NaN, temp). Added QoL (unique_ratio, opt ckpt, seq-cache). PyTorch 2.5.1 compat (SDPA, dtype). Implemented ruff/mn5 hooks. Env audit (Py→3.12, PyT→2.5.1). Updated ENV_MIGRATION, CLAUDE, config.
 
