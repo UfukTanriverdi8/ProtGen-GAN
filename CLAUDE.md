@@ -407,9 +407,10 @@ gan/
 ├── # CONFIG & DOCS
 ├── CLAUDE.md                  This file
 ├── README.md                  High-level project overview
-├── protgen-gan-env-v2.yml     Conda env spec (Python 3.12, PyTorch 2.5.1, CUDA 12.1)
-├── Conda-Environment-for-ProtGEN_mn5.yml  Legacy env spec (Python 3.8, PyTorch 2.4.1)
-│                              ⚠ Still active on MN5 until env is migrated there
+├── protgen-gan-env-v2.yml     Conda env spec (Python 3.12, PyTorch 2.5.1, CUDA 12.1) — active on
+│                              both Anzu and MN5 (migrated via conda-pack, see Infrastructure below)
+├── Conda-Environment-for-ProtGEN_mn5.yml  Legacy env spec (Python 3.8, PyTorch 2.4.1) — superseded,
+│                              kept for reference only
 └── bfg-1.15.0.jar             BFG repo cleaner (git history cleanup utility)
 ```
 
@@ -506,6 +507,27 @@ Current standard: `n_critic = 8`, first epoch frozen.
 |-------------|---------|
 | **Anzu** | Hacettepe BioDataSciLab GPU server (Ubuntu). Used for eval runs, debugging, smaller experiments. SSH access. |
 | **MareNostrum5 (MN5)** | BSC supercomputer, thousands of H100s. Used for large GAN training runs and AF3 evaluation. **No internet access** — files transferred via SCP (upload) and SFTP (download). |
+
+### Environment (conda-pack migration, complete as of 2026-07-17)
+The `protgen-gan` conda env (`protgen-gan-env-v2.yml`) is now identical on Anzu and MN5, packed
+with `conda-pack` and transferred via SCP since MN5 has no internet for a normal conda install.
+
+- MN5 install path: `/gpfs/projects/etur29/ufuk/envs/protgen-gan`
+- Activate with the packed env's own script, **not** `conda activate`:
+  `source /gpfs/projects/etur29/ufuk/envs/protgen-gan/bin/activate`
+- Never mix `conda activate`/`deactivate` with this env on MN5 — the two activation mechanisms
+  partially clobber each other's env vars (`CONDA_PREFIX`, `PATH`) and deactivation silently
+  fails. Use a fresh shell instead of trying to deactivate.
+- SLURM scripts already updated to use the packed env; see `slurms/*.sh`.
+
+**`progres` database files:** `progres` auto-downloads its trained model + pre-embedded databases
+(~830MB) from Zenodo on first use — this fails on MN5 (no internet). These files were manually
+copied from Anzu (where they already existed as a side effect of local eval runs) via `rsync`
+into MN5's `PROGRES_DATA_DIR` (`/gpfs/projects/etur29/ufuk/progres/`), preserving the
+`trained_models/`, `databases/`, and `chainsaw/model_v3/` subdirectory structure plus each file's
+`.pt.okay` marker (which tells `progres` to skip re-downloading). If this directory is ever lost
+or `progres`'s `zenodo_record`/`database_subdir` version bumps, re-run the same rsync from Anzu
+rather than trying to download directly on MN5.
 
 ### Git Workflow (Two-Remote Setup)
 MN5 has no internet access, so it cannot push/pull directly to GitHub. The local machine
