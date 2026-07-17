@@ -7,16 +7,16 @@
 # Required on every machine before running any script.
 # MN5:  add to your SLURM job script
 # Anzu: add to ~/.bashrc
-export SOURCE_DIR=/gpfs/projects/etur29/ufuk   # MN5 example
-export SOURCE_DIR=/path/to/your/models          # Anzu example
+export SOURCE_DIR=/gpfs/projects/etur29/ufuk                   # MN5 example
+export SOURCE_DIR=/media/ubuntu/8TB/ufuk/protgen-gan/models     # Anzu example
 # config.py resolves PROTBERT, ESMFold, and checkpoint paths from SOURCE_DIR.
 # MN5 hostnames are auto-detected as a fallback if SOURCE_DIR is not set.
 ```
 
 ### Training (MN5 — submit via SLURM)
 ```bash
-sbatch long_10p_run.sh        # Seeded mode extended run
-sbatch lr_full_run.sh         # Blind mode LR grid search
+sbatch slurms/long_10p_run.sh        # Seeded mode extended run
+sbatch slurms/lr_full_run.sh         # Blind mode LR grid search
 
 # Direct invocation (Anzu / local debugging)
 python 10p_train.py --run_name debug_run --n_epochs 2 --batch_size 4
@@ -42,7 +42,7 @@ python generate.py --ckpt_id finetuned_protbert --num_full 5000 --num_seeded 500
 
 ### Evaluation
 ```bash
-sbatch mass_eval.sh                              # Batch structural eval (120k+ seqs)
+sbatch slurms/mass_eval.sh                       # Batch structural eval (120k+ seqs)
 python eval_sequences/check_duplicates.py        # Deduplication stats
 python eval_sequences/prefilter_sequences.py     # Remove length >350, X tokens
 python eval_sequences/build_csv_from_txt.py      # Aggregate generation outputs into CSV
@@ -385,15 +385,17 @@ gan/
         └── 120k_eval_seqs_final.csv        After full metric evaluation
 
 ├── # SLURM JOB SCRIPTS (MN5)
-├── generate_samples.sh        Array job: generate 10k sequences from 6 checkpoints
-│                              (full + seeded in parallel per checkpoint)
-├── mass_eval.sh               Array job: parallel metric evaluation of generated seqs
-├── long_10p_run.sh            Extended training run for seeded mode
-├── lr_10p_run.sh              LR grid search for seeded mode (25 combinations)
-├── lr_full_run.sh             LR grid search for blind mode
-├── lr_best_runs.sh            Retraining with best LRs from sweep
-├── n_critic_10p_run.sh        n_critic grid search (seeded mode)
-└── n_critic_full_run.sh       n_critic grid search (blind mode)
+└── slurms/
+    ├── generate_samples.sh        Array job: generate 10k sequences from 6 checkpoints
+    │                              (full + seeded in parallel per checkpoint)
+    ├── mass_eval.sh               Array job: parallel metric evaluation of generated seqs
+    ├── long_10p_run.sh            Extended training run for seeded mode
+    ├── lr_10p_run.sh              LR grid search for seeded mode (25 combinations)
+    ├── lr_full_run.sh             LR grid search for blind mode
+    ├── lr_best_runs.sh            Retraining with best LRs from sweep
+    ├── n_critic_10p_run.sh        n_critic grid search (seeded mode)
+    ├── n_critic_full_run.sh       n_critic grid search (blind mode)
+    └── env_smoke_test.sh          Quick sanity check that the packed conda env loads correctly
 
 ├── # VALIDATION / VISUALISATION
 └── validation/
@@ -493,6 +495,7 @@ Current standard: `n_critic = 8`, first epoch frozen.
 - `docs/GIT_WORKFLOW.md` — complete two-remote git workflow and wandb offline sync. Includes agent-specific notes at the bottom.
 - `docs/GENERATOR_GRADIENT_FIX.md` — full research synthesis and staged implementation plan for the non-differentiable-generator architectural issue (above). Read before touching `models.py`, `loss.py`, or either training script in relation to that issue.
 - `docs/GRADIENT_FIX_EXPLAINED.md` — conceptual companion to the above; explains the gradient problem, soft embeddings, KL anchor, and related concepts from first principles. No implementation details — read for understanding.
+- `docs/ENV_MIGRATION.md` — rationale and code changes for the Python 3.8/PyTorch 2.4.1 → Python 3.12/PyTorch 2.5.1 environment migration (`protgen-gan-env-v2.yml`). Read before touching env files or diagnosing version-related errors.
 
 ### Claude Code Automation (`.claude/`)
 - **Hook: file protection** — blocks edits to `.env` and `protgen-gan-env-v2.yml`
