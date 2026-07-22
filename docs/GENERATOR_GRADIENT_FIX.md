@@ -181,11 +181,34 @@ identical masked input and scores KL only over those remasked positions. Both tr
 scripts updated. Expectation: `kl_loss` changes smoothly under weight updates — confirm on
 the next seeded run.
 
-**Stage 3 — Validate in seeded mode before blind mode.**
+**Stage 3 ✅ — Validate in seeded mode before blind mode.**
 (Originally Stage 4.) Seeded mode partially validated (ouqv9wox), but under the OOD KL bug.
 BUG 4 (attention mask excluding [MASK] tokens in blind mode) was fixed separately — no
 longer a blocker. With the KL fix in place, re-run seeded mode and confirm stable
 `kl_loss` before promoting to blind mode.
+
+*Observed (2026-06-27, post-`c18c89a`, both 3 epochs, seeded mode, n_critic=4):*
+
+- **`xwres3cz` (`test-10p-soft-nc4-kl0`, lambda_kl=0):** `gen_grad_norm` > 0 from epoch 2
+  on, bounded ~0.1–30 (vs. 100k+ pre-fix) — no `kl_loss` logged since `ref_protbert` is
+  skipped entirely at `lambda_kl=0`. `unique_ratio` held at 1.0 throughout, but sequence
+  *quality* collapsed hard without the anchor: `plddt` 0.74→0.50→0.36, `scAccuracy`
+  0.38→0.22→0.03, `progres` 0.91→0.59→0.50, `pairwise_tm` 0.76→0.28→0.20 from baseline to
+  end of epoch 3. Diverse but increasingly non-protein-like — confirms the KL anchor is
+  necessary, not just noise.
+- **`ydsjq9f4` (`test-10p-soft-nc4-kl1e2`, lambda_kl=0.01):** `gen_grad_norm` > 0 from
+  epoch 2 on, bounded ~0.3–2.4. `kl_loss` ≈0 in epoch 1 (frozen, generator = reference),
+  then **oscillates in a bounded 0–4 range** through epochs 2–3 — three orders of
+  magnitude smaller than the pre-fix 89–1236 range, and never explodes. `unique_ratio`
+  held at 1.0, and quality metrics stayed healthy: `plddt` 0.75→0.69→0.70, `scAccuracy`
+  improved 0.38→0.40→0.42, `progres` 0.92→0.87, `pairwise_tm` 0.75→0.64.
+
+**Conclusion: the fix works.** `kl_loss` no longer oscillates wildly, `gen_grad_norm > 0`
+in both configurations, and `unique_ratio` never collapses. The lambda_kl=0 run additionally
+shows the KL anchor is load-bearing for sequence quality (not diversity) — without it the
+critic score keeps improving while structural plausibility craters. Neither run was ever
+analyzed in a Claude Code session at the time; recovered from wandb run history on
+2026-07-22.
 
 **Stage 4 (only if needed) — Non-differentiable reward via PPO/REINFORCE.**
 If a non-differentiable signal is added later (e.g. an external structure or function
@@ -206,8 +229,10 @@ on top of the differentiable critic term — don't replace the critic term with 
   through the same matrix, not passed as raw IDs.
 - **kl_loss oscillates wildly (89–1236 range observed in ouqv9wox)** → this was the
   out-of-distribution input issue, fixed in `c18c89a` (`compute_soft_embeds` now operates
-  on a re-masked input). If oscillation persists on a post-fix run, fall back to
-  `--lambda_kl 0.0` to isolate clean adversarial dynamics and investigate further.
+  on a re-masked input). **Confirmed resolved**: post-fix run `ydsjq9f4` (lambda_kl=0.01,
+  3 epochs) shows `kl_loss` bounded to a 0–4 range throughout. If oscillation reappears,
+  fall back to `--lambda_kl 0.0` to isolate clean adversarial dynamics and investigate
+  further.
 - **Oscillating critic loss / generator collapsing (unique_ratio < 1.0)** → confirm
   KL anchor is active (or increase lambda_kl), reduce n_critic, or fall back to seeded
   mode if testing blind mode.

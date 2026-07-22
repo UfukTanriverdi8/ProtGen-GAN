@@ -232,7 +232,17 @@ oscillated 89–1236 throughout training even with `gen_probs.clamp(min=1e-8)` a
 in-distribution; `compute_kl_anchor` evaluates the frozen reference on the same masked input
 and scores KL only at the remasked positions. Applied to both training scripts. `--lambda_kl`
 can now be left at its default; `--lambda_kl 0.0` remains available for clean adversarial-only
-runs. Watch `kl_loss` on the next seeded run to confirm it no longer oscillates.
+runs.
+
+**✅ VALIDATED (2026-06-27, runs `xwres3cz` and `ydsjq9f4`, both 3-epoch seeded-mode, n_critic=4):**
+`gen_grad_norm > 0` from epoch 2 on in both runs, bounded (not exploding like pre-fix's
+100k+ spikes). `kl_loss` (lambda_kl=0.01 run) now oscillates in a bounded 0–4 range instead
+of the pre-fix 89–1236 — fix confirmed. `unique_ratio` held at 1.0 in both runs. The
+lambda_kl=0 run additionally shows the KL anchor is load-bearing for sequence *quality*:
+without it, `plddt`/`scAccuracy`/`progres`/`pairwise_tm` all collapsed by epoch 3 even
+though uniqueness never dropped — diverse but non-protein-like. Full numbers in
+`docs/GENERATOR_GRADIENT_FIX.md` Stage 3. These runs were never analyzed in a Claude Code
+session at the time; recovered from wandb run history on 2026-07-22.
 
 ---
 

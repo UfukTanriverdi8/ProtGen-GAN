@@ -42,7 +42,9 @@
       }
     ]
   },
-  "enabledPlugins": {
+    "enabledPlugins": {
+    "claude-code-setup@claude-plugins-official": true,
+    "claude-md-management@claude-plugins-official": true,
     "context7@claude-plugins-official": true
   }
 }
