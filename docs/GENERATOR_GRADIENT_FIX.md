@@ -210,6 +210,20 @@ critic score keeps improving while structural plausibility craters. Neither run 
 analyzed in a Claude Code session at the time; recovered from wandb run history on
 2026-07-22.
 
+**✅ Independent correctness check (2026-07-22, `tests/check_kl_identity.py`):** the
+observations above only show `kl_loss` *behaving* plausibly during real training — they
+don't prove `compute_kl_anchor` itself is bug-free (wrong tensor passed to the wrong
+argument, misaligned `remask_positions`, a skipped softmax could all still produce a
+smooth-looking curve). Added a standalone script that loads the checkpoint twice — once
+as `generator`, once as `ref_protbert` — and confirms the mathematical identity
+`KL(P‖P) = 0`: with identical weights on the same masked input, `kl_loss = 5.1e-7`
+(~0, as required). A negative control with the reference weights perturbed gives
+`kl_loss = 12.9` (clearly nonzero), ruling out a test that trivially "passes" because
+`ref_protbert`'s output isn't actually being used. Also confirmed
+`tokenizer.mask_token_id` is consistent everywhere it's used (`= 4` for this checkpoint's
+vocab) — `generate.py` previously relied on a hardcoded default matching this by
+coincidence rather than reading it from the tokenizer; fixed in commit `718e446`.
+
 **Stage 4 (only if needed) — Non-differentiable reward via PPO/REINFORCE.**
 If a non-differentiable signal is added later (e.g. an external structure or function
 oracle), add it as a *separate* PPO-style term with its own baseline and KL constraint,

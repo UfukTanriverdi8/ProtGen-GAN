@@ -1,4 +1,15 @@
 {
+  "permissions": {
+    "allow": [
+      "Bash(rtk ls *)",
+      "Bash(rtk grep *)",
+      "Bash(rtk git status *)",
+      "Bash(rtk read *)",
+      "Bash(rtk find *)",
+      "mcp__wandb__diagnose_run_tool",
+      "mcp__wandb__get_run_history_tool"
+    ]
+  },
   "hooks": {
     "SessionStart": [
       {

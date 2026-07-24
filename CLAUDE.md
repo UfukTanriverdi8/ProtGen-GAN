@@ -244,6 +244,10 @@ though uniqueness never dropped — diverse but non-protein-like. Full numbers i
 `docs/GENERATOR_GRADIENT_FIX.md` Stage 3. These runs were never analyzed in a Claude Code
 session at the time; recovered from wandb run history on 2026-07-22.
 
+`tests/check_kl_identity.py` independently verifies `compute_kl_anchor`'s plumbing (not
+just training-curve behavior) via `KL(P‖P)=0` + a perturbed-weights negative control. Run
+it before trusting future changes to `compute_soft_embeds`/`compute_kl_anchor`.
+
 ---
 
 ## ✅ FIXED — `compute_gradient_penalty` (`loss.py` + both training scripts)
@@ -259,6 +263,17 @@ gp = compute_gradient_penalty(
     device
 )
 ```
+
+---
+
+## ✅ FIXED — `generate.py` relied on `Generator`'s hardcoded `mask_token_id` default
+
+**File:** `generate.py:372`
+**Was:** Never passed `mask_token_id`, silently using the class default (`4`) — only
+correct by coincidence with this checkpoint's vocab. A different checkpoint's tokenizer
+would silently mask the wrong token with no error.
+**Fixed (`718e446`):** Passes `mask_token_id=tokenizer.mask_token_id` explicitly, like
+`10p_train.py`/`fully_masked_train.py` already did.
 
 ---
 
@@ -382,6 +397,8 @@ gan/
 │                              PROGRES, pairwise TM-score diversity, seq_similarity
 ├── run_mass_eval.py           Batch evaluation orchestrator (processes 120k+ sequences)
 ├── test_model_and_metrics.py  Dev harness for testing metric pipeline
+├── tests/
+│   └── check_kl_identity.py   Verifies compute_kl_anchor via KL(P‖P)=0 identity + negative control
 └── eval_sequences/
     ├── build_csv_from_txt.py  Aggregates raw .txt generation outputs into a CSV
     │                          (parses run name / mode / epoch from filename)
@@ -419,10 +436,11 @@ gan/
 ├── # CONFIG & DOCS
 ├── CLAUDE.md                  This file
 ├── README.md                  High-level project overview
-├── protgen-gan-env-v2.yml     Conda env spec (Python 3.12, PyTorch 2.5.1, CUDA 12.1) — active on
-│                              both Anzu and MN5 (migrated via conda-pack, see Infrastructure below)
-├── Conda-Environment-for-ProtGEN_mn5.yml  Legacy env spec (Python 3.8, PyTorch 2.4.1) — superseded,
-│                              kept for reference only
+├── envs/
+│   ├── protgen-gan-env-v2.yml   The only valid/active env spec (Python 3.12, PyTorch 2.5.1,
+│   │                            CUDA 12.1) — identical on Anzu and MN5, see Infrastructure below
+│   ├── anzu-env-export.yml      Backup snapshot taken during the env migration — not for use
+│   └── mn5-env-export.yml       Backup snapshot taken during the env migration — not for use
 └── bfg-1.15.0.jar             BFG repo cleaner (git history cleanup utility)
 ```
 
@@ -505,10 +523,10 @@ Current standard: `n_critic = 8`, first epoch frozen.
 - `docs/GIT_WORKFLOW.md` — complete two-remote git workflow and wandb offline sync. Includes agent-specific notes at the bottom.
 - `docs/GENERATOR_GRADIENT_FIX.md` — full research synthesis and staged implementation plan for the non-differentiable-generator architectural issue (above). Read before touching `models.py`, `loss.py`, or either training script in relation to that issue.
 - `docs/GRADIENT_FIX_EXPLAINED.md` — conceptual companion to the above; explains the gradient problem, soft embeddings, KL anchor, and related concepts from first principles. No implementation details — read for understanding.
-- `docs/ENV_MIGRATION.md` — rationale and code changes for the Python 3.8/PyTorch 2.4.1 → Python 3.12/PyTorch 2.5.1 environment migration (`protgen-gan-env-v2.yml`). Read before touching env files or diagnosing version-related errors.
+- `docs/ENV_MIGRATION.md` — rationale and code changes for the Python 3.8/PyTorch 2.4.1 → Python 3.12/PyTorch 2.5.1 environment migration (`envs/protgen-gan-env-v2.yml`). Read before touching env files or diagnosing version-related errors.
 
 ### Claude Code Automation (`.claude/`)
-- **Hook: file protection** — blocks edits to `.env` and `protgen-gan-env-v2.yml`
+- **Hook: file protection** — blocks edits to `.env` and `protgen-gan-env-v2.yml` (path-substring match, so it still applies now that the file lives under `envs/`)
 - **Hook: ruff auto-lint** — runs `ruff check` on every `.py` file after Edit/Write
 - **Hook: mn5 push guard** — requires confirmation for `git push mn5` or force-push
 - **Skill: `slurm-job`** — generates MN5 SLURM scripts from run parameters
@@ -522,7 +540,7 @@ Current standard: `n_critic = 8`, first epoch frozen.
 | **MareNostrum5 (MN5)** | BSC supercomputer, thousands of H100s. Used for large GAN training runs and AF3 evaluation. **No internet access** — files transferred via SCP (upload) and SFTP (download). |
 
 ### Environment (conda-pack migration, complete as of 2026-07-17)
-The `protgen-gan` conda env (`protgen-gan-env-v2.yml`) is now identical on Anzu and MN5, packed
+The `protgen-gan` conda env (`envs/protgen-gan-env-v2.yml`) is now identical on Anzu and MN5, packed
 with `conda-pack` and transferred via SCP since MN5 has no internet for a normal conda install.
 
 - MN5 install path: `/gpfs/projects/etur29/ufuk/envs/protgen-gan`
@@ -574,7 +592,7 @@ evaluation is no longer appropriate.
 
 ---
 
-## Possible Next Steps
+## TODO
 
 1. ~~**Fix BUG 2**~~ — ✅ Fixed (2026-06-19)
 
@@ -604,6 +622,34 @@ evaluation is no longer appropriate.
     to EvoDiff. Avoids near-zero probability tokens while keeping diversity. Optionally make k
     adaptive based on critic feedback (widen when critic says fake, narrow when it says real).
     Worth evaluating against `torch.multinomial` after the gradient path is fixed.
+
+11. **Critic hard/soft embedding mismatch** — critic only ever trains on hard embeddings but
+    scores a 50% hard / 50% soft blend during generator updates; possible confidence-inflation
+    reward-hack, not yet observed but not ruled out. Full writeup + proposed diagnostic:
+    `docs/GENERATOR_GRADIENT_FIX.md` → "Open risks / caveats".
+
+12. ~~**KL identity test**~~ — ✅ Done (2026-07-22). `tests/check_kl_identity.py` confirms
+    `compute_kl_anchor` plumbing is correct (KL(P‖P)=0 + negative control).
+
+13. ~~**`mask_token_id` consistency**~~ — ✅ Done (2026-07-22, commit `718e446`). Confirmed `=4`
+    everywhere it's used; `generate.py`'s hardcoded-default gap fixed.
+
+14. **Pin temperature per run** — currently randomized every step (`models.py:131` TODO),
+    adding noise to gen_grad_norm/kl_loss when comparing across λ_kl values. Expose as a CLI
+    flag before the next sweep.
+
+15. **Reconsider the fixed 50% remask fraction** — `models.py:136` TODO. The λ=0.01 run's
+    gentle decline (progres 0.92→0.87, pairwise_tm 0.75→0.64 over 3 epochs) raises whether
+    that's an early-training transient or a structural rate issue tied to the fixed fraction.
+
+16. **Validate blind mode under the gradient fix** — Stage 3 validation (item 2) covered
+    seeded mode only. Blind mode is documented as higher mode-collapse risk and was never
+    stable pre-fix — real gap, not a nice-to-have.
+
+17. **Reconcile straight-through decision vs. implementation** — the Decision table
+    (`docs/GENERATOR_GRADIENT_FIX.md` line 56) says straight-through was adopted for
+    intermediate refinement-step commits; `compute_soft_embeds` actually does K=1 truncation
+    with no straight-through. Confirm this is a deliberate simplification, not drift.
 
 ---
 
