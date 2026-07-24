@@ -104,6 +104,14 @@ def parse_args():
         default=0.1,
         help="Fraction of masked positions filled per generation step (default 0.1 = 10 steps).",
     )
+    parser.add_argument(
+        "--temperature",
+        type=float,
+        default=1.0,
+        help="Fixed temperature for generation and soft-embed sampling. Previously "
+        "randomized per-step in [0.8, 1.2], which added noise when comparing "
+        "gen_grad_norm/kl_loss across lambda_kl values.",
+    )
     return parser.parse_args()
 
 
@@ -179,8 +187,7 @@ lambda_gp = args.lambda_gp
 lambda_kl = args.lambda_kl
 initial_masking_rate = 0.9
 iteration_fill_rate = args.iteration_fill_rate
-min_temp = 0.8
-max_temp = 1.2
+temperature = args.temperature
 
 
 # -----------------------
@@ -204,6 +211,7 @@ wandb.config.update(
         "batch_size": args.batch_size,
         "num_eval_sequences": args.num_eval_sequences,
         "eval_batch_size": args.eval_batch_size,
+        "temperature": args.temperature,
     }
 )
 
@@ -230,8 +238,7 @@ def generate_fakes_for_batch(
     attention_mask,
     initial_mask_rate,
     iteration_rate,
-    min_temp,
-    max_temp,
+    temperature,
     debug=False,
 ):
     device = input_ids.device
@@ -257,7 +264,6 @@ def generate_fakes_for_batch(
             final_input_ids != tokenizer.pad_token_id
         ).long()
 
-        temperature = min_temp + torch.rand(1).item() * (max_temp - min_temp)
         final_input_ids = generator.generate(
             final_input_ids,
             updated_attention_mask,
@@ -444,8 +450,7 @@ for epoch in range(n_epochs):
                 attn_mask_gen,
                 initial_masking_rate,
                 iteration_fill_rate,
-                min_temp,
-                max_temp,
+                temperature,
             ).detach()
             fake_mask = (fake_data != tokenizer.pad_token_id).long()
 
@@ -493,8 +498,7 @@ for epoch in range(n_epochs):
             attn_mask_gen,
             initial_masking_rate,
             iteration_fill_rate,
-            min_temp,
-            max_temp,
+            temperature,
         )
         attn_mask_fake = (fake_data != tokenizer.pad_token_id).long()
 
@@ -506,8 +510,7 @@ for epoch in range(n_epochs):
                 critic,
                 fake_data,
                 attn_mask_fake,
-                min_temp,
-                max_temp,
+                temperature,
                 tokenizer,
             )
         )

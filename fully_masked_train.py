@@ -108,6 +108,14 @@ def parse_args():
         default=0.1,
         help="Fraction of masked positions filled per generation step (default 0.1 = 10 steps).",
     )
+    parser.add_argument(
+        "--temperature",
+        type=float,
+        default=1.0,
+        help="Fixed temperature for generation and soft-embed sampling. Previously "
+        "randomized per-step in [0.8, 1.2], which added noise when comparing "
+        "gen_grad_norm/kl_loss across lambda_kl values.",
+    )
     return parser.parse_args()
 
 
@@ -183,8 +191,7 @@ lambda_gp = args.lambda_gp
 lambda_kl = args.lambda_kl
 initial_masking_rate = 0.9
 iteration_fill_rate = args.iteration_fill_rate
-min_temp = 0.8
-max_temp = 1.2
+temperature = args.temperature
 
 debug_seq = "TIALRPDRLTQVLGTEVPTDEGTRLLGAIGFDVEAGEDALHCTVPTWRPDVSIEEDLIEEVA"
 
@@ -210,6 +217,7 @@ wandb.config.update(
         "batch_size": args.batch_size,
         "num_eval_sequences": args.num_eval_sequences,
         "eval_batch_size": args.eval_batch_size,
+        "temperature": args.temperature,
     }
 )
 
@@ -333,8 +341,7 @@ def generate_fake_batch(
     sample_file,
     initial_masking_rate,
     iteration_fill_rate,
-    min_temp,
-    max_temp,
+    temperature,
     max_len,
     device,
     debug=False,
@@ -366,7 +373,6 @@ def generate_fake_batch(
     while current_masking_rate > 0:
         iteration_count += 1
         updated_attention_mask = (final_input_ids != tokenizer.pad_token_id).long()
-        temperature = min_temp + torch.rand(1).item() * (max_temp - min_temp)
         final_input_ids = generator.generate(
             final_input_ids,
             updated_attention_mask,
@@ -460,8 +466,7 @@ for epoch in range(n_epochs):
                 sample_file="data/dnmt_unformatted.txt",
                 initial_masking_rate=initial_masking_rate,
                 iteration_fill_rate=iteration_fill_rate,
-                min_temp=min_temp,
-                max_temp=max_temp,
+                temperature=temperature,
                 max_len=512,
                 device=device,
             )
@@ -504,8 +509,7 @@ for epoch in range(n_epochs):
             sample_file="data/dnmt_unformatted.txt",
             initial_masking_rate=initial_masking_rate,
             iteration_fill_rate=iteration_fill_rate,
-            min_temp=min_temp,
-            max_temp=max_temp,
+            temperature=temperature,
             max_len=512,
             device=device,
         )
@@ -519,8 +523,7 @@ for epoch in range(n_epochs):
                 critic,
                 fake_data,
                 attn_mask_fake,
-                min_temp,
-                max_temp,
+                temperature,
                 tokenizer,
             )
         )

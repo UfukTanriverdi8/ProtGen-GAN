@@ -422,7 +422,11 @@ gan/
     ├── lr_best_runs.sh            Retraining with best LRs from sweep
     ├── n_critic_10p_run.sh        n_critic grid search (seeded mode)
     ├── n_critic_full_run.sh       n_critic grid search (blind mode)
-    └── env_smoke_test.sh          Quick sanity check that the packed conda env loads correctly
+    ├── env_smoke_test.sh          Quick sanity check that the packed conda env loads correctly
+    └── sweeps/                    Hyperparameter sweep array jobs (split out from the flat
+                                   layout above); see docs/RUN_DOCUMENTATION.md for how
+                                   results are recorded
+        └── lambda_kl_sweep_p1.sh  Phase 1 screening: lambda_kl grid, seeded mode, n_critic=4
 
 ├── # VALIDATION / VISUALISATION
 └── validation/
@@ -441,7 +445,13 @@ gan/
 │   │                            CUDA 12.1) — identical on Anzu and MN5, see Infrastructure below
 │   ├── anzu-env-export.yml      Backup snapshot taken during the env migration — not for use
 │   └── mn5-env-export.yml       Backup snapshot taken during the env migration — not for use
-└── bfg-1.15.0.jar             BFG repo cleaner (git history cleanup utility)
+├── bfg-1.15.0.jar             BFG repo cleaner (git history cleanup utility)
+└── docs/
+    ├── RUN_DOCUMENTATION.md   Generic convention for docs/runs/ + docs/sweeps/ (below)
+    ├── runs/                  One markdown file per individual training run
+    │                          (config, final metrics, per-epoch trend, verdict)
+    └── sweeps/                One markdown file per sweep (design ref, run table, winner
+                               selection reasoning, conclusion)
 ```
 
 > Fine-tuning code and AF3 analysis scripts will be added to this repo later.
@@ -524,6 +534,7 @@ Current standard: `n_critic = 8`, first epoch frozen.
 - `docs/GENERATOR_GRADIENT_FIX.md` — full research synthesis and staged implementation plan for the non-differentiable-generator architectural issue (above). Read before touching `models.py`, `loss.py`, or either training script in relation to that issue.
 - `docs/GRADIENT_FIX_EXPLAINED.md` — conceptual companion to the above; explains the gradient problem, soft embeddings, KL anchor, and related concepts from first principles. No implementation details — read for understanding.
 - `docs/ENV_MIGRATION.md` — rationale and code changes for the Python 3.8/PyTorch 2.4.1 → Python 3.12/PyTorch 2.5.1 environment migration (`envs/protgen-gan-env-v2.yml`). Read before touching env files or diagnosing version-related errors.
+- `docs/RUN_DOCUMENTATION.md` — generic convention for recording individual runs (`docs/runs/`) and sweeps (`docs/sweeps/`) in plain markdown, so results can be revisited without digging through wandb history. Read before starting any new training run or sweep, and use it to write up results once a run/sweep finishes.
 
 ### Claude Code Automation (`.claude/`)
 - **Hook: file protection** — blocks edits to `.env` and `protgen-gan-env-v2.yml` (path-substring match, so it still applies now that the file lives under `envs/`)
@@ -634,9 +645,17 @@ evaluation is no longer appropriate.
 13. ~~**`mask_token_id` consistency**~~ — ✅ Done (2026-07-22, commit `718e446`). Confirmed `=4`
     everywhere it's used; `generate.py`'s hardcoded-default gap fixed.
 
-14. **Pin temperature per run** — currently randomized every step (`models.py:131` TODO),
-    adding noise to gen_grad_norm/kl_loss when comparing across λ_kl values. Expose as a CLI
-    flag before the next sweep.
+14. ~~**Pin temperature per run**~~ — ✅ Done (2026-07-24). Was randomized every step
+    (`models.py:131` TODO, now removed), adding noise to gen_grad_norm/kl_loss when comparing
+    across λ_kl values. Replaced with a fixed `--temperature` CLI flag (default `1.0`) in
+    both training scripts — no randomized-range option kept; existing diversity comes from
+    `torch.multinomial` sampling and per-step remask-position randomness, not from varying
+    temperature. Prerequisite for the lambda_kl sweep below.
+
+18. **lambda_kl sweep (in progress, 2026-07-24)** — two-phase sweep on MN5, seeded mode only,
+    n_critic=4 fixed. Phase 1: 5 epochs × `lambda_kl ∈ {0, 0.005, 0.01, 0.05, 0.1}`. Phase 2:
+    top-2 candidates re-run for 15 epochs. Design and results:
+    `docs/sweeps/lambda-kl-sweep-2026-07.md`, following `docs/RUN_DOCUMENTATION.md`'s convention.
 
 15. **Reconsider the fixed 50% remask fraction** — `models.py:136` TODO. The λ=0.01 run's
     gentle decline (progres 0.92→0.87, pairwise_tm 0.75→0.64 over 3 epochs) raises whether

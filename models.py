@@ -123,14 +123,10 @@ def compute_soft_embeds(
     critic,
     input_ids,
     attn_mask,
-    min_temp,
-    max_temp,
+    temperature,
     tokenizer,
     remask_frac=0.5,
 ):
-    # TODO: Random temperature sampling can be discussed in the future and there can be a better way to do this.
-    temperature = min_temp + torch.rand(1).item() * (max_temp - min_temp)
-
     # -- Phase 1: Saving the positions that will be REMASKED later
     # We are saving them from now on so that we can use them before the critic and also for the KL anchor computation
     # TODO: remask_frac is fixed 0.5 currently, but we can explore the idea of using the same prob distribution that we used during finetuning
