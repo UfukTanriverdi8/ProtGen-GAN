@@ -50,6 +50,7 @@ min_temp)` fresh every step (range `[0.8, 1.2]`), adding per-step noise to
 | `lr_critic` | 5e-5 | conservative pair |
 | `temperature` | 1.0 | fixed flag, see above |
 | `max_train_seqs` | None (full dataset, ~52,637 seqs) | time budget confirmed safe, see below |
+| `num_eval_sequences` | 30 | bumped from the script default (10) — selection criteria compares per-epoch trends across 5 candidates, and 10 samples is too noisy a signal for that |
 | `lambda_gp`, `wd_gen`, `wd_critic`, `batch_size`, `iteration_fill_rate` | script defaults (5.0, 0.01, 0.01, 8, 0.1) | unchanged, not part of this experiment |
 
 ### Phase 1 — Screening

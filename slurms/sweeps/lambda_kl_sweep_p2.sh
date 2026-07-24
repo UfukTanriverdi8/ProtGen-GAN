@@ -48,4 +48,5 @@ python 10p_train.py \
   --temperature 1.0 \
   --n_epochs    15 \
   --batch_size  8 \
+  --num_eval_sequences 30 \
   --run_name    $run_name

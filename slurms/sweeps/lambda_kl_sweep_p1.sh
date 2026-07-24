@@ -27,7 +27,7 @@ export PROGRES_DATA_DIR=/gpfs/projects/etur29/ufuk/progres/
 # Make Python prints unbuffered so you see them live in your .out file
 export PYTHONUNBUFFERED=1
 
-# Phase 1 screening grid — see docs/superpowers/specs/2026-07-24-lambda-kl-sweep-design.md
+# Phase 1 screening grid — see docs/sweeps/lambda-kl-sweep-2026-07.md
 # Map the SLURM array index to a lambda_kl value.
 kl_list=(0 0.005 0.01 0.05 0.1)
 lambda_kl=${kl_list[$SLURM_ARRAY_TASK_ID-1]}
@@ -37,6 +37,9 @@ run_name="kl-sweep-p1-kl${lambda_kl}"
 
 # Launch training — fixed params per the sweep design: n_critic=4, lr_gen=5e-6,
 # lr_critic=5e-5, temperature=1.0 (pinned), full dataset, 5 epochs.
+# num_eval_sequences bumped from the script default (10) to 30 — the selection
+# criteria compares per-epoch trends across 5 candidates, and 10 samples is too
+# noisy a signal for that comparison.
 python 10p_train.py \
   --n_critic    4 \
   --lambda_gp   5 \
@@ -46,4 +49,5 @@ python 10p_train.py \
   --temperature 1.0 \
   --n_epochs    5 \
   --batch_size  8 \
+  --num_eval_sequences 30 \
   --run_name    $run_name
