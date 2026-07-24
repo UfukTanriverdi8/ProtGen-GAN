@@ -1,7 +1,7 @@
 # protgen-gan - Entire History
 
 **Reconstructed from the meeting logs, code commits, and documentation of the project.**  
-**Last Updated: 14 May 2026**
+**Last Updated: 24 July 2026**
 
 This document captures the full life of the project: every major architectural decision, what was learned from each phase, and every significant bug discovered. It is written as a research narrative rather than a changelog, because the most important things to preserve are not just what changed but why, and what the consequences were.
 
@@ -228,19 +228,40 @@ The Git workflow uses a two-remote setup: GitHub as origin, MN5 local repo as a 
 
 ---
 
-## Planned Next Steps
+## Phase 6: Bug Fixes and Gradient-Flow Resolution (June - July 2026)
 
-In priority order, given the bugs described above:
+With all nine bugs catalogued, the fixes were carried out in priority order. BUG 4
+(wrong gradient-penalty call signature) and BUG 5 (pLDDT tuple logged instead of a
+float) were fixed first, since both were runtime-breaking or silently corrupting every
+logged metric. Bugs 6-9 (dead temperature variable in evaluation, wrong attention mask
+in blind mode, an overwritten NaN guard, and noisy debug logging) followed. A
+uniqueness-ratio metric was added to `run_evaluation()` -- a check cheap enough that it
+would have caught the argmax bug (Bug 1) on the very first run, had it existed then.
 
-1. Fix the generator gradient flow (soft embedding pass-through during generator updates).
-2. Fix BUG 4 -- training scripts crash at runtime with wrong GP signature.
-3. Fix BUG 5 -- unpack pLDDT return tuple so W&B logs actual float values.
-4. Fix remaining bugs 6-9.
-5. Add uniqueness ratio logging to `run_evaluation()` -- a one-line addition that would have caught the argmax bug on the first run.
-6. Refactor shared code from both training scripts into `train_utils.py` so fixes only need to be applied once.
-7. Verify blind mode diversity with a small generation test after the multinomial fix.
-8. Re-run the 30 AF3 error sequences from the 120k batch.
-9. Re-run 120k evaluation with scAccuracy filter removed.
-10. Short 2-3 epoch training test on best hyperparameter config to assess whether gradient fix changes dynamics before committing to large-scale HPC runs.
-11. Full new large-scale generation and evaluation campaign.
-12. Evaluate Gökay's uniform top-k sampling suggestion (sample uniformly from top-k tokens rather than proportionally from the full distribution, inspired by EvoDiff, with optional adaptive k based on critic feedback).
+The generator gradient-flow fix (Bug 3) was implemented in three stages: instrumenting
+`gen_grad_norm` to confirm the zero-gradient problem before touching anything, then
+soft embeddings with the real sequences embedded through the same matrix and the
+WGAN-GP gradient penalty rewritten to interpolate in embedding space, then a KL anchor
+against a frozen reference ProtBERT to prevent the generator from reward-hacking the
+critic. An initial version of the KL anchor computed its comparison on a fully-revealed
+sequence, which is out-of-distribution for an MLM model and caused `kl_loss` to
+oscillate wildly (89-1236 across a 5-epoch run); this was fixed by re-masking 50% of
+the completed sequence before scoring, which brought `kl_loss` down to a stable 0-4
+range. Two reference runs (`xwres3cz`, `ydsjq9f4`) confirmed `gen_grad_norm > 0` and
+stable `kl_loss` for the first time in the project's history -- the generator was
+finally receiving adversarial gradient. A standalone identity test
+(`tests/check_kl_identity.py`) independently verified the KL anchor's implementation
+via `KL(P‖P) = 0` plus a perturbed-weights negative control, rather than relying on
+training curves alone.
+
+Alongside the gradient-flow work, the environment was migrated from Python
+3.8/PyTorch 2.4.1/CUDA 11.8 to Python 3.12/PyTorch 2.5.1/CUDA 12.1
+(`docs/ENV_MIGRATION.md`), packed with `conda-pack` and deployed identically to both
+Anzu and MN5 by 2026-07-17. Generation temperature, previously randomized every step,
+was pinned to a fixed `--temperature` flag to remove a confounding variable ahead of
+hyperparameter comparisons.
+
+As of late July 2026, a two-phase `lambda_kl` sweep is running on MN5 to select the KL
+anchor's weight before committing to a full-scale training run under the fixed
+gradient path -- see `docs/sweeps/lambda-kl-sweep-2026-07.md` for design and results,
+and `CLAUDE.md` for the project's current task list.

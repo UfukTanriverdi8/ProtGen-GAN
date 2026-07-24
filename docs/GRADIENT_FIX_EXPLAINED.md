@@ -360,26 +360,29 @@ An alternative to KL divergence is a simpler **MLM cross-entropy anchor**: run t
 masked input through the frozen ProtBERT, and penalize the generator for disagreeing with
 its predictions. Same idea, slightly different math.
 
-### ⚠️ Current implementation issue (2026-06-27)
+### ✅ Fixed implementation issue (2026-06-27, commit `c18c89a`)
 
-The KL anchor is implemented and running, but `compute_soft_embeds` — which feeds
-input to both the soft-embedding path AND the KL computation — receives **fully completed
-sequences** (zero [MASK] tokens) after the fill loop finishes. ProtBERT is an MLM model
-trained exclusively on masked inputs. Its logits on fully-revealed sequences are
-uncalibrated extrapolations, not well-trained predictions.
+The KL anchor was implemented and running, but `compute_soft_embeds` — which feeds
+input to both the soft-embedding path AND the KL computation — was receiving **fully
+completed sequences** (zero [MASK] tokens) after the fill loop finished. ProtBERT is an
+MLM model trained exclusively on masked inputs. Its logits on fully-revealed sequences
+were uncalibrated extrapolations, not well-trained predictions.
 
-In practice: even small adversarial weight updates cause large logit swings on this
-out-of-distribution input, which in turn cause the KL to explode (observed: 89–1236
-oscillation across a 5-epoch run). The clamp (`gen_probs.clamp(min=1e-8)`) prevents
-log(0) crashes but not genuine divergence. `clip_grad_norm_` limits parameter-level
-damage but does not stabilise the KL value itself.
+In practice: even small adversarial weight updates caused large logit swings on this
+out-of-distribution input, which in turn caused the KL to explode (observed: 89–1236
+oscillation across a 5-epoch run). The clamp (`gen_probs.clamp(min=1e-8)`) prevented
+log(0) crashes but not genuine divergence. `clip_grad_norm_` limited parameter-level
+damage but did not stabilise the KL value itself.
 
-**The fix**: pass a partially masked sequence to `compute_soft_embeds` instead of the
-completed sequence. This keeps ProtBERT in-distribution (predicting masked positions,
-which is what it was trained for), makes the KL anchor compute a meaningful comparison
+**The fix**: `compute_soft_embeds` now re-masks 50% of the completed sequence (special
+tokens excluded) and runs the generator on that masked input instead of the fully
+completed one. This keeps ProtBERT in-distribution (predicting masked positions, which
+is what it was trained for), makes the KL anchor compute a meaningful comparison
 between two calibrated distributions, and means adversarial weight updates affect
-logits in a smooth, predictable way. Until this is fixed, use `--lambda_kl 0.0` for
-test runs to bypass the unstable term.
+logits in a smooth, predictable way. Confirmed on post-fix runs (`xwres3cz`/`ydsjq9f4`,
+2026-06-27): `kl_loss` bounded to a 0–4 range instead of the pre-fix 89–1236 — see
+`GENERATOR_GRADIENT_FIX.md` Stage 3 for the full validation. `--lambda_kl 0.0` remains
+available for clean adversarial-only runs, not as a workaround for this issue.
 
 ---
 

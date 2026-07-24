@@ -1,7 +1,7 @@
 # lambda_kl Sweep (2026-07)
 
 **Started:** 2026-07-24
-**Status:** Design approved, Phase 1 not yet submitted
+**Status:** Phase 1 submitted to MN5 (resubmitted after the `num_eval_sequences` fix, commit `7687ec4`); results pending.
 
 ## Design
 
@@ -118,7 +118,7 @@ this workload, adding further margin.
 
 ## Results
 
-_Pending — Phase 1 not yet submitted to MN5._
+_Pending — see Status above._
 
 ### Runs
 

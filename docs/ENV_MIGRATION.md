@@ -8,7 +8,8 @@ The PyG C-extensions were compiled against `pt24cu118` and break under PyTorch 2
 ## New environment file
 
 `protgen-gan-env-v2.yml` — supersedes `Conda-Environment-for-ProtGEN_mn5.yml`.
-The old YAML is still the active environment on MN5 until the migration is deployed there.
+Migration is complete on both Anzu and MN5 as of 2026-07-17 (see `CLAUDE.md` →
+Infrastructure → Environment); the old YAML is no longer active anywhere.
 
 Key version floor changes enforced in the new file:
 

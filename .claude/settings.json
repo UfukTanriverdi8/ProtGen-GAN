@@ -4,8 +4,13 @@
       "Bash(rtk ls *)",
       "Bash(rtk grep *)",
       "Bash(rtk git status *)",
+      "Bash(rtk git log *)",
+      "Bash(rtk git diff *)",
+      "Bash(rtk git show *)",
       "Bash(rtk read *)",
       "Bash(rtk find *)",
+      "Bash(rtk head *)",
+      "Bash(rtk wc *)",
       "mcp__wandb__diagnose_run_tool",
       "mcp__wandb__get_run_history_tool"
     ]
