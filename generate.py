@@ -369,7 +369,9 @@ def main():
     protbert = safe_local_from_pretrained(model_path, args.device)
     if tokenizer.pad_token_id >= protbert.get_input_embeddings().weight.size(0):
         protbert.resize_token_embeddings(len(tokenizer))
-    generator = Generator(protbert_model=protbert).to(args.device)
+    generator = Generator(
+        protbert_model=protbert, mask_token_id=tokenizer.mask_token_id
+    ).to(args.device)
     generator.eval()
 
     # Full-mode lengths
