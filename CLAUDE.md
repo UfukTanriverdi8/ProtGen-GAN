@@ -544,6 +544,7 @@ Current standard: `n_critic = 8`, first epoch frozen.
 - **Skill: `bug-fix-checklist`** — Claude-only; greps for all known unfixed bugs before touching training/eval files
 - **Skill: `pre-submit`** — validates codebase state (bugs, env, wandb) before SLURM submission
 - **Skill: `wandb-sync`** — guides MN5 → Anzu → wandb cloud offline run sync
+- **Subagent: `wandb-run-reviewer`** — documents a single synced wandb run into `docs/runs/` per `RUN_DOCUMENTATION.md`'s template (full per-epoch history via wandb MCP, not just final values). Does not rank/compare runs — that's a separate synthesis step done inline, not delegated.
 
 | Environment | Purpose |
 |-------------|---------|
