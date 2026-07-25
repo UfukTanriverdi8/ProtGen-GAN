@@ -653,10 +653,16 @@ evaluation is no longer appropriate.
     `torch.multinomial` sampling and per-step remask-position randomness, not from varying
     temperature. Prerequisite for the lambda_kl sweep below.
 
-18. **lambda_kl sweep (in progress, 2026-07-24)** — two-phase sweep on MN5, seeded mode only,
-    n_critic=4 fixed. Phase 1: 5 epochs × `lambda_kl ∈ {0, 0.005, 0.01, 0.05, 0.1}`. Phase 2:
-    top-2 candidates re-run for 15 epochs. Design and results:
-    `docs/sweeps/lambda-kl-sweep-2026-07.md`, following `docs/RUN_DOCUMENTATION.md`'s convention.
+18. **lambda_kl sweep (Phase 1 done, Phase 2 pending, 2026-07-25)** — two-phase sweep on MN5,
+    seeded mode only, n_critic=4 fixed. Phase 1 (5 epochs × `lambda_kl ∈ {0, 0.005, 0.01, 0.05,
+    0.1}`) complete and analyzed: `lambda_kl=0` deprioritized (critic saturated at
+    `critic_loss=5.000`, `gen_grad_norm` collapsed to ~1e-7 for epochs 3-5 — quality metrics
+    declined despite `unique_ratio=1.0`, consistent with the earlier Stage 3 finding). Top-2
+    for Phase 2: `{0.005, 0.05}` — `0.005` the clear front-runner (only arm stable-to-improving
+    on all 4 quality metrics), `0.05` a thin-margin second over `0.1`. Phase 2 script
+    (`slurms/sweeps/lambda_kl_sweep_p2.sh`) filled in, not yet submitted. Design and full
+    results: `docs/sweeps/lambda-kl-sweep-2026-07.md`, following `docs/RUN_DOCUMENTATION.md`'s
+    convention.
 
 15. **Reconsider the fixed 50% remask fraction** — `models.py:136` TODO. The λ=0.01 run's
     gentle decline (progres 0.92→0.87, pairwise_tm 0.75→0.64 over 3 epochs) raises whether

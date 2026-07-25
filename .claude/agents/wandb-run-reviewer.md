@@ -19,7 +19,7 @@ If your task prompt doesn't give you a specific `run_id` (or a `run_name` you ca
 
 1. Read `docs/RUN_DOCUMENTATION.md` in the repo root and use its "Per-run file" template exactly — do not improvise a different structure.
 2. Call `get_run_history_tool` for the full per-epoch series, not just summary/final values. Pull whatever metrics were actually logged for this run (commonly: `kl_loss`, `gen_grad_norm`, `unique_ratio`, `plddt`, `scAccuracy`, `progres`, `pairwise_tm` — but only report what's actually present, don't assume all of these were logged).
-3. Get the run's config (hyperparameters) — via `get_run_history_tool`'s config output or `query_wandb_tool` if needed.
+3. Get the run's config (hyperparameters) — via `get_run_history_tool`'s config output. **Known gap:** this has been observed to return only `_wandb` client/framework metadata (`cli_version`, `python_version`, etc.) even when the run's actual config is populated. If the returned config looks metadata-only (no run-specific keys like `lambda_kl`, `lr_gen`, etc.), don't conclude the data is missing — retry with `query_wandb_tool` before falling back to inferring values from the run name or design docs. Only note config as unconfirmed if both tools fail to surface it.
 4. If any metric looks anomalous (wild oscillation, NaN, a metric that stops updating partway through), you may call `diagnose_run_tool` for more detail, and note the finding in the Verdict section — but do not editorialize about whether that disqualifies the run for some sweep's purposes. That's the synthesis step's job, not yours.
 5. Fill in the template:
    - Config table: only fields with real values from the run's config — don't fabricate.

@@ -1,7 +1,7 @@
 # lambda_kl Sweep (2026-07)
 
 **Started:** 2026-07-24
-**Status:** Phase 1 submitted to MN5 (resubmitted after the `num_eval_sequences` fix, commit `7687ec4`); results pending.
+**Status:** Phase 1 complete and analyzed (2026-07-25). Top-2 selected — Phase 2 (`slurms/sweeps/lambda_kl_sweep_p2.sh`) ready to submit.
 
 ## Design
 
@@ -118,18 +118,83 @@ this workload, adding further margin.
 
 ## Results
 
-_Pending — see Status above._
+All 5 Phase 1 arms completed 5 epochs on the full dataset with no NaNs and no
+hard-criteria disqualification (`unique_ratio` stayed at 1.0 in every run;
+`kl_loss`, where computed, stayed bounded — nowhere near the pre-fix 89–1236
+oscillation range). Selection came down to the trend-inspection and
+final-epoch composite steps.
+
+**Correction (2026-07-25):** the per-run docs below note that wandb `config`
+only returned `_wandb` client/framework metadata, with hyperparameters
+backfilled from the run name instead. Checked the raw synced run data
+directly (`arrivals/offline-run-*/files/config.yaml`) and the actual
+hyperparameters (`lambda_kl`, `lr_gen`, `lr_critic`, etc.) were logged
+correctly by `10p_train.py`'s `wandb.config.update()` call and are present in
+every run's config — nothing was lost in offline logging or sync. The gap
+was in the review subagents' wandb MCP query (likely `get_run_history_tool`
+surfacing only the `_wandb` block, not the flattened custom keys alongside
+it), not in the training pipeline. The backfilled values in the per-run docs
+happen to be correct since they were sourced from the run name/design doc,
+but should be treated as unverified-by-wandb rather than confirmed. Fixed by
+having `wandb-run-reviewer` fall back to `query_wandb_tool` or a direct read
+of `files/config.yaml` when `get_run_history_tool`'s config comes back
+metadata-only.
 
 ### Runs
 
-| Run | lambda_kl | Key metric(s) | Verdict | File |
+| Run | lambda_kl | Key metric(s) (final epoch) | Verdict | File |
 |---|---|---|---|---|
-| _(pending)_ | | | | |
+| `kl-sweep-p1-kl0` | 0 | plddt 0.67 (from 0.76 baseline), pairwise_tm 0.67 (low of 0.61 at ep4) | Deprioritized — quality decline + `gen_grad_norm` collapsed to ~1e-7 for epochs 3-5 while `critic_loss` saturated at exactly 5.000, i.e. effectively no adversarial signal for the back half of training | `docs/runs/kl-sweep-p1-kl0_hobeuiv1.md` |
+| `kl-sweep-p1-kl0.005` | 0.005 | plddt 0.77 (rising from 0.75), scAcc 0.41, pairwise_tm 0.80 | **Winner (1st)** — only arm with stable-to-improving trend on all 4 quality metrics simultaneously; also wins or near-ties every final-epoch metric outright | `docs/runs/kl-sweep-p1-kl0.005_6of3ccvx.md` |
+| `kl-sweep-p1-kl0.01` | 0.01 | plddt 0.74, pairwise_tm 0.71 (low of run) | Survives hard gate, but noisiest/no clear direction; lowest composite score of the 4 survivors | `docs/runs/kl-sweep-p1-kl0.01_kwm7j52c.md` |
+| `kl-sweep-p1-kl0.05` | 0.05 | plddt 0.74, pairwise_tm 0.74 (down from ep4 peak of 0.80) | **Winner (2nd)** — mild late-epoch dip in pairwise_tm, but edges out 0.1 on composite | `docs/runs/kl-sweep-p1-kl0.05_v7ha9aab.md` |
+| `kl-sweep-p1-kl0.1` | 0.1 | plddt 0.74, scAcc 0.38 (down from 0.40 peak), pairwise_tm 0.74 | Survives hard gate; similar mild late decline shape to 0.05, narrowly loses on composite | `docs/runs/kl-sweep-p1-kl0.1_0yeu4yiu.md` |
 
 ### Winner selection reasoning
 
-_Pending._
+Per the Selection criteria above: none of the 5 runs hit either hard
+disqualifier, so all 5 went through trend inspection first.
+
+**`lambda_kl=0` deprioritized by trend, not by the hard gate.** `unique_ratio`
+never dropped and `kl_loss` isn't computed at `lambda_kl=0`, so it technically
+survives the two written disqualifiers — but `plddt_score` dropped sharply
+after epoch 1 (0.76→0.67) and never recovered, and `pairwise_tm` declined to
+a run-low of 0.61 before a partial rebound. More importantly, this is exactly
+the "merely slow to collapse" pattern the design doc's criteria are meant to
+catch: `gen_grad_norm` spiked once mid-epoch-2 then collapsed to ~1e-7 for
+epochs 3-5, coinciding with `critic_loss` sitting exactly at 5.000 — the
+critic saturated and the generator got no meaningful adversarial gradient for
+60% of training. This matches CLAUDE.md's prior finding that `lambda_kl=0`
+runs decline in quality even with `unique_ratio=1.0` throughout — confirmed
+again here, with a specific mechanism attached this time.
+
+**Remaining 4 candidates ranked by mean of normalized final-epoch metrics**
+(plddt, scAccuracy, progres, pairwise_tm; min-max normalized across the 4
+survivors per metric):
+
+| lambda_kl | Composite score |
+|---|---|
+| 0.005 | 1.00 |
+| 0.05 | 0.26 |
+| 0.1 | 0.25 |
+| 0.01 | 0.00 |
+
+`0.005` isn't a marginal winner — it has the best or tied-best value on 3 of
+4 final-epoch metrics (plddt, scAccuracy, pairwise_tm) and is a close second
+on `progres`, and its per-epoch trend is the only one that's genuinely
+stable-to-improving across the board rather than flat/noisy or mildly
+declining. `0.05` and `0.1` are close (0.26 vs 0.25 — within likely noise
+given `num_eval_sequences=30`); `0.05` takes the edge on the mechanical
+ranking, but this margin is thin enough not to be a confident call on its
+own — Phase 2's longer horizon (15 epochs) is exactly the kind of
+confirmation this warrants. `0.01` ranks last among the survivors: noisiest
+trajectory, no clear direction, `pairwise_tm` ending at its run-low.
 
 ### Conclusion
 
-_Pending._
+**Phase 2 candidates: `lambda_kl ∈ {0.005, 0.05}`.** `0.005` is the clear
+front-runner; `0.05` is a reasonable second pick over `0.1` but by a thin
+margin worth re-checking at 15 epochs rather than treating as settled.
+`lambda_kl=0` is confirmed (again, with a new mechanistic detail — critic
+saturation cutting off gradient) as unsuitable without the KL anchor.
+`slurms/sweeps/lambda_kl_sweep_p2.sh` updated with `kl_list=(0.005 0.05)`.

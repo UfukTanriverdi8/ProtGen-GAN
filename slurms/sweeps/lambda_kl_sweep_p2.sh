@@ -28,11 +28,11 @@ export PROGRES_DATA_DIR=/gpfs/projects/etur29/ufuk/progres/
 export PYTHONUNBUFFERED=1
 
 # Phase 2 confirmation — see docs/sweeps/lambda-kl-sweep-2026-07.md
-# FILL IN before submitting: replace with the top-2 lambda_kl values selected
-# from Phase 1 (docs/sweeps/lambda-kl-sweep-2026-07.md's "Winner selection
-# reasoning" section) once those runs finish. Placeholder values below are
-# NOT real winners — do not submit as-is.
-kl_list=(FILL_ME_1 FILL_ME_2)
+# Top-2 from Phase 1 (see that doc's "Winner selection reasoning"): 0.005 is
+# the clear front-runner (stable-to-improving on all 4 quality metrics); 0.05
+# narrowly beat 0.1 on composite score but by a thin margin worth re-checking
+# at this longer horizon.
+kl_list=(0.005 0.05)
 lambda_kl=${kl_list[$SLURM_ARRAY_TASK_ID-1]}
 
 # Construct a run name
@@ -49,4 +49,5 @@ python 10p_train.py \
   --n_epochs    15 \
   --batch_size  8 \
   --num_eval_sequences 30 \
-  --run_name    $run_name
+  --run_name    $run_name \
+  --wandb_tags  kl-sweep-p2

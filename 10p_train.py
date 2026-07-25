@@ -112,6 +112,13 @@ def parse_args():
         "randomized per-step in [0.8, 1.2], which added noise when comparing "
         "gen_grad_norm/kl_loss across lambda_kl values.",
     )
+    parser.add_argument(
+        "--wandb_tags",
+        type=str,
+        default="",
+        help="Comma-separated wandb tags for this run (e.g. 'kl-sweep-p1,seeded'). "
+        "Empty by default.",
+    )
     return parser.parse_args()
 
 
@@ -193,10 +200,12 @@ temperature = args.temperature
 # -----------------------
 # W&B Initialization
 # -----------------------
+wandb_tags = [t.strip() for t in args.wandb_tags.split(",") if t.strip()]
 wandb.init(
     project="protgen-gan",
     name=args.run_name,
     mode=os.environ.get("WANDB_MODE", "online"),
+    tags=wandb_tags,
 )
 wandb.config.update(
     {

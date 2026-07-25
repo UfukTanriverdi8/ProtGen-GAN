@@ -50,4 +50,5 @@ python 10p_train.py \
   --n_epochs    5 \
   --batch_size  8 \
   --num_eval_sequences 30 \
-  --run_name    $run_name
+  --run_name    $run_name \
+  --wandb_tags  kl-sweep-p1
