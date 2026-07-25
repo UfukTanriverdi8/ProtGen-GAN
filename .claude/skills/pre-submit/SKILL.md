@@ -14,10 +14,10 @@ Grep for each known bug. Report status of each:
 
 ### BUG 2 — pLDDT tuple unpacking (CRITICAL)
 ```bash
-grep -n "avg_plddt_score = calculate_plddt_scores" 10p_train.py fully_masked_train.py
+grep -n "avg_plddt_score, _ = calculate_plddt_scores_and_save_pdb" 10p_train.py fully_masked_train.py
 ```
-- FIXED if line shows `avg_plddt_score, _ = calculate_plddt_scores_and_save_pdb(...)`
-- BROKEN if no tuple unpack
+- FIXED if a match is found in both files (tuple-unpacked)
+- BROKEN if no match — means the call site reverted to `avg_plddt_score = calculate_plddt_scores_and_save_pdb(...)` (single var, silently assigning a tuple)
 
 ### BUG 3 — Dead temperature in val_metrics
 ```bash
@@ -35,10 +35,10 @@ grep -n "mask_token_id\|pad_token_id" fully_masked_train.py | grep "updated_atte
 
 ### BUG 5 — NaN guard overwritten
 ```bash
-grep -n "avg_plddt_score" val_metrics.py
+grep -n "avg_plddt_score =" val_metrics.py
 ```
-- FIXED if only one assignment (the NaN-safe one)
-- BROKEN if two consecutive assignments exist
+- FIXED if only one assignment line matches (the NaN-safe `(sum(valid) / len(valid)) if valid else -1`)
+- BROKEN if a second, unguarded `avg_plddt_score = sum(...) / len(...)` assignment appears after it
 
 ### BUG 6 — debug=True default
 ```bash

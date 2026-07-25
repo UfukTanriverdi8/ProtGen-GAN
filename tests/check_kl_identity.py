@@ -108,4 +108,6 @@ assert kl_perturbed > 1e-2, (
 )
 print("PASS: KL(gen || ref) is clearly nonzero when weights differ.\n")
 
-print("compute_kl_anchor identity check: PASSED both the identity and negative-control cases.")
+print(
+    "compute_kl_anchor identity check: PASSED both the identity and negative-control cases."
+)

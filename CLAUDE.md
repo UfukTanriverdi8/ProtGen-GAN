@@ -543,7 +543,6 @@ Current standard: `n_critic = 8`, first epoch frozen.
 - **Skill: `slurm-job`** — generates MN5 SLURM scripts from run parameters
 - **Skill: `bug-fix-checklist`** — Claude-only; greps for all known unfixed bugs before touching training/eval files
 - **Skill: `pre-submit`** — validates codebase state (bugs, env, wandb) before SLURM submission
-- **Skill: `wandb-sync`** — guides MN5 → Anzu → wandb cloud offline run sync
 - **Subagent: `wandb-run-reviewer`** — documents a single synced wandb run into `docs/runs/` per `RUN_DOCUMENTATION.md`'s template (full per-epoch history via wandb MCP, not just final values). Does not rank/compare runs — that's a separate synthesis step done inline, not delegated.
 
 | Environment | Purpose |
@@ -593,9 +592,30 @@ gitignored and never committed — it must exist independently on every machine 
 any parsing library.
 
 ### wandb Workflow on MN5
-MN5 has no internet. wandb runs are logged offline, then:
-1. Download wandb run directory via SFTP to Anzu
-2. Upload to wandb from Anzu with `wandb sync`
+MN5 has no internet. wandb runs are logged offline, then synced from Anzu once transferred over.
+Current flow (as of 2026-07-25), driven by two shell aliases on Anzu — not a Claude Code skill,
+since the actual sync/transfer steps must be run by a human with MN5 SSH access:
+
+1. **Stage on MN5:** once a run finishes, move its `wandb/offline-run-*/` directory into
+   `wandb/departure/` before pulling — keeps in-progress runs untouched (never rsync a
+   `.wandb` file mid-write) and gives explicit control over what gets pulled next.
+2. **Pull run directories:** `get-mn5-wandb-runs` alias — rsyncs everything in
+   `wandb/departure/` on MN5 to `/home/ufuk/protgen/mn5/arrivals/` on Anzu.
+3. **Pull SLURM logs:** `get-mn5-logs` alias — rsyncs the whole `outputs/` folder from MN5 to
+   this repo's `outputs/` on Anzu (git-tracked; a resubmitted job with the same
+   `#SBATCH --output=` pattern will overwrite the old log file, so commit before resubmitting
+   if you want the prior run's log preserved in history).
+4. **Identify which folder is which run:** offline-run folder names
+   (`offline-run-<timestamp>-<run_id>`) don't encode the human-readable `run_name` and the
+   `run_id` isn't known until MN5 assigns it — but each array task's `.err` log (from step 3)
+   contains a `wandb: Run data is saved locally in <path>` line, and the SLURM script's
+   `kl_list`-style array already gives a static array-task-id → `run_name` mapping. Combining
+   the two identifies every folder without needing to open `config.yaml` or guess.
+5. **Sync to wandb cloud:** `wandb sync` each folder in `arrivals/` (a simple loop over
+   `arrivals/offline-run-*/` — no dedicated tooling needed for this step).
+6. **Document (optional):** once synced, the `wandb-run-reviewer` subagent (see Claude Code
+   Automation below) can pull each run's full history via wandb MCP and write a
+   `docs/runs/<run_name>_<run_id>.md` file per `RUN_DOCUMENTATION.md`'s convention.
 
 ### Evaluation Frequency
 The evaluation frequency inside the training loop should be dynamic and proportional to
