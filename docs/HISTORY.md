@@ -102,7 +102,7 @@ After extensive training experiments without finding runs with significant struc
 
 ## Phase 5: Bug Discovery (March 2026)
 
-March 2026 was when the two most consequential bugs in the project were discovered, invalidating approximately 8 months of training runs.
+March 2026 was when the three most consequential bugs in the project were discovered, invalidating approximately 8 months of training runs.
 
 ---
 
@@ -261,7 +261,23 @@ Anzu and MN5 by 2026-07-17. Generation temperature, previously randomized every 
 was pinned to a fixed `--temperature` flag to remove a confounding variable ahead of
 hyperparameter comparisons.
 
-As of late July 2026, a two-phase `lambda_kl` sweep is running on MN5 to select the KL
-anchor's weight before committing to a full-scale training run under the fixed
-gradient path -- see `docs/sweeps/lambda-kl-sweep-2026-07.md` for design and results,
-and `CLAUDE.md` for the project's current task list.
+With the gradient path confirmed working but only validated over 3 epochs, the next
+open question was `lambda_kl`: the KL anchor's weight had only ever been tested at one
+value (0.01), and there was no evidence it was the right one, or that the gradient fix
+would stay stable over a longer run. A two-phase `lambda_kl` sweep was run on MN5
+(Phase 1: 5 epochs, five candidate values; Phase 2: 15 epochs, top two candidates) to
+answer both questions at once before committing to a full-scale training run.
+
+The sweep confirmed the gradient fix holds up at 15 epochs -- no NaNs, no mode
+collapse -- and settled on `lambda_kl=0.05` (Phase 2 reversed Phase 1's provisional
+pick of 0.005, once the longer horizon showed 0.05 kept the generator's gradient
+healthy after the critic saturated, where 0.005's did not). But the sweep's more
+important result may be a limitation it exposed rather than a value it found: quality
+metrics plateau almost immediately in every run regardless of epoch count or
+`lambda_kl`, and the critic reliably saturates to a fixed loss value (`critic_loss`
+pinned at exactly 5.000) in nearly every arm. `lambda_kl` determines whether the
+generator's gradient survives that saturation, not whether the saturation happens.
+Full design, results, and per-run data: `docs/sweeps/lambda-kl-sweep-2026-07.md`. Why
+the critic saturates this way -- and whether it, not `lambda_kl`, is the real ceiling
+on generation quality -- is open and worth investigating before the next full-scale
+run; see `CLAUDE.md`'s task list.

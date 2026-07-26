@@ -673,16 +673,43 @@ evaluation is no longer appropriate.
     `torch.multinomial` sampling and per-step remask-position randomness, not from varying
     temperature. Prerequisite for the lambda_kl sweep below.
 
-18. **lambda_kl sweep (Phase 1 done, Phase 2 pending, 2026-07-25)** — two-phase sweep on MN5,
-    seeded mode only, n_critic=4 fixed. Phase 1 (5 epochs × `lambda_kl ∈ {0, 0.005, 0.01, 0.05,
-    0.1}`) complete and analyzed: `lambda_kl=0` deprioritized (critic saturated at
-    `critic_loss=5.000`, `gen_grad_norm` collapsed to ~1e-7 for epochs 3-5 — quality metrics
-    declined despite `unique_ratio=1.0`, consistent with the earlier Stage 3 finding). Top-2
-    for Phase 2: `{0.005, 0.05}` — `0.005` the clear front-runner (only arm stable-to-improving
-    on all 4 quality metrics), `0.05` a thin-margin second over `0.1`. Phase 2 script
-    (`slurms/sweeps/lambda_kl_sweep_p2.sh`) filled in, not yet submitted. Design and full
-    results: `docs/sweeps/lambda-kl-sweep-2026-07.md`, following `docs/RUN_DOCUMENTATION.md`'s
-    convention.
+18. ~~**lambda_kl sweep**~~ — ✅ Done (2026-07-26). Two-phase sweep on MN5, seeded mode only,
+    n_critic=4 fixed. Phase 1 (5 epochs × `lambda_kl ∈ {0, 0.005, 0.01, 0.05, 0.1}`) deprioritized
+    `lambda_kl=0` (critic saturated at `critic_loss=5.000`, `gen_grad_norm` collapsed to ~1e-7 for
+    epochs 3-5) and provisionally picked `0.005` over `0.05`/`0.1`. Phase 2 (15 epochs ×
+    `lambda_kl ∈ {0.005, 0.05}`) **reversed that pick**: `0.05` beats `0.005` on 3 of 4 quality
+    metrics (plddt 0.767 vs 0.747, scAcc 0.399 vs 0.386, pairwise_tm 0.837 vs 0.766) and — more
+    importantly — kept `gen_grad_norm` healthy (~0.4-2.0) through epoch 15 even after the critic
+    saturated at epoch 9, whereas `0.005`'s `gen_grad_norm` weakened to ~0.03-0.25 once its critic
+    saturated at epoch 5. **`lambda_kl=0.05` is the winner for future full-scale training.**
+    Caveat: neither Phase 2 run's final checkpoint was saved to disk — both hit MN5's
+    `gpfs_projects` disk quota (4.20 TB hard limit, driven by `10p_train.py` saving a full
+    checkpoint, ~8.2-8.5 GB, every epoch with no cleanup — see item 19) while writing epoch 15's
+    weights; training/eval/wandb-logging for epoch 15 completed fine, only the on-disk checkpoint
+    write failed. A fresh run with `lambda_kl=0.05` is needed before this result can be used for
+    generation. Quota freed by deleting stale pre-gradient-fix grid-search checkpoints
+    (2026-07-26). Full results: `docs/sweeps/lambda-kl-sweep-2026-07.md`.
+
+19. **Checkpoint storage bloat** — `10p_train.py`/`fully_masked_train.py` save a full checkpoint
+    (both ProtBERT copies + both optimizer states, ~8.2-8.5 GB) every epoch, to a new `epoch_N/`
+    directory, with no cleanup — this caused item 18's Phase 2 checkpoint-save failure by
+    exhausting MN5's `gpfs_projects` quota (4.20 TB). The optimizer-state half of that cost
+    (~2/3 of the total) is currently pure waste: it was added for a future resume script
+    (QoL 5, above) that was never built. Two independent fixes worth doing before the next
+    multi-epoch sweep or long run: (1) stop saving optimizer state until the resume script
+    exists, (2) only keep the last checkpoint (or last N) instead of every epoch. Not yet
+    implemented — discussed 2026-07-26, deferred.
+
+20. **Investigate critic saturation** — across nearly every `lambda_kl` sweep arm (item 18),
+    `critic_loss` eventually pins at exactly `5.0000` and stays there for the remainder of
+    training. `lambda_kl` only determines whether the generator's gradient survives this
+    (`0.05` did, `0.005` and `0.0` didn't) — it doesn't prevent the saturation itself, and
+    quality metrics plateau almost immediately regardless of epoch count or `lambda_kl` value.
+    This is likely the actual ceiling on generation quality now, not the KL anchor weight.
+    Worth checking whether the exact, repeated `5.000` value points to a specific cause (e.g.
+    a clamp/loss-scaling artifact in `loss.py`, or a genuine critic-capacity/`n_critic`
+    mismatch) before the next full-scale run. See `docs/HISTORY.md` (Phase 6, end) and
+    `docs/sweeps/lambda-kl-sweep-2026-07.md` for the supporting data. Not started.
 
 15. **Reconsider the fixed 50% remask fraction** — `models.py:136` TODO. The λ=0.01 run's
     gentle decline (progres 0.92→0.87, pairwise_tm 0.75→0.64 over 3 epochs) raises whether

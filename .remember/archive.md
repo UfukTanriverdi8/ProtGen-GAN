@@ -1,5 +1,8 @@
 # Archive
 
+## Week of 2026-07-20
+Soft-embed gradient debugging: run analysis (c18c89a) confirmed gen_grad_norm positive, KL loss improved 0–4 (vs 89–1236 pre-fix), unique_ratio stable. Started GENERATOR_GRADIENT_FIX.md documentation. Phase 1 λ_kl sweep prep underway.
+
 ## Week of 2026-06-29
 Audited ProtGen GAN (13 critical issues: transformer skip, non-diff generator, diversity gaps, training dupes, hardcoded paths); rejected conda→uv; added .claude/ hooks (.env/.yml/slurm); documented soft-embed train/eval mismatch & updated memory.
 

@@ -1,7 +1,10 @@
 # lambda_kl Sweep (2026-07)
 
 **Started:** 2026-07-24
-**Status:** Phase 1 complete and analyzed (2026-07-25). Top-2 selected — Phase 2 (`slurms/sweeps/lambda_kl_sweep_p2.sh`) ready to submit.
+**Status:** Phase 1 and Phase 2 complete and analyzed (2026-07-26). **Winner: `lambda_kl=0.05`**
+(reverses Phase 1's provisional pick of `0.005` — see Phase 2 Results below). Neither Phase 2
+run's final checkpoint was saved to disk (MN5 `gpfs_projects` quota exceeded mid-sync) — a
+fresh training run is required before this winner can be used for generation.
 
 ## Design
 
@@ -190,7 +193,7 @@ own — Phase 2's longer horizon (15 epochs) is exactly the kind of
 confirmation this warrants. `0.01` ranks last among the survivors: noisiest
 trajectory, no clear direction, `pairwise_tm` ending at its run-low.
 
-### Conclusion
+### Conclusion (Phase 1)
 
 **Phase 2 candidates: `lambda_kl ∈ {0.005, 0.05}`.** `0.005` is the clear
 front-runner; `0.05` is a reasonable second pick over `0.1` but by a thin
@@ -198,3 +201,65 @@ margin worth re-checking at 15 epochs rather than treating as settled.
 `lambda_kl=0` is confirmed (again, with a new mechanistic detail — critic
 saturation cutting off gradient) as unsuitable without the KL anchor.
 `slurms/sweeps/lambda_kl_sweep_p2.sh` updated with `kl_list=(0.005 0.05)`.
+
+---
+
+## Phase 2 Results (2026-07-26)
+
+Both arms ran the full `n_epochs=15` on MN5 and completed all training and evaluation
+successfully — confirmed via wandb history (`state=finished`, epoch-15 metrics present and
+matching each run's summary). **Operational issue, not a training issue:** both jobs hit
+`safetensors_rust.SafetensorError: I/O error: Disk quota exceeded` on MN5's `gpfs_projects`
+filesystem (confirmed via `bsc_quota`: usage had reached the 4.20 TB hard limit, driven by
+`10p_train.py` saving a full checkpoint — both ProtBERT copies plus both optimizer states,
+~8.2–8.5 GB — every epoch with no cleanup) while writing the epoch-15 checkpoint to disk,
+*after* that epoch's training/eval/wandb-logging had already completed. Consequence: **all
+15 epochs of metrics are valid and complete for both runs, but neither run's final model
+weights were ever written to disk** — a fresh run is needed to actually obtain a usable
+checkpoint from the winning arm.
+
+### Runs
+
+| Run | lambda_kl | Key metric(s) (epoch 15) | Verdict | File |
+|---|---|---|---|---|
+| `kl-sweep-p2-kl0.005` | 0.005 | plddt 0.747, scAcc 0.386, progres 0.911, pairwise_tm 0.766, gen_grad_norm 0.099 | Flat/stable on all 4 quality metrics, `unique_ratio=1.0` throughout — but `critic_loss` pins at exactly 5.000 from epoch 5 on, and `gen_grad_norm` settles to a comparatively weak ~0.03–0.25 band for the back two-thirds of training | `docs/runs/kl-sweep-p2-kl0.005_s9n1tlld.md` |
+| `kl-sweep-p2-kl0.05` | 0.05 | plddt 0.767, scAcc 0.399, progres 0.911, pairwise_tm 0.837, gen_grad_norm 1.131 | **Winner** — flat/stable on all 4 quality metrics, `unique_ratio=1.0` throughout, ends at or above baseline on every metric; `critic_loss` also pins at 5.000 (from epoch 9 on) but `gen_grad_norm` stays healthy (~0.4–2.0) through the final epoch — the critic saturating did not cut off the generator's adversarial signal here | `docs/runs/kl-sweep-p2-kl0.05_228dww56.md` |
+
+### Winner selection reasoning
+
+Phase 1 picked `0.005` as the clear front-runner on a 5-epoch horizon. At 15 epochs, that
+ranking reverses: `0.05` beats `0.005` on 3 of 4 final-epoch quality metrics outright (plddt
+0.767 vs 0.747, scAccuracy 0.399 vs 0.386, pairwise_tm 0.837 vs 0.766 — the largest gap of
+the four) and ties on the fourth (progres, 0.911 vs 0.911). Both runs are `unique_ratio=1.0`
+throughout with no mode collapse, so neither is disqualified by the hard gate.
+
+The more important signal is mechanistic, not just the final numbers: **both runs show the
+same critic-saturation pattern** (`critic_loss` pinned exactly at `5.000`) that got
+`lambda_kl=0` disqualified in Phase 1 — but the two runs diverge sharply in what that
+saturation does to the generator. In `0.005`, `gen_grad_norm` settles to a comparatively weak
+~0.03–0.25 once the critic saturates (epoch 5 onward), while in `0.05` it stays in a much
+healthier ~0.4–2.0 band all the way through epoch 15 despite the critic saturating even
+earlier (epoch 9). In other words: `0.05`'s stronger KL anchor appears to keep the generator
+receiving a meaningful adversarial-plus-anchor gradient even once the critic stops
+discriminating well, whereas `0.005`'s weaker anchor leaves the generator more exposed to a
+saturated critic's near-zero gradient. This matches the sweep's original selection-criteria
+philosophy (`GENERATOR_GRADIENT_FIX.md` Stage 3): a candidate that merely *looks* fine on
+final-epoch numbers isn't the same as one with healthy underlying training dynamics — and at
+the longer 15-epoch horizon, `0.05`'s gradient health became the deciding factor Phase 1's
+shorter horizon couldn't yet reveal.
+
+### Conclusion (Phase 2 / overall)
+
+**Final recommendation: `lambda_kl=0.05`** for the next full-scale training run — supersedes
+Phase 1's provisional `0.005` pick. `lambda_kl=0` remains confirmed unsuitable (Phase 1).
+`0.01` and `0.1` were not carried into Phase 2 and remain untested at the longer horizon; given
+`0.05`'s clear margin and healthy gradient dynamics at 15 epochs, there's no signal motivating
+a revisit of either.
+
+**Before using this checkpoint anywhere:** Phase 2's `lambda_kl=0.05` run has no saved model
+weights (see "Phase 2 Results" above — MN5 disk quota exceeded during the final checkpoint
+write). Free space in `gpfs_projects` (deleted the stale pre-gradient-fix grid-search
+checkpoints on 2026-07-26) has already been confirmed adequate; a fresh run with the same
+config (`lambda_kl=0.05`, `n_critic=4`, `lr_gen=5e-6`, `lr_critic=5e-5`, `temperature=1.0`,
+15+ epochs, full dataset) is needed to actually produce a usable checkpoint before generation
+or further evaluation can proceed.
