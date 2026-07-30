@@ -353,6 +353,7 @@ def run_evaluation(epoch_idx, batch_idx, critic_loss_val, gen_loss_val, tag="eva
         generator=generator,
         tokenizer=tokenizer,
         num_sequences=args.num_eval_sequences,
+        temperature=args.temperature,
         device=device,
     )
 

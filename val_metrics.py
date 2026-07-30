@@ -102,7 +102,11 @@ def convert_outputs_to_pdb(outputs):
 
 
 def generate_fake_sequences(
-    generator, tokenizer, num_sequences, device: str | torch.device = "cuda"
+    generator,
+    tokenizer,
+    num_sequences,
+    temperature=1.0,
+    device: str | torch.device = "cuda",
 ):
     """
     Generates fake protein sequences using the generator model.
@@ -111,6 +115,7 @@ def generate_fake_sequences(
         generator: The generator model (e.g., a fine-tuned ProtBERT).
         tokenizer: The tokenizer for the model.
         num_sequences: How many sequences to generate.
+        temperature: Fixed sampling temperature for every fill step.
         device: The device to run the generation on.
 
     Returns:
@@ -132,14 +137,13 @@ def generate_fake_sequences(
         current_masking_rate = 1.0
         iteration_fill_rate = 0.1
         while current_masking_rate > 0:
-            random_temp = torch.empty(1).uniform_(0.8, 1.2).item()
             with torch.no_grad():
                 generated_ids = generator.generate(
                     fully_masked_input,
                     attention_mask,
                     keep_percent=iteration_fill_rate,
                     current_rate=current_masking_rate,
-                    temperature=random_temp,
+                    temperature=temperature,
                 )
             fully_masked_input = generated_ids.clone()
             current_masking_rate = max(0, current_masking_rate - iteration_fill_rate)

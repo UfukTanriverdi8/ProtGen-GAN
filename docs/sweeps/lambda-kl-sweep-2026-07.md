@@ -121,6 +121,23 @@ this workload, adding further margin.
 
 ## Results
 
+**Correction (2026-07-30):** the temperature-pinning fix (`CLAUDE.md` TODO 14) that this
+sweep depended on to remove a confounding variable was incomplete. It correctly pinned
+temperature in the training-loop generation path, but missed `generate_fake_sequences`
+(`val_metrics.py`), which produced every sequence behind the quality metrics below
+(`plddt`, `scAccuracy`, `progres`, `pairwise_tm`, `unique_ratio`) across both phases of
+this sweep — it drew an uncontrolled `uniform(0.8, 1.2)` temperature every fill step
+regardless of `--temperature`. `gen_grad_norm`, `kl_loss`, `critic_loss`, and
+`generator_loss` were unaffected (correctly pinned throughout), so the mechanistic case
+for `lambda_kl=0.05` (its `gen_grad_norm` staying healthy after critic saturation, unlike
+`0.005`'s) still holds. But every quality-metric number and comparison below — including
+the Phase 1→Phase 2 reversal — was measured under this uncontrolled temperature, adding
+an unquantified confound on top of the small-sample noise already flagged for close
+calls. Bug fixed 2026-07-30 (`generate_fake_sequences` now takes and uses a `temperature`
+parameter). Treat the quality-metric comparisons below as suggestive, not confirmed;
+`lambda_kl=0`'s disqualification is likely still correct given the size of its collapse,
+but the closer calls among survivors are less certain than presented.
+
 All 5 Phase 1 arms completed 5 epochs on the full dataset with no NaNs and no
 hard-criteria disqualification (`unique_ratio` stayed at 1.0 in every run;
 `kl_loss`, where computed, stayed bounded — nowhere near the pre-fix 89–1236

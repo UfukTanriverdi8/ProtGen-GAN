@@ -666,12 +666,25 @@ evaluation is no longer appropriate.
 13. ~~**`mask_token_id` consistency**~~ — ✅ Done (2026-07-22, commit `718e446`). Confirmed `=4`
     everywhere it's used; `generate.py`'s hardcoded-default gap fixed.
 
-14. ~~**Pin temperature per run**~~ — ✅ Done (2026-07-24). Was randomized every step
-    (`models.py:131` TODO, now removed), adding noise to gen_grad_norm/kl_loss when comparing
-    across λ_kl values. Replaced with a fixed `--temperature` CLI flag (default `1.0`) in
-    both training scripts — no randomized-range option kept; existing diversity comes from
-    `torch.multinomial` sampling and per-step remask-position randomness, not from varying
-    temperature. Prerequisite for the lambda_kl sweep below.
+14. ~~**Pin temperature per run**~~ — ✅ Done (2026-07-24), **gap found and closed 2026-07-30**.
+    Was randomized every step (`models.py:131` TODO, now removed), adding noise to
+    gen_grad_norm/kl_loss when comparing across λ_kl values. Replaced with a fixed
+    `--temperature` CLI flag (default `1.0`) in both training scripts — no randomized-range
+    option kept; existing diversity comes from `torch.multinomial` sampling and per-step
+    remask-position randomness, not from varying temperature. Prerequisite for the lambda_kl
+    sweep below.
+    **Gap:** the 2026-07-24 fix only pinned temperature in the training-loop generation path
+    (`compute_soft_embeds`/`generate_fakes_for_batch`/`generate_fake_batch`). It missed
+    `generate_fake_sequences` (`val_metrics.py`), used by `run_evaluation()` in both training
+    scripts to generate the sequences behind `plddt`/`scAccuracy`/`progres`/`pairwise_tm`/
+    `unique_ratio` — this function still drew a fresh `uniform(0.8, 1.2)` temperature every
+    fill step and had no `temperature` parameter to override it. This means every quality
+    metric from the entire lambda_kl sweep (both phases) was measured under uncontrolled
+    random temperature, adding an unquantified confound on top of the sampling noise already
+    flagged for close calls. `gen_grad_norm`/`kl_loss`/`critic_loss`/`generator_loss` were
+    NOT affected (correctly used the pinned value throughout) — the mechanistic case for
+    `lambda_kl=0.05` (item 18) stands. Fixed 2026-07-30: `generate_fake_sequences` now takes
+    a `temperature` parameter, both training scripts pass `args.temperature` through.
 
 18. ~~**lambda_kl sweep**~~ — ✅ Done (2026-07-26). Two-phase sweep on MN5, seeded mode only,
     n_critic=4 fixed. Phase 1 (5 epochs × `lambda_kl ∈ {0, 0.005, 0.01, 0.05, 0.1}`) deprioritized

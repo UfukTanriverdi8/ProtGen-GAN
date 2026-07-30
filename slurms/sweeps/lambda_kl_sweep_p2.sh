@@ -1,7 +1,7 @@
 #!/bin/bash
-#SBATCH --job-name=kl_sweep_p2
-#SBATCH --output=outputs/10p/kl_sweep_p2_%a.out
-#SBATCH --error=outputs/10p/kl_sweep_p2_%a.err
+#SBATCH --job-name=kl_sweep_p2_retry
+#SBATCH --output=outputs/10p/kl_sweep_p2_retry_%a.out
+#SBATCH --error=outputs/10p/kl_sweep_p2_retry_%a.err
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=20
 #SBATCH --gres=gpu:1
@@ -27,18 +27,20 @@ export PROGRES_DATA_DIR=/gpfs/projects/etur29/ufuk/progres/
 # Make Python prints unbuffered so you see them live in your .out file
 export PYTHONUNBUFFERED=1
 
-# Phase 2 confirmation — see docs/sweeps/lambda-kl-sweep-2026-07.md
-# Top-2 from Phase 1 (see that doc's "Winner selection reasoning"): 0.005 is
-# the clear front-runner (stable-to-improving on all 4 quality metrics); 0.05
-# narrowly beat 0.1 on composite score but by a thin margin worth re-checking
-# at this longer horizon.
+# Phase 2 RETRY — see docs/sweeps/lambda-kl-sweep-2026-07.md's 2026-07-30 correction
+# note. The original Phase 2 run's quality metrics (plddt/scAccuracy/progres/
+# pairwise_tm) were measured under an uncontrolled random temperature
+# (generate_fake_sequences ignored --temperature, fixed 2026-07-30) — this
+# re-run repeats both arms with that bug fixed. Also gives kl0.05 (the current
+# pick) an actual saved checkpoint, since neither original Phase 2 run's
+# checkpoint made it to disk (MN5 gpfs_projects quota exceeded).
 kl_list=(0.005 0.05)
 lambda_kl=${kl_list[$SLURM_ARRAY_TASK_ID-1]}
 
 # Construct a run name
-run_name="kl-sweep-p2-kl${lambda_kl}"
+run_name="kl-sweep-p2-retry-kl${lambda_kl}"
 
-# Launch training — same fixed params as Phase 1, longer horizon to confirm stability.
+# Launch training — same fixed params as the original Phase 2 run.
 python 10p_train.py \
   --n_critic    4 \
   --lambda_gp   5 \
@@ -50,4 +52,4 @@ python 10p_train.py \
   --batch_size  8 \
   --num_eval_sequences 30 \
   --run_name    $run_name \
-  --wandb_tags  kl-sweep-p2
+  --wandb_tags  kl-sweep-p2,kl-sweep-p2-retry
