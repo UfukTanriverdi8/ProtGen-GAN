@@ -523,6 +523,11 @@ Current standard: `n_critic = 8`, first epoch frozen.
 > `docs/GENERATOR_GRADIENT_FIX.md` is implemented and the generator actually starts
 > receiving adversarial signal for the first time.
 
+> **⚠️ No seed was pinned until 2026-07-31** (`--seed` flag) — every comparison above, plus every
+> hyperparameter sweep before that date (including lambda_kl Phases 1/2), ran with unseeded
+> randomness as an unquantified confound. Treat pre-2026-07-31 "best config" conclusions as
+> suggestive, not confirmed. See TODO 20 and `docs/sweeps/lambda-kl-sweep-2026-07.md`.
+
 ---
 
 ## Infrastructure
@@ -744,7 +749,41 @@ evaluation is no longer appropriate.
     whether future sweeps need multiple seeds per arm to separate real hyperparameter effects
     from this run-to-run noise. See `docs/HISTORY.md` (Phase 6, end) and
     `docs/sweeps/lambda-kl-sweep-2026-07.md` (Phase 2 Retry Results) for the supporting data.
-    Not started.
+    **Update (2026-07-31):** root cause of the run-to-run instability found — neither training
+    script pinned a random seed anywhere (`random`/`numpy`/`torch`/`torch.cuda` were all
+    unseeded), so every launch drew fresh randomness for batch order, dropout, multinomial
+    sampling, and remask positions. Fixed via a `--seed` CLI flag (default `89`) added to both
+    scripts, seeding all four sources right after arg parsing and logging the value to
+    `wandb.config`. This doesn't explain *why* the critic saturates, but it means future sweep
+    reruns can now hold the seed fixed to isolate a real hyperparameter effect from this noise —
+    the next natural step for this item is re-running a lambda_kl comparison with the seed
+    pinned across arms.
+    **Next concrete step (2026-07-31):** distinguish genuine convergence from degenerate
+    collapse by checking per-example variance of `real_scores`/`fake_scores` within a saturated
+    batch, not just their means. Genuine convergence: `mean(fake) ≈ mean(real)` but each score
+    still varies meaningfully example-to-example. Degenerate collapse: every score — real or
+    fake, any example — converges to nearly the same scalar, i.e. the critic stopped being a
+    function of its input at all. Not yet checked against any saturated run's actual scores;
+    would need per-batch `real_scores`/`fake_scores` logged (not currently done, may require a
+    small code change) or a forward pass on a saved saturated-epoch checkpoint.
+
+21. **wandb `config` field empty for offline runs — root cause found (2026-07-31)** — every run
+    in the lambda_kl sweep shows `run.config` (via both MCP and the direct Python API)
+    containing only `_wandb` client metadata, no real hyperparameters, despite both training
+    scripts correctly calling `wandb.config.update({...})` with the right values right after
+    `wandb.init()`. Inspecting the raw `config.yaml` written locally by an offline run *before
+    any sync ever touches it* (`arrivals/offline-run-20260730_132036-w8c2wl85/files/config.yaml`
+    and its `-2rohdbx2` sibling) confirms neither has any top-level keys besides
+    `wandb_version`/`_wandb` — so **offline mode never materializes `wandb.config.update()`'s
+    values into `config.yaml` at all**, not an MCP or sync-step artifact as two earlier notes
+    wrongly concluded (both mistook wandb's auto-captured CLI-args telemetry, buried at
+    `_wandb.e.<hash>.args`, for the real config field). Worth testing whether passing
+    hyperparameters via `wandb.init(config={...})` directly (instead of a separate `.update()`
+    call after init) persists correctly under `mode="offline"` — try this on the next MN5 run
+    regardless of sweep status. Every hyperparameter value already recorded in this project's
+    run docs is still correct (backfilled from the submitting SLURM script), just not
+    confirmable via wandb's own config field until this is fixed. See
+    `docs/sweeps/lambda-kl-sweep-2026-07.md`'s Results section for the full trail.
 
 15. **Reconsider the fixed 50% remask fraction** — `models.py:136` TODO. The λ=0.01 run's
     gentle decline (progres 0.92→0.87, pairwise_tm 0.75→0.64 over 3 epochs) raises whether
@@ -758,6 +797,24 @@ evaluation is no longer appropriate.
     (`docs/GENERATOR_GRADIENT_FIX.md` line 56) says straight-through was adopted for
     intermediate refinement-step commits; `compute_soft_embeds` actually does K=1 truncation
     with no straight-through. Confirm this is a deliberate simplification, not drift.
+
+22. **No validation loss exists — only training loss** (raised 2026-07-31). Neither training
+    script holds out any data: `dataset.py`'s `get_dynamic_dataloaders` splits each epoch's data
+    by *role* (gen vs critic), re-shuffled fresh every epoch — not a train/val partition. Every
+    `critic_loss`/`generator_loss` logged to wandb (baseline/mid/end tags, see `run_evaluation()`
+    in both scripts) is a training-batch value. The structural metrics (`plddt`/`scAccuracy`/
+    `progres`/`pairwise_tm`/`unique_ratio`) are a legitimate held-out signal for the *generator*
+    (computed on freshly generated sequences, never touching training data) but say nothing about
+    whether the *critic* generalizes — it could be scoring real-vs-fake well/badly on training
+    reals purely from memorization, not genuine discrimination. At minimum, think through whether
+    holding out a slice of real sequences (never shown to the critic during training) and
+    periodically scoring them would give a meaningful signal here — directly useful for item 20's
+    saturation question too (does saturation persist on real sequences the critic never trained
+    on?). Note: WGAN-GP's `critic_loss` isn't a bounded/normalized loss like a classification
+    loss, so a held-out version of it won't have the classic "val loss diverges from train loss"
+    overfitting signature — same saturation question, different-looking curve. Not yet
+    implemented or even fully designed — this item is "consider the possibility," not a decided
+    approach.
 
 ---
 

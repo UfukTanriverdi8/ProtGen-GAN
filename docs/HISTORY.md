@@ -281,3 +281,13 @@ Full design, results, and per-run data: `docs/sweeps/lambda-kl-sweep-2026-07.md`
 the critic saturates this way -- and whether it, not `lambda_kl`, is the real ceiling
 on generation quality -- is open and worth investigating before the next full-scale
 run; see `CLAUDE.md`'s task list.
+
+A retry of Phase 2 then surfaced a bigger problem: neither training script pinned any
+random seed, so every run before 2026-07-31 -- this sweep included -- carried
+unquantified run-to-run noise on top of whatever the hyperparameter was doing. This
+was caught because re-running `lambda_kl=0.005` with identical settings produced
+qualitatively different dynamics the second time. `lambda_kl=0.05` held up across two
+independent unseeded runs, so it's still trusted, but every other historical
+hyperparameter conclusion in this project (LR search, n_critic search) lacks that same
+confirmation. A `--seed` flag (default 89) was added to fix this going forward; see
+`CLAUDE.md`'s Hyperparameter Search History section.

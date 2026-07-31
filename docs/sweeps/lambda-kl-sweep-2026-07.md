@@ -146,25 +146,31 @@ hard-criteria disqualification (`unique_ratio` stayed at 1.0 in every run;
 oscillation range). Selection came down to the trend-inspection and
 final-epoch composite steps.
 
-**Correction (2026-07-25), itself corrected (2026-07-31):** the per-run docs
-below note that wandb `config` only returned `_wandb` client/framework
-metadata, with hyperparameters backfilled from the run name instead. The
-2026-07-25 note claimed this was purely an MCP-tool query limitation (citing
-`arrivals/offline-run-*/files/config.yaml` as proof the real values were
-present) and that a fix to `wandb-run-reviewer` (falling back to
-`query_wandb_tool`) resolved it. **That conclusion does not hold.** When the
-Phase 2 retry runs were documented on 2026-07-31, the wandb MCP server was
-unreachable (DNS failure on `mcp.withwandb.com`), so both retry runs were
-queried directly via the wandb Python API (`run.config`, `run._attrs`) —
-completely bypassing MCP. Both still returned only `_wandb` metadata, no real
-hyperparameters. So the gap is not MCP-specific; it's either in how
-`10p_train.py` logs config (worth checking `wandb.config.update()`'s actual
-call site and timing) or in how the offline-run sync process handles config
-data more broadly. Not yet root-caused. Every hyperparameter value in every
-run doc in this sweep is still correct (all backfilled from the submitting
-SLURM script, which is authoritative), but should continue to be treated as
-unverified-by-wandb rather than confirmed, and this should be investigated
-properly before the next sweep rather than assumed fixed.
+**Correction (2026-07-25), corrected again (2026-07-31), root cause found
+(2026-07-31):** the per-run docs below note that wandb `config` only returned
+`_wandb` client/framework metadata, with hyperparameters backfilled from the
+run name instead. The 2026-07-25 note claimed this was purely an MCP-tool
+query limitation, citing `arrivals/offline-run-*/files/config.yaml` as proof
+the real values were present — but that check had mistaken wandb's
+auto-captured CLI-args telemetry (buried at `_wandb.e.<hash>.args`, a plain
+list of argument strings like `--n_critic`, `'4'`) for the actual `config`
+field. They're not the same thing. Directly inspecting the raw
+`config.yaml` written locally by the retry runs, **before any sync ever
+touched them**, shows no top-level keys at all besides `wandb_version` and
+`_wandb` — confirmed identical in both retry runs' local files. So the gap
+isn't in MCP, the Python API, or the sync step; **offline mode never
+materializes `wandb.config.update()`'s values into `config.yaml` in the
+first place.** `10p_train.py`/`fully_masked_train.py` both call
+`wandb.config.update({...})` with the correct real values immediately after
+`wandb.init(mode="offline", ...)` — the call itself looks correct — but
+whatever local write path is supposed to persist that into `config.yaml`
+under offline mode isn't doing so. Every hyperparameter value in every run
+doc in this sweep is still correct (all backfilled from the submitting SLURM
+script, which is authoritative), but wandb's own `config` field should be
+treated as broken for offline runs specifically until this is fixed —
+possibly by moving the hyperparameters into `wandb.init(config={...})`
+directly instead of a separate `.update()` call after init, which is worth
+testing on the next run regardless of sweep status.
 
 ### Runs
 
