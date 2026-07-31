@@ -699,9 +699,21 @@ evaluation is no longer appropriate.
     `gpfs_projects` disk quota (4.20 TB hard limit, driven by `10p_train.py` saving a full
     checkpoint, ~8.2-8.5 GB, every epoch with no cleanup — see item 19) while writing epoch 15's
     weights; training/eval/wandb-logging for epoch 15 completed fine, only the on-disk checkpoint
-    write failed. A fresh run with `lambda_kl=0.05` is needed before this result can be used for
-    generation. Quota freed by deleting stale pre-gradient-fix grid-search checkpoints
-    (2026-07-26). Full results: `docs/sweeps/lambda-kl-sweep-2026-07.md`.
+    write failed. Quota freed by deleting stale pre-gradient-fix grid-search checkpoints
+    (2026-07-26).
+    **Retry (2026-07-31):** re-ran both arms for 15 epochs after fixing the temperature-pinning
+    gap (TODO 14) — both retry checkpoints saved successfully this time. Quality metrics were
+    essentially unchanged from the original (temperature-buggy) numbers, so that bug didn't
+    distort the comparison's conclusion. But `lambda_kl=0.005`'s training dynamics did NOT
+    reproduce: the retry showed no persistent critic saturation and wild `gen_grad_norm` spikes
+    (up to 510, vs. the original's max ~12) instead of the original's clean saturation-plus-weak-
+    gradient pattern. `lambda_kl=0.05`'s dynamics DID reproduce (critic saturated even earlier —
+    epoch 2 vs. epoch 9 — yet `gen_grad_norm` stayed just as healthy, 0.74-1.01 mean per epoch).
+    **`0.05` remains the winner, now on firmer footing** (reproduced twice) than `0.005` (which
+    showed contradictory behavior between its two runs) — see item 20. A usable checkpoint for
+    `lambda_kl=0.05` now exists:
+    `/gpfs/projects/etur29/ufuk/gan-checkpoints/kl-sweep-p2-retry-kl0.05/epoch_15/`. Full
+    results: `docs/sweeps/lambda-kl-sweep-2026-07.md`.
 
 19. **Checkpoint storage bloat** — `10p_train.py`/`fully_masked_train.py` save a full checkpoint
     (both ProtBERT copies + both optimizer states, ~8.2-8.5 GB) every epoch, to a new `epoch_N/`
@@ -716,13 +728,23 @@ evaluation is no longer appropriate.
 20. **Investigate critic saturation** — across nearly every `lambda_kl` sweep arm (item 18),
     `critic_loss` eventually pins at exactly `5.0000` and stays there for the remainder of
     training. `lambda_kl` only determines whether the generator's gradient survives this
-    (`0.05` did, `0.005` and `0.0` didn't) — it doesn't prevent the saturation itself, and
-    quality metrics plateau almost immediately regardless of epoch count or `lambda_kl` value.
-    This is likely the actual ceiling on generation quality now, not the KL anchor weight.
-    Worth checking whether the exact, repeated `5.000` value points to a specific cause (e.g.
-    a clamp/loss-scaling artifact in `loss.py`, or a genuine critic-capacity/`n_critic`
-    mismatch) before the next full-scale run. See `docs/HISTORY.md` (Phase 6, end) and
-    `docs/sweeps/lambda-kl-sweep-2026-07.md` for the supporting data. Not started.
+    (`0.05` did, `0.005` and `0.0` didn't, at least in the original Phase 1/2 runs) — it doesn't
+    prevent the saturation itself, and quality metrics plateau almost immediately regardless of
+    epoch count or `lambda_kl` value. This is likely the actual ceiling on generation quality
+    now, not the KL anchor weight. Worth checking whether the exact, repeated `5.000` value
+    points to a specific cause (e.g. a clamp/loss-scaling artifact in `loss.py`, or a genuine
+    critic-capacity/`n_critic` mismatch) before the next full-scale run.
+    **Update (2026-07-31, Phase 2 retry):** saturation onset timing is itself NOT reproducible
+    run-to-run — re-running `lambda_kl=0.005` with identical hyperparameters produced a run
+    that never persistently saturated at all (unlike the original), while re-running
+    `lambda_kl=0.05` saturated even earlier than before (epoch 2 vs. epoch 9) but with
+    `gen_grad_norm` staying healthy both times. This raises the priority of this item: the
+    open question isn't just "why does the critic saturate" but "why is the timing/occurrence
+    of saturation itself so unstable across otherwise-identical runs" — worth considering
+    whether future sweeps need multiple seeds per arm to separate real hyperparameter effects
+    from this run-to-run noise. See `docs/HISTORY.md` (Phase 6, end) and
+    `docs/sweeps/lambda-kl-sweep-2026-07.md` (Phase 2 Retry Results) for the supporting data.
+    Not started.
 
 15. **Reconsider the fixed 50% remask fraction** — `models.py:136` TODO. The λ=0.01 run's
     gentle decline (progres 0.92→0.87, pairwise_tm 0.75→0.64 over 3 epochs) raises whether

@@ -1,10 +1,12 @@
 # lambda_kl Sweep (2026-07)
 
 **Started:** 2026-07-24
-**Status:** Phase 1 and Phase 2 complete and analyzed (2026-07-26). **Winner: `lambda_kl=0.05`**
-(reverses Phase 1's provisional pick of `0.005` — see Phase 2 Results below). Neither Phase 2
-run's final checkpoint was saved to disk (MN5 `gpfs_projects` quota exceeded mid-sync) — a
-fresh training run is required before this winner can be used for generation.
+**Status:** Phase 1, Phase 2, and a Phase 2 retry are all complete and analyzed (2026-07-31).
+**Winner: `lambda_kl=0.05`**, now confirmed by two independent 15-epoch runs — a usable
+checkpoint exists (`kl-sweep-p2-retry-kl0.05`, saved successfully to disk). The retry also
+surfaced a real, unresolved finding: `lambda_kl=0.005`'s training dynamics (critic saturation,
+`gen_grad_norm` stability) were NOT reproducible run-to-run, while `0.05`'s were — see "Phase 2
+Retry Results" below.
 
 ## Design
 
@@ -144,21 +146,25 @@ hard-criteria disqualification (`unique_ratio` stayed at 1.0 in every run;
 oscillation range). Selection came down to the trend-inspection and
 final-epoch composite steps.
 
-**Correction (2026-07-25):** the per-run docs below note that wandb `config`
-only returned `_wandb` client/framework metadata, with hyperparameters
-backfilled from the run name instead. Checked the raw synced run data
-directly (`arrivals/offline-run-*/files/config.yaml`) and the actual
-hyperparameters (`lambda_kl`, `lr_gen`, `lr_critic`, etc.) were logged
-correctly by `10p_train.py`'s `wandb.config.update()` call and are present in
-every run's config — nothing was lost in offline logging or sync. The gap
-was in the review subagents' wandb MCP query (likely `get_run_history_tool`
-surfacing only the `_wandb` block, not the flattened custom keys alongside
-it), not in the training pipeline. The backfilled values in the per-run docs
-happen to be correct since they were sourced from the run name/design doc,
-but should be treated as unverified-by-wandb rather than confirmed. Fixed by
-having `wandb-run-reviewer` fall back to `query_wandb_tool` or a direct read
-of `files/config.yaml` when `get_run_history_tool`'s config comes back
-metadata-only.
+**Correction (2026-07-25), itself corrected (2026-07-31):** the per-run docs
+below note that wandb `config` only returned `_wandb` client/framework
+metadata, with hyperparameters backfilled from the run name instead. The
+2026-07-25 note claimed this was purely an MCP-tool query limitation (citing
+`arrivals/offline-run-*/files/config.yaml` as proof the real values were
+present) and that a fix to `wandb-run-reviewer` (falling back to
+`query_wandb_tool`) resolved it. **That conclusion does not hold.** When the
+Phase 2 retry runs were documented on 2026-07-31, the wandb MCP server was
+unreachable (DNS failure on `mcp.withwandb.com`), so both retry runs were
+queried directly via the wandb Python API (`run.config`, `run._attrs`) —
+completely bypassing MCP. Both still returned only `_wandb` metadata, no real
+hyperparameters. So the gap is not MCP-specific; it's either in how
+`10p_train.py` logs config (worth checking `wandb.config.update()`'s actual
+call site and timing) or in how the offline-run sync process handles config
+data more broadly. Not yet root-caused. Every hyperparameter value in every
+run doc in this sweep is still correct (all backfilled from the submitting
+SLURM script, which is authoritative), but should continue to be treated as
+unverified-by-wandb rather than confirmed, and this should be investigated
+properly before the next sweep rather than assumed fixed.
 
 ### Runs
 
@@ -273,10 +279,86 @@ Phase 1's provisional `0.005` pick. `lambda_kl=0` remains confirmed unsuitable (
 `0.05`'s clear margin and healthy gradient dynamics at 15 epochs, there's no signal motivating
 a revisit of either.
 
-**Before using this checkpoint anywhere:** Phase 2's `lambda_kl=0.05` run has no saved model
-weights (see "Phase 2 Results" above — MN5 disk quota exceeded during the final checkpoint
-write). Free space in `gpfs_projects` (deleted the stale pre-gradient-fix grid-search
-checkpoints on 2026-07-26) has already been confirmed adequate; a fresh run with the same
-config (`lambda_kl=0.05`, `n_critic=4`, `lr_gen=5e-6`, `lr_critic=5e-5`, `temperature=1.0`,
-15+ epochs, full dataset) is needed to actually produce a usable checkpoint before generation
-or further evaluation can proceed.
+**Superseded note:** the paragraph below described Phase 2's missing checkpoint and the need
+for a fresh run. That fresh run happened — see "Phase 2 Retry Results" below, which also
+caught and fixed a second bug (temperature pinning) that affected this section's quality-metric
+numbers. Original text kept for history: Phase 2's `lambda_kl=0.05` run had no saved model
+weights (MN5 disk quota exceeded during the final checkpoint write); a fresh run with the same
+config was needed to produce a usable checkpoint.
+
+---
+
+## Phase 2 Retry Results (2026-07-31)
+
+Two things motivated a retry of Phase 2, not just a resubmission: (1) neither original Phase 2
+checkpoint made it to disk (quota), and (2) a real bug was found after Phase 2 completed —
+`generate_fake_sequences` (`val_metrics.py`), which generates the sequences behind every
+quality metric (`plddt`/`scAccuracy`/`progres`/`pairwise_tm`/`unique_ratio`), ignored the
+pinned `--temperature` flag and sampled at an uncontrolled random temperature the entire time.
+Fixed 2026-07-30 (`generate_fake_sequences` now takes and uses a `temperature` parameter). Both
+`lambda_kl=0.005` and `lambda_kl=0.05` were re-run for 15 epochs with the fix in place. Both
+retry checkpoints saved successfully to disk this time — no quota issue recurred.
+
+The wandb MCP server was unreachable during this review (DNS resolution failure on
+`mcp.withwandb.com`, unrelated to this sweep — see the correction note above), so both retries
+were documented via the wandb Python API directly (`api.wandb.ai`) instead of MCP tools.
+
+### Runs
+
+| Run | lambda_kl | Key metric(s) (epoch 15) | Verdict | File |
+|---|---|---|---|---|
+| `kl-sweep-p2-retry-kl0.005` | 0.005 | plddt 0.738, scAcc 0.386, progres 0.900, pairwise_tm 0.728, gen_grad_norm 0.222, critic_loss 4.997 | Quality metrics essentially match the original run — temperature fix didn't change the picture. But training dynamics did not reproduce: critic never persistently saturated this time (volatile all 15 epochs, briefly negative at epoch 9), and `gen_grad_norm` swung wildly (spikes up to 510) instead of staying in the original's tight 0.03–0.25 band | `docs/runs/kl-sweep-p2-retry-kl0.005_w8c2wl85.md` |
+| `kl-sweep-p2-retry-kl0.05` | 0.05 | plddt 0.761, scAcc 0.405, progres 0.914, pairwise_tm 0.829, gen_grad_norm 1.269, critic_loss 5.000 | **Confirms the winner, more strongly than before.** Quality metrics match the original. Critic saturated earlier and more persistently (epoch 2 vs. epoch 9), yet `gen_grad_norm` stayed just as healthy (0.74–1.01 mean every epoch) — the mechanistic case for `0.05` reproduced and, if anything, strengthened | `docs/runs/kl-sweep-p2-retry-kl0.05_2rohdbx2.md` |
+
+### What the retry actually tells us
+
+**Quality metrics were never the confound they could have been.** Both arms' plddt/scAccuracy/
+progres/pairwise_tm landed close to their original (temperature-buggy) values. The temperature
+bug added noise and made the numbers technically unverified, but it didn't produce a
+systematically different picture once fixed — reassuring, but this was found out only by
+actually re-running, not by reasoning about it in advance.
+
+**The real finding is about reproducibility, not temperature.** `lambda_kl=0.05`'s training
+dynamics reproduced cleanly across two independent 15-epoch runs: critic saturates, but
+`gen_grad_norm` stays healthy regardless. `lambda_kl=0.005`'s dynamics did not reproduce at
+all — the original run showed textbook critic saturation with a stable, weak gradient; the
+retry showed no persistent saturation and wildly unstable gradient spikes (up to 510, versus
+the original's max of ~12). Since `gen_grad_norm`/`critic_loss`/`kl_loss`/`generator_loss` all
+come from the training-loop generation path (unaffected by the temperature bug in either run),
+this divergence is attributable to ordinary run-to-run stochastic variance (batch order,
+masking positions, sampling draws), not to anything that changed between the two Phase 2
+attempts. In other words: `lambda_kl=0.005`'s single-seed Phase 2 result was not a reliable
+read on that hyperparameter's actual behavior — it could just as easily have looked like this
+retry the first time, in which case the original Phase 1→2 story would have looked different
+from the start.
+
+This means the sweep's confidence in ranking `0.005` against `0.05` was thinner than presented
+even setting the temperature bug aside — single-seed comparisons of adversarial training
+dynamics are noisy, and `0.005` is a demonstrated example of that noise, not `0.05`. `0.05` has
+now been tested twice with consistent results; `0.005` has been tested twice with inconsistent
+results. That asymmetry itself is a reason to trust `0.05` more, independent of either run's
+specific numbers.
+
+### Conclusion (Phase 2 Retry / final)
+
+**`lambda_kl=0.05` remains the winner, now on firmer footing than before the retry** — it
+reproduced its healthy-gradient-under-saturation behavior across two independent runs, its
+quality metrics are unaffected by the (now-fixed) temperature bug, and this retry's checkpoint
+is actually saved to disk and usable for generation
+(`/gpfs/projects/etur29/ufuk/gan-checkpoints/kl-sweep-p2-retry-kl0.05/epoch_15/` on MN5).
+`lambda_kl=0.005` is not recommended, not primarily because it lost the numeric comparison, but
+because its own training dynamics were shown to be unreliable run-to-run — a single 15-epoch
+run isn't enough to trust it either way.
+
+**Open items this retry surfaced, not yet resolved:**
+- The wandb `config` field returns empty (only `_wandb` client metadata) for every run in this
+  sweep, confirmed now via both the MCP tool and the direct Python API — not an MCP-tool
+  limitation as previously assumed (see the corrected correction note above). Worth checking
+  `10p_train.py`'s `wandb.config.update()` call directly before the next sweep.
+- Critic saturation to a fixed loss value remains unexplained (CLAUDE.md TODO 20) and, per this
+  retry, its onset timing is itself not reproducible across runs of identical hyperparameters —
+  worth deprioritizing "which lambda_kl causes saturation" in favor of "why does the critic
+  saturate at all, and why does the timing vary so much run-to-run."
+- Single-seed sweep arms are a real limitation exposed here, not just a theoretical caveat —
+  worth considering multiple seeds per arm for any future sweep that compares training dynamics
+  (not just final quality metrics) between hyperparameter values.
