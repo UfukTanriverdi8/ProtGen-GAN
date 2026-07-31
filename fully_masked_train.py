@@ -1,5 +1,7 @@
 import os
 import argparse
+import random
+import numpy as np
 import torch
 
 
@@ -123,10 +125,27 @@ def parse_args():
         help="Comma-separated wandb tags for this run (e.g. 'kl-sweep-p1,blind'). "
         "Empty by default.",
     )
+    parser.add_argument(
+        "--seed",
+        type=int,
+        default=89,
+        help="Random seed for random/numpy/torch/cuda, pinned so two runs with the "
+        "same hyperparameters are reproducible instead of drawing from independent "
+        "random state (batch order, dropout, multinomial sampling, remask positions).",
+    )
     return parser.parse_args()
 
 
 args = parse_args()
+
+# -----------------------
+# Reproducibility
+# -----------------------
+random.seed(args.seed)
+np.random.seed(args.seed)
+torch.manual_seed(args.seed)
+torch.cuda.manual_seed_all(args.seed)
+print(f"Seed pinned: {args.seed}")
 
 
 model_checkpoint_path = PROTBERT_PATH
@@ -212,9 +231,7 @@ wandb.init(
     name=args.run_name,
     mode=os.environ.get("WANDB_MODE", "online"),
     tags=wandb_tags,
-)
-wandb.config.update(
-    {
+    config={
         "n_critic": args.n_critic,
         "lambda_gp": args.lambda_gp,
         "lambda_kl": args.lambda_kl,
@@ -227,7 +244,8 @@ wandb.config.update(
         "num_eval_sequences": args.num_eval_sequences,
         "eval_batch_size": args.eval_batch_size,
         "temperature": args.temperature,
-    }
+        "seed": args.seed,
+    },
 )
 
 
