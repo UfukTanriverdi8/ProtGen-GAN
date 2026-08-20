@@ -816,6 +816,15 @@ evaluation is no longer appropriate.
     implemented or even fully designed — this item is "consider the possibility," not a decided
     approach.
 
+23. **Re-evaluate the evaluation pipeline itself** (from 24 Jul 2026 notes, not previously
+    tracked). The current metric set (`pLDDT`/`scAccuracy`/`progres`/`pairwise TM`/
+    `seq_similarity`) was chosen a long time ago. Consider alternatives — **ProTrek** in
+    particular, plus ESMFold2 — to see whether they'd give a more reliable quality/functional
+    signal than the current set, especially given `progres`/`scAccuracy` are already known to be
+    poor predictors of DNA-SAM binding (see Key Evaluation Findings above). Not yet scoped —
+    needs a look at what ProTrek actually outputs and whether it's a drop-in replacement or
+    additive.
+
 ---
 
 ## Research Context
