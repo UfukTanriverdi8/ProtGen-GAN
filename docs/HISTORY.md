@@ -1,7 +1,7 @@
 # protgen-gan - Entire History
 
 **Reconstructed from the meeting logs, code commits, and documentation of the project.**  
-**Last Updated: 24 July 2026**
+**Last Updated: 20 August 2026**
 
 This document captures the full life of the project: every major architectural decision, what was learned from each phase, and every significant bug discovered. It is written as a research narrative rather than a changelog, because the most important things to preserve are not just what changed but why, and what the consequences were.
 
@@ -291,3 +291,43 @@ independent unseeded runs, so it's still trusted, but every other historical
 hyperparameter conclusion in this project (LR search, n_critic search) lacks that same
 confirmation. A `--seed` flag (default 89) was added to fix this going forward; see
 `CLAUDE.md`'s Hyperparameter Search History section.
+
+Pinning the seed explained *why* runs disagreed with each other, but not *why* the
+critic saturates at `critic_loss=5.000` in the first place -- and there was still no
+way to tell whether that saturation was genuine convergence (critic still discriminates
+individual examples, means just converge) or degenerate collapse (critic stopped being
+a function of its input at all), since only mean scores were ever logged, never their
+variance. On 2026-08-20, held-out critic validation tooling was added to `10p_train.py`
+to make that distinction checkable. A fixed slice of real sequences (`--holdout_size`,
+default 200) is now carved from `dnmt_full.txt`'s pool at startup, before the per-epoch
+dynamic gen/critic resplit ever sees it, using a dedicated seeded `torch.Generator`
+rather than a persisted file -- reproducible across runs with the same `--seed` without
+adding a second, independently-drifting data-split artifact (the codebase already has
+one: `file_formatter.py`'s dead train/val split is independent from its
+`dnmt_gen.txt`/`dnmt_critic.txt` split, so a revived `dnmt_val.txt` could silently
+overlap `dnmt_critic.txt`). `run_holdout_eval()` scores this held-out set with the
+critic in eval mode and logs both mean and std of its scores; a new `--loss_log_every`
+flag surfaces the same mean/std breakdown on the training pool every N batches instead
+of only three times per epoch, where it had been discarded after being computed every
+single batch.
+
+While implementing this, a second, unrelated bug was found: `mid_batch_idx` (meant to
+trigger a mid-epoch evaluation point) had been silently unreachable for any
+`n_critic >= 2` since its introduction -- it was computed as `len(gen_dl) // 2`, but
+`batch_number` (what it's compared against) only increments once per outer
+critic-then-generator cycle, and each cycle consumes `n_critic + 1` gen-batches. Every
+sweep run to date, including the entire lambda_kl sweep, only ever logged a
+`"baseline"` point once at the very start of training and an `"end"` point once per
+epoch -- the `"mid"` tag never fired despite the variable naming suggesting it did.
+Fixed to compute against the actual outer-loop iteration count. `run_evaluation`'s
+expensive structural pipeline (ESMFold/scAccuracy/progres/pairwise_tm) was deliberately
+not reinstated at the mid-epoch trigger now that it can actually fire, to avoid
+silently inflating per-epoch compute cost on every future sweep -- only the cheap
+holdout scoring runs there.
+
+The new tooling was verified with a 1-epoch, 200-sequence smoke test on Anzu: all new
+fields log correctly, the `"mid"` tag fires, and values reproduce identically across
+two independent runs with the same `--seed`. The actual question this tooling exists to
+answer -- whether score variance collapses in lockstep with `critic_loss` saturation --
+still needs a real-scale run taken long enough to hit saturation, most likely on MN5;
+see `CLAUDE.md`'s TODO item 20.

@@ -141,188 +141,32 @@ DrugGEN is a GAN-based de novo drug design system from the same lab (Tunca Doğa
 
 ---
 
-## ✅ FIXED — Temperature/Argmax Bug (`models.py`)
+## ✅ Resolved Issues (historical — full narrative in `docs/HISTORY.md` Phase 5/6)
 
-**Fixed in:** `models.py` → `Generator.generate()`
+All fixed and merged. Kept here as a short index of what to search for; the "why" and
+full before/after detail lives in `docs/HISTORY.md`, and `docs/GENERATOR_GRADIENT_FIX.md`
+/ `docs/GRADIENT_FIX_EXPLAINED.md` own the gradient-flow implementation depth.
 
-The original code applied temperature to logits then called `.max()` (argmax), making
-temperature completely ineffective. Argmax always picks the same token regardless of the
-distribution shape. Fix: replaced `.max()` with `torch.multinomial()` so temperature
-actually controls sampling diversity.
-
-**Consequence of the unfixed version:** blind mode produced ~300 unique sequences out of
-10,000 (one per sampled length). GAN training saw zero diverse fakes for ~60-70 runs.
-Seeded mode was accidentally functional only because different seeds produced different logits.
-
----
-
-## ✅ FIXED — Generator Gradient Flow Fix (All Stages Done)
-
-**Affects:** Every training run ever. Not a one-line fix — required architectural change.
-**Status (2026-06-26):** All 3 stages implemented. Generator now receives adversarial
-gradient for the first time. Read `docs/GENERATOR_GRADIENT_FIX.md` before touching
-`models.py`, `loss.py`, or either training script for this issue.
-
-### The Problem
-
-The generator's `generate()` method returns discrete `torch.long` token IDs. PyTorch
-integer tensors carry no gradient. When those token IDs are passed to the critic:
-
-```python
-# In both training scripts (generator update step):
-fake_data = generate_fakes_for_batch(...)   # returns torch.long token IDs
-fake_scores = critic(fake_data, ...)        # embedding lookup on integers
-g_loss = generator_loss(fake_scores)
-g_loss.backward()                           # gradient dies at the integer boundary
-gen_optimizer.step()                        # applies zero gradient to generator
-```
-
-The critic's embedding lookup is not differentiable w.r.t. integer input IDs — they're
-indices into a lookup table, not continuous values. `g_loss.backward()` propagates
-gradients through the critic's own parameters, but cannot cross back through the discrete
-sampling step into the generator's ProtBERT weights.
-
-**Result:** The generator backbone (ProtBERT) has never been updated by adversarial signal.
-The only thing that changes during "generator updates" is weight decay from AdamW gradually
-eroding the fine-tuned weights. The GAN has never functioned as a GAN — it has been using
-the fine-tuned ProtBERT as-is for generation, with the critic learning to classify against
-a static generator.
-
-This is true both with the old argmax and with the new `torch.multinomial()` — both produce
-discrete integers, neither is differentiable.
-
-### Decided fix (see `docs/GENERATOR_GRADIENT_FIX.md` for full justification)
-
-Soft embedding pass-through, **not** Gumbel-Softmax and **not** REINFORCE for the
-adversarial term — the critic is differentiable, so a continuous relaxation is the right
-family. Decided approach in full:
-
-**Stage 0 ✅** — `gen_grad_norm` logged after `g_loss.backward()` in both training scripts.
-Confirmed ≈0 before fix (proves the bug). Should be > 0 after Stage 1.
-
-**Stage 1 ✅** — Soft embeddings + embed-the-real + GP in embedding space:
-- `compute_soft_embeds()` in `models.py`: re-masks 50% of the completed sequence (excluding
-  special tokens), runs one generator forward pass on that masked input →
-  `softmax(logits/T) @ critic_word_weight`, then blends soft embeds at the remasked positions
-  with hard original-token embeds elsewhere → full embeds via `inputs_embeds`. Gradient reaches
-  the generator only through the remasked slots. The iterative fill loop is NOT in the gradient
-  graph (K=1 truncated backprop, natural).
-- Both real and fake embedded via `critic.protbert.bert.embeddings()` before critic update
-  so critic cannot distinguish real/fake by embedding sparsity.
-- `compute_gradient_penalty()` now accepts pre-computed `[B,L,H]` embedding tensors.
-
-**Stage 2 ✅** — KL anchor against frozen reference ProtBERT:
-- `compute_kl_anchor()` in `models.py`: `KL(generator || frozen_ref)` at same temperature,
-  computed only at the remasked positions — both models see the identical masked input.
-- `ref_protbert` loaded from `PROTBERT_PATH`, frozen, eval — never updated.
-- `g_loss = -critic(soft_embeds).mean() + lambda_kl * KL(gen || ref)` (default `lambda_kl=0.01`).
-- `kl_loss` logged to wandb. Tune `--lambda_kl` if generator drifts too fast or too slow.
-
-**Next: validate in seeded mode.** Watch `gen_grad_norm` (> 0), `kl_loss` (stable, not
-exploding), and `unique_ratio` (not collapsing). Blind mode has mode-collapse risk —
-test seeded first. Full validation criteria in `docs/GENERATOR_GRADIENT_FIX.md`.
-
-**✅ FIXED — KL anchor / soft embeds now computed on a re-masked input (2026-06-27):**
-Previously `compute_soft_embeds` (and thus `compute_kl_anchor`) received `fake_data` after
-the iterative fill loop — fully revealed, zero [MASK] tokens. ProtBERT is MLM-trained and
-had never seen fully-revealed input; logits were uncalibrated in that regime, and `kl_loss`
-oscillated 89–1236 throughout training even with `gen_probs.clamp(min=1e-8)` and
-`clip_grad_norm_(max_norm=1.0)`. Fix (commit `c18c89a`): `compute_soft_embeds` now re-masks
-50% of the completed sequence and runs the generator on that, so ProtBERT stays
-in-distribution; `compute_kl_anchor` evaluates the frozen reference on the same masked input
-and scores KL only at the remasked positions. Applied to both training scripts. `--lambda_kl`
-can now be left at its default; `--lambda_kl 0.0` remains available for clean adversarial-only
-runs.
-
-**✅ VALIDATED (2026-06-27, runs `xwres3cz` and `ydsjq9f4`, both 3-epoch seeded-mode, n_critic=4):**
-`gen_grad_norm > 0` from epoch 2 on in both runs, bounded (not exploding like pre-fix's
-100k+ spikes). `kl_loss` (lambda_kl=0.01 run) now oscillates in a bounded 0–4 range instead
-of the pre-fix 89–1236 — fix confirmed. `unique_ratio` held at 1.0 in both runs. The
-lambda_kl=0 run additionally shows the KL anchor is load-bearing for sequence *quality*:
-without it, `plddt`/`scAccuracy`/`progres`/`pairwise_tm` all collapsed by epoch 3 even
-though uniqueness never dropped — diverse but non-protein-like. Full numbers in
-`docs/GENERATOR_GRADIENT_FIX.md` Stage 3. These runs were never analyzed in a Claude Code
-session at the time; recovered from wandb run history on 2026-07-22.
-
-`tests/check_kl_identity.py` independently verifies `compute_kl_anchor`'s plumbing (not
-just training-curve behavior) via `KL(P‖P)=0` + a perturbed-weights negative control. Run
-it before trusting future changes to `compute_soft_embeds`/`compute_kl_anchor`.
-
----
-
-## ✅ FIXED — `compute_gradient_penalty` (`loss.py` + both training scripts)
-
-Now accepts pre-computed `real_embeds` and `fake_embeds` (`[B,L,H]` float tensors).
-Callers embed real and fake before calling. Signature:
-
-```python
-gp = compute_gradient_penalty(
-    critic, real_embeds, fake_embeds_hard,
-    attn_mask_real,
-    fake_mask,
-    device
-)
-```
-
----
-
-## ✅ FIXED — `generate.py` relied on `Generator`'s hardcoded `mask_token_id` default
-
-**File:** `generate.py:372`
-**Was:** Never passed `mask_token_id`, silently using the class default (`4`) — only
-correct by coincidence with this checkpoint's vocab. A different checkpoint's tokenizer
-would silently mask the wrong token with no error.
-**Fixed (`718e446`):** Passes `mask_token_id=tokenizer.mask_token_id` explicitly, like
-`10p_train.py`/`fully_masked_train.py` already did.
-
----
-
-## ✅ BUGS FOUND — Fixed (2026-06-19)
-
-These were identified by auditing the codebase after the temperature fix.
-
----
-
-### ✅ BUG 2 — `calculate_plddt_scores_and_save_pdb` tuple unpacking
-
-**Files:** `10p_train.py:231`, `fully_masked_train.py:160`
-**Was:** CRITICAL — silently logged a tuple to wandb instead of a float; all pLDDT
-metrics in every training run were garbage.
-**Fixed:** `avg_plddt_score, _ = calculate_plddt_scores_and_save_pdb(...)`
-
----
-
-### ✅ BUG 3 — `generate_fake_sequences` dead temperature variable
-
-**File:** `val_metrics.py:119–131`
-**Was:** Significant — evaluation sequences always used temperature=1.0; the random
-temperature variation was computed but silently discarded via `fixed_temp`.
-**Fixed:** Removed `fixed_temp`, now passes `random_temp` to `generator.generate()`.
-
----
-
-### ✅ BUG 4 — `fully_masked_train.py` attention mask excluded [MASK] tokens
-
-**File:** `fully_masked_train.py:222`
-**Was:** Significant — mask tokens were invisible in attention, degrading blind mode
-generation quality. Used `mask_token_id` instead of `pad_token_id`.
-**Fixed:** `updated_attention_mask = (final_input_ids != tokenizer.pad_token_id).long()`
-
----
-
-### ✅ BUG 5 — NaN guard in `calculate_plddt_scores_and_save_pdb` overwritten
-
-**File:** `val_metrics.py:200`
-**Was:** Moderate — NaN-safe average was immediately overwritten by unsafe `sum/len`.
-**Fixed:** Deleted the unsafe second `if` block.
-
----
-
-### ✅ BUG 6 — `generate_fake_batch` defaulted `debug=True`
-
-**File:** `fully_masked_train.py:197`
-**Was:** QoL — flooded SLURM logs with per-position mask counts on every batch.
-**Fixed:** Changed default to `debug=False`.
+- **Temperature/argmax bug** (`models.py` → `Generator.generate()`) — `.max()` after
+  softmax was pure argmax; temperature was inert for the entire project's history until
+  fixed. Fix: `torch.multinomial()`.
+- **Generator gradient flow** (`models.py`/`loss.py`, all 3 stages, `docs/GENERATOR_GRADIENT_FIX.md`) —
+  discrete token IDs blocked all adversarial gradient into the generator; every run before
+  this fix used an effectively static generator. Fix: soft embedding pass-through
+  (`compute_soft_embeds()`, 50% remask) + KL anchor against a frozen reference ProtBERT
+  (`compute_kl_anchor()`). Validated via `gen_grad_norm > 0` and bounded `kl_loss` (0–4)
+  in reference runs `xwres3cz`/`ydsjq9f4`. `tests/check_kl_identity.py` independently
+  verifies `compute_kl_anchor`'s plumbing — run it before trusting future changes there.
+- **`compute_gradient_penalty`** (`loss.py`) — bypassed the full transformer and ignored
+  padding masks; now interpolates in embedding space through the real critic function
+  (accepts pre-computed `real_embeds`/`fake_embeds`, `[B,L,H]`).
+- **`generate.py` `mask_token_id`** — relied on `Generator`'s hardcoded class default
+  instead of the tokenizer's actual mask token id (`718e446`).
+- **Bugs 2–6** (2026-06-19 audit) — pLDDT tuple logged as scalar instead of unpacked
+  (`10p_train.py`/`fully_masked_train.py`), dead temperature variable in
+  `generate_fake_sequences` (`val_metrics.py`), wrong attention mask (`mask_token_id`
+  instead of `pad_token_id`) in blind mode, an NaN-safe average immediately overwritten
+  by an unsafe one, and `generate_fake_batch` defaulting to `debug=True`. All fixed same day.
 
 ---
 
@@ -691,34 +535,15 @@ evaluation is no longer appropriate.
     `lambda_kl=0.05` (item 18) stands. Fixed 2026-07-30: `generate_fake_sequences` now takes
     a `temperature` parameter, both training scripts pass `args.temperature` through.
 
-18. ~~**lambda_kl sweep**~~ — ✅ Done (2026-07-26). Two-phase sweep on MN5, seeded mode only,
-    n_critic=4 fixed. Phase 1 (5 epochs × `lambda_kl ∈ {0, 0.005, 0.01, 0.05, 0.1}`) deprioritized
-    `lambda_kl=0` (critic saturated at `critic_loss=5.000`, `gen_grad_norm` collapsed to ~1e-7 for
-    epochs 3-5) and provisionally picked `0.005` over `0.05`/`0.1`. Phase 2 (15 epochs ×
-    `lambda_kl ∈ {0.005, 0.05}`) **reversed that pick**: `0.05` beats `0.005` on 3 of 4 quality
-    metrics (plddt 0.767 vs 0.747, scAcc 0.399 vs 0.386, pairwise_tm 0.837 vs 0.766) and — more
-    importantly — kept `gen_grad_norm` healthy (~0.4-2.0) through epoch 15 even after the critic
-    saturated at epoch 9, whereas `0.005`'s `gen_grad_norm` weakened to ~0.03-0.25 once its critic
-    saturated at epoch 5. **`lambda_kl=0.05` is the winner for future full-scale training.**
-    Caveat: neither Phase 2 run's final checkpoint was saved to disk — both hit MN5's
-    `gpfs_projects` disk quota (4.20 TB hard limit, driven by `10p_train.py` saving a full
-    checkpoint, ~8.2-8.5 GB, every epoch with no cleanup — see item 19) while writing epoch 15's
-    weights; training/eval/wandb-logging for epoch 15 completed fine, only the on-disk checkpoint
-    write failed. Quota freed by deleting stale pre-gradient-fix grid-search checkpoints
-    (2026-07-26).
-    **Retry (2026-07-31):** re-ran both arms for 15 epochs after fixing the temperature-pinning
-    gap (TODO 14) — both retry checkpoints saved successfully this time. Quality metrics were
-    essentially unchanged from the original (temperature-buggy) numbers, so that bug didn't
-    distort the comparison's conclusion. But `lambda_kl=0.005`'s training dynamics did NOT
-    reproduce: the retry showed no persistent critic saturation and wild `gen_grad_norm` spikes
-    (up to 510, vs. the original's max ~12) instead of the original's clean saturation-plus-weak-
-    gradient pattern. `lambda_kl=0.05`'s dynamics DID reproduce (critic saturated even earlier —
-    epoch 2 vs. epoch 9 — yet `gen_grad_norm` stayed just as healthy, 0.74-1.01 mean per epoch).
-    **`0.05` remains the winner, now on firmer footing** (reproduced twice) than `0.005` (which
-    showed contradictory behavior between its two runs) — see item 20. A usable checkpoint for
-    `lambda_kl=0.05` now exists:
+18. ~~**lambda_kl sweep**~~ — ✅ Done, reproduced twice (Phase 1/2 on 2026-07-26, retried
+    2026-07-31 after fixing an unrelated seed-pinning bug — see item 20). **Winner:
+    `lambda_kl=0.05`** — beat `0.005` on 3/4 quality metrics and kept `gen_grad_norm` healthy
+    after critic saturation in both the original and retry runs, while `0.005` showed
+    contradictory dynamics between its two runs (persistent saturation + weak gradient
+    originally, no persistent saturation + wild gradient spikes on retry). Usable checkpoint:
     `/gpfs/projects/etur29/ufuk/gan-checkpoints/kl-sweep-p2-retry-kl0.05/epoch_15/`. Full
-    results: `docs/sweeps/lambda-kl-sweep-2026-07.md`.
+    per-phase design, all metric numbers, and the MN5 disk-quota checkpoint-save failure that
+    hit the original Phase 2 run: `docs/sweeps/lambda-kl-sweep-2026-07.md`.
 
 19. **Checkpoint storage bloat** — `10p_train.py`/`fully_masked_train.py` save a full checkpoint
     (both ProtBERT copies + both optimizer states, ~8.2-8.5 GB) every epoch, to a new `epoch_N/`
@@ -732,40 +557,28 @@ evaluation is no longer appropriate.
 
 20. **Investigate critic saturation** — across nearly every `lambda_kl` sweep arm (item 18),
     `critic_loss` eventually pins at exactly `5.0000` and stays there for the remainder of
-    training. `lambda_kl` only determines whether the generator's gradient survives this
-    (`0.05` did, `0.005` and `0.0` didn't, at least in the original Phase 1/2 runs) — it doesn't
-    prevent the saturation itself, and quality metrics plateau almost immediately regardless of
-    epoch count or `lambda_kl` value. This is likely the actual ceiling on generation quality
-    now, not the KL anchor weight. Worth checking whether the exact, repeated `5.000` value
-    points to a specific cause (e.g. a clamp/loss-scaling artifact in `loss.py`, or a genuine
-    critic-capacity/`n_critic` mismatch) before the next full-scale run.
-    **Update (2026-07-31, Phase 2 retry):** saturation onset timing is itself NOT reproducible
-    run-to-run — re-running `lambda_kl=0.005` with identical hyperparameters produced a run
-    that never persistently saturated at all (unlike the original), while re-running
-    `lambda_kl=0.05` saturated even earlier than before (epoch 2 vs. epoch 9) but with
-    `gen_grad_norm` staying healthy both times. This raises the priority of this item: the
-    open question isn't just "why does the critic saturate" but "why is the timing/occurrence
-    of saturation itself so unstable across otherwise-identical runs" — worth considering
-    whether future sweeps need multiple seeds per arm to separate real hyperparameter effects
-    from this run-to-run noise. See `docs/HISTORY.md` (Phase 6, end) and
-    `docs/sweeps/lambda-kl-sweep-2026-07.md` (Phase 2 Retry Results) for the supporting data.
-    **Update (2026-07-31):** root cause of the run-to-run instability found — neither training
-    script pinned a random seed anywhere (`random`/`numpy`/`torch`/`torch.cuda` were all
-    unseeded), so every launch drew fresh randomness for batch order, dropout, multinomial
-    sampling, and remask positions. Fixed via a `--seed` CLI flag (default `89`) added to both
-    scripts, seeding all four sources right after arg parsing and logging the value to
-    `wandb.config`. This doesn't explain *why* the critic saturates, but it means future sweep
-    reruns can now hold the seed fixed to isolate a real hyperparameter effect from this noise —
-    the next natural step for this item is re-running a lambda_kl comparison with the seed
-    pinned across arms.
-    **Next concrete step (2026-07-31):** distinguish genuine convergence from degenerate
-    collapse by checking per-example variance of `real_scores`/`fake_scores` within a saturated
-    batch, not just their means. Genuine convergence: `mean(fake) ≈ mean(real)` but each score
-    still varies meaningfully example-to-example. Degenerate collapse: every score — real or
-    fake, any example — converges to nearly the same scalar, i.e. the critic stopped being a
-    function of its input at all. Not yet checked against any saturated run's actual scores;
-    would need per-batch `real_scores`/`fake_scores` logged (not currently done, may require a
-    small code change) or a forward pass on a saved saturated-epoch checkpoint.
+    training; quality metrics plateau almost immediately regardless of epoch count or
+    `lambda_kl`. This is likely the actual ceiling on generation quality now, not the KL
+    anchor weight. Saturation *onset timing* was also found to be non-reproducible run-to-run,
+    traced to an unseeded RNG and fixed via `--seed` — full discovery narrative in
+    `docs/HISTORY.md` Phase 6.
+    **Diagnostic tooling landed (2026-08-20, `10p_train.py` only):** `run_holdout_eval()`
+    scores a fixed held-out slice of real sequences the critic never trains on
+    (`--holdout_size`, see item 22) and `--loss_log_every` logs the training-pool score
+    mean/std every N batches — both previously discarded per-example variance and only ever
+    logged means. A near-zero `*_score_std` at the point `critic_loss` pins at `5.0000` would
+    be the degenerate-collapse signature (critic stopped being a function of its input);
+    healthy std with converging means would mean genuine convergence. Implementing this also
+    surfaced and fixed a separate bug: `mid_batch_idx` was computed against `len(gen_dl)`
+    directly instead of the actual outer-loop iteration count, making it unreachably large for
+    any `n_critic >= 2` — the `"mid"` eval tag had silently never fired in any real run to
+    date, including the entire lambda_kl sweep. `run_evaluation`'s structural pipeline is
+    deliberately not re-enabled at `mid` now that it can fire, to avoid inflating per-epoch
+    compute cost. Full detail: `docs/HISTORY.md` Phase 6 (end).
+    **Not yet done:** only a 1-epoch/200-sequence smoke test has been run (Anzu) — confirms
+    the tooling works, not what it's diagnosing. Next step is a real-scale run (probably MN5)
+    taken long enough to hit saturation, to see whether `*_score_std` collapses in lockstep
+    with `critic_loss`.
 
 21. **wandb `config` field empty for offline runs — root cause found (2026-07-31)** — every run
     in the lambda_kl sweep shows `run.config` (via both MCP and the direct Python API)
@@ -815,6 +628,27 @@ evaluation is no longer appropriate.
     overfitting signature — same saturation question, different-looking curve. Not yet
     implemented or even fully designed — this item is "consider the possibility," not a decided
     approach.
+    **Implemented for the critic, `10p_train.py` only (2026-08-20):** `--holdout_size`
+    (default 200) reserves that many sequences from `dnmt_full.txt`'s pool at load time,
+    before `get_dynamic_dataloaders`'s per-epoch reshuffle ever sees them — carved in-script
+    via a dedicated seeded `torch.Generator` rather than a persisted file, so it stays
+    reproducible across runs with the same `--seed` without adding a second, independently-
+    drifting data-split artifact (the codebase already has one such artifact:
+    `file_formatter.py`'s dead train/val split is independent from its `dnmt_gen`/`dnmt_critic`
+    split, so a revived `dnmt_val.txt` could silently overlap `dnmt_critic.txt`). Note: because
+    the held-out indices are `perm[:holdout_size]` from a seeded permutation, two runs with the
+    same `--seed` and same effective pool size (i.e. same `--max_train_seqs`) get *nested*
+    holdout sets when `--holdout_size` differs — the smaller holdout's sequences are a prefix
+    subset of the larger's, not a disjoint set — but the sets still aren't identical, so
+    `holdout_*` metrics aren't directly comparable across arms with different `--holdout_size`;
+    hold it constant across a sweep if comparing those metrics between arms.
+    Shrinks `10p_train.py`'s effective training pool by `holdout_size` relative to every prior run —
+    a <1% change at the default value against ~52k sequences, called out in the flag's `help=`
+    text. `--holdout_eval_fakes` optionally also scores fresh generator output against the
+    held-out set for real/fake symmetry. See item 20 for what's logged and the diagnostic
+    rationale. **Not done:** `fully_masked_train.py` (blind mode) has no equivalent — deferred
+    since blind mode isn't validated yet (item 16). The unified-script merge (QoL 5) was also
+    explicitly deferred rather than bundled with this change.
 
 23. **Re-evaluate the evaluation pipeline itself** (from 24 Jul 2026 notes, not previously
     tracked). The current metric set (`pLDDT`/`scAccuracy`/`progres`/`pairwise TM`/
