@@ -3,13 +3,14 @@ import argparse
 import random
 import numpy as np
 import torch
+from torch.utils.data import DataLoader
 
 
 from transformers import AutoTokenizer, AutoModelForMaskedLM, EsmForProteinFolding
 from models import Generator, Critic, compute_soft_embeds, compute_kl_anchor
 import wandb
 from loss import critic_loss, generator_loss, compute_gradient_penalty
-from dataset import load_and_tokenize_dataset, get_dynamic_dataloaders
+from dataset import load_and_tokenize_dataset, get_dynamic_dataloaders, DNMTDataset
 from torch.optim import AdamW
 from val_metrics import (
     calculate_plddt_scores_and_save_pdb,
@@ -115,6 +116,31 @@ def parse_args():
         "gen_grad_norm/kl_loss across lambda_kl values.",
     )
     parser.add_argument(
+        "--holdout_size",
+        type=int,
+        default=200,
+        help="Real sequences reserved from dnmt_full.txt's pool at startup, never seen "
+        "by gen or critic training splits, used for periodic held-out critic scoring "
+        "(mean/std of real_scores) to diagnose critic saturation (CLAUDE.md item 20). "
+        "0 disables. Shrinks the effective training pool by this amount vs. runs before "
+        "this flag existed.",
+    )
+    parser.add_argument(
+        "--holdout_eval_fakes",
+        action="store_true",
+        help="Also score freshly generated fakes against the holdout set for "
+        "real-vs-fake distribution symmetry. Only takes effect when "
+        "--num_eval_sequences > 0.",
+    )
+    parser.add_argument(
+        "--loss_log_every",
+        type=int,
+        default=25,
+        help="Log critic_loss_step + real/fake score mean/std every N batches (0 "
+        "disables). Independent of run_evaluation's baseline/mid/end cadence and of "
+        "--num_eval_sequences.",
+    )
+    parser.add_argument(
         "--wandb_tags",
         type=str,
         default="",
@@ -165,6 +191,30 @@ if args.max_train_seqs is not None:
     tokenized_full_dataset = tokenized_full_dataset.select(
         range(min(args.max_train_seqs, len(tokenized_full_dataset)))
     )
+
+# Carve out a held-out slice BEFORE the per-epoch dynamic gen/critic split ever sees the
+# pool, so the critic never trains on it — used later for held-out score diagnostics
+# (CLAUDE.md item 20/22). Dedicated generator so this doesn't perturb the global RNG
+# stream that drives batch order / dropout / multinomial sampling elsewhere.
+holdout_size = min(args.holdout_size, len(tokenized_full_dataset))
+if holdout_size > 0:
+    holdout_gen = torch.Generator().manual_seed(args.seed)
+    holdout_perm = torch.randperm(len(tokenized_full_dataset), generator=holdout_gen).tolist()
+    holdout_idx, pool_idx = holdout_perm[:holdout_size], holdout_perm[holdout_size:]
+    holdout_dataset = tokenized_full_dataset.select(holdout_idx)
+    tokenized_full_dataset = tokenized_full_dataset.select(pool_idx)
+    print(
+        f"Held out {holdout_size} sequences from the critic training pool "
+        f"({len(tokenized_full_dataset)} remaining for gen/critic dynamic split)."
+    )
+else:
+    holdout_dataset = None
+
+holdout_loader = (
+    DataLoader(DNMTDataset(holdout_dataset), batch_size=args.eval_batch_size, shuffle=False)
+    if holdout_dataset is not None
+    else None
+)
 
 
 # -----------------------
@@ -239,6 +289,9 @@ wandb.init(
         "eval_batch_size": args.eval_batch_size,
         "temperature": args.temperature,
         "seed": args.seed,
+        "holdout_size": args.holdout_size,
+        "holdout_eval_fakes": args.holdout_eval_fakes,
+        "loss_log_every": args.loss_log_every,
     },
 )
 
@@ -418,6 +471,71 @@ def run_evaluation(epoch_idx, batch_idx, critic_loss_val, gen_loss_val, tag="eva
     clean_m8_folder()
 
 
+def run_holdout_eval(epoch_idx, batch_idx, tag="holdout"):
+    """
+    Scores the held-out real sequences the critic never trains on. Logs mean AND std
+    of per-example scores — a saturated critic_loss with healthy score std means
+    genuine convergence; std collapsing toward 0 means the critic stopped being a
+    function of its input at all (CLAUDE.md item 20).
+    """
+    if holdout_loader is None:
+        return
+
+    critic.eval()
+    real_scores_all = []
+    with torch.no_grad():
+        for batch in holdout_loader:
+            input_ids = batch["input_ids"].to(device)
+            attn_mask = batch["attention_mask"].to(device)
+            embeds = critic.protbert.bert.embeddings(input_ids=input_ids)
+            scores = critic(embeds, attention_mask=attn_mask)
+            real_scores_all.append(scores.squeeze(-1).cpu())
+    critic.train()
+    real_scores_t = torch.cat(real_scores_all)
+
+    log_dict = {
+        "epoch": epoch_idx + 1,
+        "batch": batch_idx,
+        "holdout_real_score_mean": real_scores_t.mean().item(),
+        "holdout_real_score_std": real_scores_t.std().item(),
+        "tag": tag,
+    }
+
+    if args.holdout_eval_fakes and args.num_eval_sequences > 0:
+        fake_seqs = generate_fake_sequences(
+            generator=generator,
+            tokenizer=tokenizer,
+            num_sequences=min(args.num_eval_sequences, holdout_size),
+            temperature=args.temperature,
+            device=device,
+        )
+        fake_batch = tokenizer(
+            fake_seqs,
+            padding="max_length",
+            truncation=True,
+            max_length=512,
+            return_tensors="pt",
+        ).to(device)
+        critic.eval()
+        with torch.no_grad():
+            fake_embeds = critic.protbert.bert.embeddings(
+                input_ids=fake_batch["input_ids"]
+            )
+            fake_scores = critic(
+                fake_embeds, attention_mask=fake_batch["attention_mask"]
+            )
+        critic.train()
+        fake_scores_t = fake_scores.squeeze(-1).cpu()
+        log_dict.update(
+            {
+                "holdout_fake_score_mean": fake_scores_t.mean().item(),
+                "holdout_fake_score_std": fake_scores_t.std().item(),
+            }
+        )
+
+    wandb.log(log_dict)
+
+
 # ------------------------------------------------------------
 # MAIN TRAINING LOOP
 # ------------------------------------------------------------
@@ -428,7 +546,12 @@ for epoch in range(n_epochs):
         tokenized_full_dataset, batch_size=args.batch_size, n_critic=args.n_critic
     )
     num_gen_batches = len(gen_dl)
-    mid_batch_idx = num_gen_batches // 2
+    # batch_number increments once per outer while-loop cycle, and each cycle consumes
+    # n_critic+1 gen batches (n_critic for the critic sub-steps' fake data, 1 for the
+    # generator update) — so the outer-loop iteration count, not len(gen_dl) itself, is
+    # what batch_number actually ranges over in an epoch.
+    max_outer_iters = num_gen_batches // (n_critic + 1)
+    mid_batch_idx = max_outer_iters // 2
 
     gen_iter, critic_iter = iter(gen_dl), iter(critic_dl)
 
@@ -450,6 +573,7 @@ for epoch in range(n_epochs):
     while True:
         critic_loss_val = 0.0
         break_epoch = False
+        real_scores_list, fake_scores_list = [], []
 
         # ----- n_critic updates -----
         for _ in range(n_critic):
@@ -503,12 +627,31 @@ for epoch in range(n_epochs):
             critic_optimizer.step()
 
             critic_loss_val += c_loss.item()
+            real_scores_list.append(real_scores.detach().squeeze(-1).cpu())
+            fake_scores_list.append(fake_scores.detach().squeeze(-1).cpu())
 
         if break_epoch:
             break
 
         critic_loss_val /= n_critic
         epoch_c_loss_sum += critic_loss_val
+
+        # -------- fine-grained loss/score logging (independent of run_evaluation) --------
+        if args.loss_log_every > 0 and batch_number % args.loss_log_every == 0:
+            real_cat = torch.cat(real_scores_list)
+            fake_cat = torch.cat(fake_scores_list)
+            wandb.log(
+                {
+                    "epoch": epoch + 1,
+                    "batch": batch_number,
+                    "critic_loss_step": critic_loss_val,
+                    "train_real_score_mean": real_cat.mean().item(),
+                    "train_real_score_std": real_cat.std().item(),
+                    "train_fake_score_mean": fake_cat.mean().item(),
+                    "train_fake_score_std": fake_cat.std().item(),
+                    "tag": "step",
+                }
+            )
 
         # ----- 1× generator update -----
         try:
@@ -581,12 +724,16 @@ for epoch in range(n_epochs):
         # -------- baseline evaluation (epoch-0 start only) --------
         if epoch == 0 and batch_number == 0:
             run_evaluation(epoch, 0, critic_loss_val, g_loss.item(), tag="baseline")
+            run_holdout_eval(epoch, 0, tag="baseline")
 
         # -------- MID-EPOCH evaluation --------
+        # run_evaluation's structural pipeline (ESMFold/scAccuracy/progres/pairwise_tm) is
+        # deliberately NOT called here — baseline/end already give per-epoch structural
+        # trend, and mid_batch_idx used to be unreachable for n_critic>=2 (see fix above),
+        # so nobody has relied on a mid-epoch structural signal. run_holdout_eval is cheap
+        # (no ESMFold) and is the actual diagnostic this mid-epoch point exists for.
         if batch_number == mid_batch_idx:
-            run_evaluation(
-                epoch, batch_number, critic_loss_val, g_loss.item(), tag="mid"
-            )
+            run_holdout_eval(epoch, batch_number, tag="mid")
 
         batch_number += 1
 
@@ -595,6 +742,7 @@ for epoch in range(n_epochs):
     avg_g_epoch = epoch_g_loss_sum / batch_number
 
     run_evaluation(epoch, batch_number, avg_c_epoch, avg_g_epoch, tag="end")
+    run_holdout_eval(epoch, batch_number, tag="end")
 
     # ---------- (model saving code stays unchanged) ----------
 
