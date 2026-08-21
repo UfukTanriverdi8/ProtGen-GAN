@@ -267,13 +267,17 @@ gan/
     ├── n_critic_10p_run.sh        n_critic grid search (seeded mode)
     ├── n_critic_full_run.sh       n_critic grid search (blind mode)
     ├── env_smoke_test.sh          Quick sanity check that the packed conda env loads correctly
-    └── sweeps/                    Hyperparameter sweep array jobs (split out from the flat
-                                   layout above); see docs/RUN_DOCUMENTATION.md for how
-                                   results are recorded
-        ├── lambda_kl_sweep_p1.sh  Phase 1 screening: lambda_kl grid, seeded mode, n_critic=4
-        ├── lambda_kl_sweep_p2.sh  Phase 2: lambda_kl finalists, seeded mode
-        └── critic_saturation_diagnostic.sh  Item 20 diagnostic: lambda_kl=0.005 vs 0.05,
-                                   held-out critic validation enabled
+    ├── sweeps/                    Hyperparameter sweep array jobs, searching for a winner
+    │                              (split out from the flat layout above); see
+    │                              docs/RUN_DOCUMENTATION.md for how results are recorded
+    │   ├── lambda_kl_sweep_p1.sh  Phase 1 screening: lambda_kl grid, seeded mode, n_critic=4
+    │   └── lambda_kl_sweep_p2.sh  Phase 2: lambda_kl finalists, seeded mode
+    └── investigations/            Diagnostic array jobs answering a question across runs, not
+                                   searching for a winner (mirrors docs/investigations/)
+        ├── critic_saturation_diagnostic.sh  Item 20: lambda_kl=0.005 vs 0.05, held-out
+        │                          critic validation enabled
+        └── lambda_gp_diagnostic.sh  Item 20 follow-up: lambda_gp grid (0/0.1/1/10) vs the
+                                   existing lambda_gp=5 baseline, lambda_kl fixed at 0.05
 
 ├── # VALIDATION / VISUALISATION
 └── validation/
