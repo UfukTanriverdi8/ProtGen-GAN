@@ -559,30 +559,28 @@ evaluation is no longer appropriate.
     exists, (2) only keep the last checkpoint (or last N) instead of every epoch. Not yet
     implemented — discussed 2026-07-26, deferred.
 
-20. **Investigate critic saturation** — across nearly every `lambda_kl` sweep arm (item 18),
-    `critic_loss` eventually pins at exactly `5.0000` and stays there for the remainder of
-    training; quality metrics plateau almost immediately regardless of epoch count or
-    `lambda_kl`. This is likely the actual ceiling on generation quality now, not the KL
-    anchor weight. Saturation *onset timing* was also found to be non-reproducible run-to-run,
-    traced to an unseeded RNG and fixed via `--seed` — full discovery narrative in
-    `docs/HISTORY.md` Phase 6.
-    **Diagnostic tooling landed (2026-08-20, `10p_train.py` only):** `run_holdout_eval()`
-    scores a fixed held-out slice of real sequences the critic never trains on
-    (`--holdout_size`, see item 22) and `--loss_log_every` logs the training-pool score
-    mean/std every N batches — both previously discarded per-example variance and only ever
-    logged means. A near-zero `*_score_std` at the point `critic_loss` pins at `5.0000` would
-    be the degenerate-collapse signature (critic stopped being a function of its input);
-    healthy std with converging means would mean genuine convergence. Implementing this also
-    surfaced and fixed a separate bug: `mid_batch_idx` was computed against `len(gen_dl)`
-    directly instead of the actual outer-loop iteration count, making it unreachably large for
-    any `n_critic >= 2` — the `"mid"` eval tag had silently never fired in any real run to
-    date, including the entire lambda_kl sweep. `run_evaluation`'s structural pipeline is
-    deliberately not re-enabled at `mid` now that it can fire, to avoid inflating per-epoch
-    compute cost. Full detail: `docs/HISTORY.md` Phase 6 (end).
-    **Not yet done:** only a 1-epoch/200-sequence smoke test has been run (Anzu) — confirms
-    the tooling works, not what it's diagnosing. Next step is a real-scale run (probably MN5)
-    taken long enough to hit saturation, to see whether `*_score_std` collapses in lockstep
-    with `critic_loss`.
+20. ✅ **Critic saturation investigated (2026-08-21)** — across nearly every `lambda_kl` sweep
+    arm (item 18), `critic_loss` pins at exactly `5.0000` for the remainder of training.
+    **Answer: genuine degenerate collapse, confirmed via held-out validation tooling (item 22),
+    and universal/architectural rather than `lambda_kl`-dependent.** `critic_loss ≈ lambda_gp`
+    is the loss formula's exact arithmetic signature of a critic that has stopped being a
+    function of its input (Wasserstein term → 0, gradient penalty → 1); `*_score_std` collapses
+    to ~1e-5–1e-6 on both training and held-out real sequences in lockstep with the pinning,
+    ruling out both benign convergence and training-set memorization. Re-running both Phase 2
+    finalists (`lambda_kl=0.005`, `0.05`) side by side showed collapse occurs in both — but
+    `lambda_kl` clearly affects *post-collapse stability*: `0.05` stays flat/collapsed the whole
+    run, while `0.005` has a real, still not fully explained instability episode around epoch 12
+    (`gen_grad_norm` spikes to 116, `generator_loss` sign-flips and never recovers by run end).
+    This means the original "0.05 wins" sweep conclusion (item 18) was partly based on
+    critic-derived signal that was itself degenerate during measurement — the more defensible
+    basis is structural quality metrics plus this diagnostic's downstream-stability finding, not
+    the original `gen_grad_norm`/critic-loss dynamics. Full analysis, anomaly timeline, and the
+    unconfirmed AdamW-overshoot hypothesis for the epoch-12 event:
+    `docs/investigations/critic-saturation-diagnostic-2026-08.md`. Discovery narrative for the
+    underlying saturation/seed issues: `docs/HISTORY.md` Phase 6.
+    **Not yet done:** test whether `lambda_gp=5` is too strong (cheap "ignore everything"
+    optimum); directly test the AdamW-overshoot hypothesis; check whether other `lambda_kl`
+    values reproduce the same universal-collapse/`lambda_kl`-dependent-stability pattern.
 
 21. **wandb `config` field empty for offline runs — root cause found (2026-07-31)** — every run
     in the lambda_kl sweep shows `run.config` (via both MCP and the direct Python API)
