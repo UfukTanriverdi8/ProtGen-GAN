@@ -574,15 +574,13 @@ evaluation is no longer appropriate.
     per-phase design, all metric numbers, and the MN5 disk-quota checkpoint-save failure that
     hit the original Phase 2 run: `docs/sweeps/lambda-kl-sweep-2026-07.md`.
 
-19. **Checkpoint storage bloat** — `10p_train.py`/`fully_masked_train.py` save a full checkpoint
-    (both ProtBERT copies + both optimizer states, ~8.2-8.5 GB) every epoch, to a new `epoch_N/`
-    directory, with no cleanup — this caused item 18's Phase 2 checkpoint-save failure by
-    exhausting MN5's `gpfs_projects` quota (4.20 TB). The optimizer-state half of that cost
-    (~2/3 of the total) is currently pure waste: it was added for a future resume script
-    (QoL 5, above) that was never built. Two independent fixes worth doing before the next
-    multi-epoch sweep or long run: (1) stop saving optimizer state until the resume script
-    exists, (2) only keep the last checkpoint (or last N) instead of every epoch. Not yet
-    implemented — discussed 2026-07-26, deferred.
+19. ✅ **Checkpoint storage bloat fixed (2026-08-21)** — `10p_train.py`/`fully_masked_train.py`
+    both gained `--save_optimizer_state` (off by default — no resume script reads these back
+    yet, QoL 5) and `--keep_last_n_checkpoints` (default 1, prunes older `epoch_N/` dirs
+    right after each new save). Verified via smoke test on Anzu: default flags keep only the
+    latest checkpoint with no optimizer files; `--save_optimizer_state --keep_last_n_checkpoints 2`
+    keeps optimizer files and the last two epochs. Prevents a repeat of item 18's Phase 2
+    MN5 quota failure on the next multi-epoch sweep.
 
 20. ✅ **Critic saturation investigated (2026-08-21)** — across nearly every `lambda_kl` sweep
     arm (item 18), `critic_loss` pins at exactly `5.0000` for the remainder of training.
