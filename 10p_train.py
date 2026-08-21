@@ -9,7 +9,13 @@ from torch.utils.data import DataLoader
 
 
 from transformers import AutoTokenizer, AutoModelForMaskedLM, EsmForProteinFolding
-from models import Generator, Critic, compute_soft_embeds, compute_kl_anchor
+from models import (
+    Generator,
+    Critic,
+    compute_soft_embeds,
+    compute_kl_anchor,
+    compute_confidence_metrics,
+)
 import wandb
 from loss import critic_loss, generator_loss, compute_gradient_penalty
 from dataset import load_and_tokenize_dataset, get_dynamic_dataloaders, DNMTDataset
@@ -707,6 +713,12 @@ for epoch in range(n_epochs):
             )
         )
         gen_optimizer.zero_grad()
+        gen_max_prob, gen_entropy = compute_confidence_metrics(
+            gen_probs, remask_positions
+        )
+        wandb.log(
+            {"gen_max_prob": gen_max_prob.item(), "gen_entropy": gen_entropy.item()}
+        )
         fake_scores = critic(soft_embeds, attention_mask=attn_mask_fake)
         if lambda_kl > 0:
             kl_loss = compute_kl_anchor(

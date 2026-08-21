@@ -42,6 +42,10 @@
           {
             "type": "command",
             "command": "python3 -c \"import sys, json, os; cmd=json.loads(os.environ.get('CLAUDE_TOOL_INPUT','{}')).get('command',''); is_push='git push' in cmd or 'git push' in cmd.replace('  ',' '); is_mn5='mn5' in cmd; is_force='--force' in cmd or ' -f ' in cmd or cmd.endswith(' -f'); exit_code=2 if (is_push and (is_mn5 or is_force)) else 0; print('⚠ Push to mn5 or force-push detected. Confirm?') if exit_code==2 else None; sys.exit(exit_code)\""
+          },
+          {
+            "type": "command",
+            "command": "python3 -c \"import sys, json, os, re; cmd=json.loads(os.environ.get('CLAUDE_TOOL_INPUT','{}')).get('command',''); scripts=['10p_train.py','fully_masked_train.py']; is_train=any(s in cmd for s in scripts) and re.search(r'\\bpython3?\\b', cmd) is not None; has_cuda='CUDA_VISIBLE_DEVICES' in cmd; print('BLOCKED: training script invoked without CUDA_VISIBLE_DEVICES set. Anzu is a shared GPU box — check nvidia-smi and prefix the command, e.g. CUDA_VISIBLE_DEVICES=2 python 10p_train.py ...') if (is_train and not has_cuda) else None; sys.exit(2 if (is_train and not has_cuda) else 0)\""
           }
         ]
       }

@@ -53,6 +53,8 @@ Example: `docs/runs/kl-sweep-p1-kl0.01_a1b2c3d4.md`
 |---|---|
 | kl_loss | ... |
 | gen_grad_norm | ... |
+| gen_max_prob | ... |
+| gen_entropy | ... |
 | unique_ratio | ... |
 | plddt | ... |
 | scAccuracy | ... |

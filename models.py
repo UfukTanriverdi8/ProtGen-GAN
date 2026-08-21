@@ -179,6 +179,26 @@ def compute_soft_embeds(
     return soft_embeds, probs, temperature, remask_positions, masked_input
 
 
+def compute_confidence_metrics(gen_probs, remask_positions):
+    """Avg max-probability and avg entropy of gen_probs, restricted to remasked positions.
+
+    Diagnostic for the confidence-inflation exploit described in
+    docs/GENERATOR_GRADIENT_FIX.md (Open risks / caveats): the generator can raise its
+    critic score by sharpening its output distribution rather than by becoming more
+    DNMT-like, since a peakier distribution pulls compute_soft_embeds' soft blend closer
+    to a hard embedding regardless of which token it's confident about. Climbing
+    max-probability / falling entropy without a matching rise in quality metrics
+    (pLDDT, scAccuracy, unique_ratio) is the signature to watch for.
+    """
+    remasked_probs = gen_probs[remask_positions]  # [N_masked, VocabSize]
+    if remasked_probs.numel() == 0:
+        zero = torch.zeros((), device=gen_probs.device, dtype=gen_probs.dtype)
+        return zero, zero
+    max_prob = remasked_probs.max(dim=-1).values.mean()
+    entropy = -(remasked_probs * remasked_probs.clamp_min(1e-9).log()).sum(dim=-1).mean()
+    return max_prob, entropy
+
+
 def compute_kl_anchor(
     gen_probs, ref_protbert, masked_input, attn_mask, temperature, remask_positions
 ):
