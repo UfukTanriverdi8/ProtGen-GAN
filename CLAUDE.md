@@ -190,14 +190,11 @@ Load logic to be added when resume script is built (QoL 5).
 **Fixed:** File read extracted into `_load_sequence_lengths()` with `@functools.lru_cache`.
 52k-line dataset file read once, cached for all subsequent calls.
 
-### QoL 4 — `from val_metrics import *` loads the entire evaluation stack at training startup
+### ✅ QoL 4 — `val_metrics` now imported by explicit name (2026-08-21, found already fixed)
 
-**Files:** `10p_train.py:10`, `fully_masked_train.py:10`
-
-Both training scripts wildcard-import `val_metrics`, which at module load time imports
-ESMFold, ProteinMPNN, BioPython, progres, tmtools, and requests. If any dependency is
-missing or broken, training crashes before a single data batch is processed. Consider
-importing only what's needed, or wrapping heavy imports inside the functions that use them.
+**Files:** `10p_train.py`, `fully_masked_train.py`
+**Fixed:** both scripts import specific names from `val_metrics`, not `import *` — no longer
+pulls the full ESMFold/ProteinMPNN/BioPython/progres/tmtools stack in unpredictably.
 
 ### QoL 5 — Both training scripts will be merged ✅ DECIDED
 
@@ -535,25 +532,11 @@ evaluation is no longer appropriate.
 13. ~~**`mask_token_id` consistency**~~ — ✅ Done (2026-07-22, commit `718e446`). Confirmed `=4`
     everywhere it's used; `generate.py`'s hardcoded-default gap fixed.
 
-14. ~~**Pin temperature per run**~~ — ✅ Done (2026-07-24), **gap found and closed 2026-07-30**.
-    Was randomized every step (`models.py:131` TODO, now removed), adding noise to
-    gen_grad_norm/kl_loss when comparing across λ_kl values. Replaced with a fixed
-    `--temperature` CLI flag (default `1.0`) in both training scripts — no randomized-range
-    option kept; existing diversity comes from `torch.multinomial` sampling and per-step
-    remask-position randomness, not from varying temperature. Prerequisite for the lambda_kl
-    sweep below.
-    **Gap:** the 2026-07-24 fix only pinned temperature in the training-loop generation path
-    (`compute_soft_embeds`/`generate_fakes_for_batch`/`generate_fake_batch`). It missed
-    `generate_fake_sequences` (`val_metrics.py`), used by `run_evaluation()` in both training
-    scripts to generate the sequences behind `plddt`/`scAccuracy`/`progres`/`pairwise_tm`/
-    `unique_ratio` — this function still drew a fresh `uniform(0.8, 1.2)` temperature every
-    fill step and had no `temperature` parameter to override it. This means every quality
-    metric from the entire lambda_kl sweep (both phases) was measured under uncontrolled
-    random temperature, adding an unquantified confound on top of the sampling noise already
-    flagged for close calls. `gen_grad_norm`/`kl_loss`/`critic_loss`/`generator_loss` were
-    NOT affected (correctly used the pinned value throughout) — the mechanistic case for
-    `lambda_kl=0.05` (item 18) stands. Fixed 2026-07-30: `generate_fake_sequences` now takes
-    a `temperature` parameter, both training scripts pass `args.temperature` through.
+14. ~~**Pin temperature per run**~~ — ✅ Done (2026-07-24, gap closed 2026-07-30). Fixed
+    `--temperature` CLI flag replaced per-step randomization. Gap: the fix initially missed
+    `generate_fake_sequences` (`val_metrics.py`), so lambda_kl sweep quality metrics (not
+    `gen_grad_norm`/losses) had an unquantified confound until closed. Full detail:
+    `docs/HISTORY.md` Phase 6.
 
 15. **Reconsider the fixed 50% remask fraction** — `models.py:136` TODO. The λ=0.01 run's
     gentle decline (progres 0.92→0.87, pairwise_tm 0.75→0.64 over 3 epochs) raises whether
@@ -567,6 +550,10 @@ evaluation is no longer appropriate.
     (`docs/GENERATOR_GRADIENT_FIX.md` line 56) says straight-through was adopted for
     intermediate refinement-step commits; `compute_soft_embeds` actually does K=1 truncation
     with no straight-through. Confirm this is a deliberate simplification, not drift.
+    **Checked 2026-08-21:** confirmed drift, not simplification — `compute_soft_embeds`
+    (`models.py:121-179`) does one soft blend in a single forward pass; there is no multi-step
+    refinement loop and no hard-forward/soft-backward commit anywhere in it. Decision on
+    whether to implement straight-through or update the doc is still open.
 
 18. ~~**lambda_kl sweep**~~ — ✅ Done, reproduced twice (Phase 1/2 on 2026-07-26, retried
     2026-07-31 after fixing an unrelated seed-pinning bug — see item 20). **Winner:
@@ -586,46 +573,19 @@ evaluation is no longer appropriate.
     keeps optimizer files and the last two epochs. Prevents a repeat of item 18's Phase 2
     MN5 quota failure on the next multi-epoch sweep.
 
-20. ✅ **Critic saturation investigated (2026-08-21)** — across nearly every `lambda_kl` sweep
-    arm (item 18), `critic_loss` pins at exactly `5.0000` for the remainder of training.
-    **Answer: genuine degenerate collapse, confirmed via held-out validation tooling (item 22),
-    and universal/architectural rather than `lambda_kl`-dependent.** `critic_loss ≈ lambda_gp`
-    is the loss formula's exact arithmetic signature of a critic that has stopped being a
-    function of its input (Wasserstein term → 0, gradient penalty → 1); `*_score_std` collapses
-    to ~1e-5–1e-6 on both training and held-out real sequences in lockstep with the pinning,
-    ruling out both benign convergence and training-set memorization. Re-running both Phase 2
-    finalists (`lambda_kl=0.005`, `0.05`) side by side showed collapse occurs in both — but
-    `lambda_kl` clearly affects *post-collapse stability*: `0.05` stays flat/collapsed the whole
-    run, while `0.005` has a real, still not fully explained instability episode around epoch 12
-    (`gen_grad_norm` spikes to 116, `generator_loss` sign-flips and never recovers by run end).
-    This means the original "0.05 wins" sweep conclusion (item 18) was partly based on
-    critic-derived signal that was itself degenerate during measurement — the more defensible
-    basis is structural quality metrics plus this diagnostic's downstream-stability finding, not
-    the original `gen_grad_norm`/critic-loss dynamics. Full analysis, anomaly timeline, and the
-    unconfirmed AdamW-overshoot hypothesis for the epoch-12 event:
-    `docs/investigations/critic-saturation-diagnostic-2026-08.md`. Discovery narrative for the
-    underlying saturation/seed issues: `docs/HISTORY.md` Phase 6.
-    **Not yet done:** test whether `lambda_gp=5` is too strong (cheap "ignore everything"
-    optimum); directly test the AdamW-overshoot hypothesis; check whether other `lambda_kl`
-    values reproduce the same universal-collapse/`lambda_kl`-dependent-stability pattern.
+20. ✅ **Critic saturation investigated (2026-08-21)** — `critic_loss` pinning at exactly
+    `5.0000` across `lambda_kl` sweep arms is genuine degenerate collapse (confirmed via
+    held-out validation, item 22), universal/architectural rather than `lambda_kl`-dependent.
+    `lambda_kl` does affect *post-collapse stability* though (`0.005` had an unresolved
+    instability episode at epoch 12; `0.05` stayed flat) — this is the more defensible basis
+    for item 18's "0.05 wins" call than the original critic-derived dynamics. Open follow-ups
+    and full analysis: `docs/investigations/critic-saturation-diagnostic-2026-08.md`.
 
-21. **wandb `config` field empty for offline runs — root cause found (2026-07-31)** — every run
-    in the lambda_kl sweep shows `run.config` (via both MCP and the direct Python API)
-    containing only `_wandb` client metadata, no real hyperparameters, despite both training
-    scripts correctly calling `wandb.config.update({...})` with the right values right after
-    `wandb.init()`. Inspecting the raw `config.yaml` written locally by an offline run *before
-    any sync ever touches it* (`arrivals/offline-run-20260730_132036-w8c2wl85/files/config.yaml`
-    and its `-2rohdbx2` sibling) confirms neither has any top-level keys besides
-    `wandb_version`/`_wandb` — so **offline mode never materializes `wandb.config.update()`'s
-    values into `config.yaml` at all**, not an MCP or sync-step artifact as two earlier notes
-    wrongly concluded (both mistook wandb's auto-captured CLI-args telemetry, buried at
-    `_wandb.e.<hash>.args`, for the real config field). Worth testing whether passing
-    hyperparameters via `wandb.init(config={...})` directly (instead of a separate `.update()`
-    call after init) persists correctly under `mode="offline"` — try this on the next MN5 run
-    regardless of sweep status. Every hyperparameter value already recorded in this project's
-    run docs is still correct (backfilled from the submitting SLURM script), just not
-    confirmable via wandb's own config field until this is fixed. See
-    `docs/sweeps/lambda-kl-sweep-2026-07.md`'s Results section for the full trail.
+21. ~~**wandb `config` field empty for offline runs**~~ — ✅ Fixed (2026-07-31, commit
+    `85c1a8e`). Root cause: offline mode never materialized a separate `wandb.config.update()`
+    call into `config.yaml`. Fix: pass hyperparameters via `wandb.init(config={...})` directly.
+    Confirmed working on a post-fix run (`docs/runs/critic-saturation-diagnostic-kl0.05_19y835y0.md`).
+    Full trail: `docs/sweeps/lambda-kl-sweep-2026-07.md`'s Results section.
 
 22. **No validation loss exists — only training loss** (raised 2026-07-31). Neither training
     script holds out any data: `dataset.py`'s `get_dynamic_dataloaders` splits each epoch's data

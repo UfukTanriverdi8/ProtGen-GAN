@@ -261,6 +261,17 @@ Anzu and MN5 by 2026-07-17. Generation temperature, previously randomized every 
 was pinned to a fixed `--temperature` flag to remove a confounding variable ahead of
 hyperparameter comparisons.
 
+The 2026-07-24 pin only reached the training-loop generation path
+(`compute_soft_embeds`/`generate_fakes_for_batch`/`generate_fake_batch`) — it missed
+`generate_fake_sequences` in `val_metrics.py`, which `run_evaluation()` uses to produce the
+sequences behind every quality metric (`plddt`/`scAccuracy`/`progres`/`pairwise_tm`/
+`unique_ratio`). That function kept drawing a fresh `uniform(0.8, 1.2)` temperature every fill
+step with no override parameter, so the entire lambda_kl sweep's quality metrics (both phases)
+were measured under an uncontrolled random temperature. `gen_grad_norm`/`kl_loss`/`critic_loss`/
+`generator_loss` were unaffected — they correctly used the pinned value throughout, so the
+mechanistic case for `lambda_kl=0.05` stood. Closed 2026-07-30: `generate_fake_sequences` gained
+a `temperature` parameter, and both training scripts now pass `args.temperature` through to it.
+
 With the gradient path confirmed working but only validated over 3 epochs, the next
 open question was `lambda_kl`: the KL anchor's weight had only ever been tested at one
 value (0.01), and there was no evidence it was the right one, or that the gradient fix
