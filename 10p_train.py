@@ -1,4 +1,5 @@
 import os
+import shutil
 import argparse
 import random
 import numpy as np
@@ -154,6 +155,21 @@ def parse_args():
         help="Random seed for random/numpy/torch/cuda, pinned so two runs with the "
         "same hyperparameters are reproducible instead of drawing from independent "
         "random state (batch order, dropout, multinomial sampling, remask positions).",
+    )
+    parser.add_argument(
+        "--save_optimizer_state",
+        action="store_true",
+        help="Also save gen_optimizer.pth/critic_optimizer.pth each epoch (~2/3 of "
+        "checkpoint size). Off by default — no resume script currently reads these back "
+        "(QoL 5, not yet built); only needed for ad-hoc optimizer-state inspection.",
+    )
+    parser.add_argument(
+        "--keep_last_n_checkpoints",
+        type=int,
+        default=1,
+        help="Number of most recent epoch_N/ checkpoint directories to retain; older ones "
+        "are deleted right after each new checkpoint finishes writing. Set to 0 to keep "
+        "all checkpoints (old behavior).",
     )
     return parser.parse_args()
 
@@ -759,11 +775,21 @@ for epoch in range(n_epochs):
     gen_dir = f"{save_dir}/generator_bert"
     generator.protbert.save_pretrained(gen_dir)
 
-    torch.save(gen_optimizer.state_dict(), f"{save_dir}/gen_optimizer.pth")
-    torch.save(critic_optimizer.state_dict(), f"{save_dir}/critic_optimizer.pth")
+    if args.save_optimizer_state:
+        torch.save(gen_optimizer.state_dict(), f"{save_dir}/gen_optimizer.pth")
+        torch.save(critic_optimizer.state_dict(), f"{save_dir}/critic_optimizer.pth")
 
     print(f"Models saved for epoch {epoch + 1}:")
     print(f" - Critic ProtBERT saved at: {critic_bert_dir}")
     print(f" - Critic Classifier saved at: {critic_classifier_path}")
     print(f" - Generator ProtBERT saved at: {gen_dir}")
-    print(f" - Optimizer states saved at: {save_dir}/")
+    if args.save_optimizer_state:
+        print(f" - Optimizer states saved at: {save_dir}/")
+
+    if args.keep_last_n_checkpoints > 0:
+        run_dir = f"{checkpoint_dir}/{args.run_name}"
+        for old_epoch in range(1, epoch + 2 - args.keep_last_n_checkpoints):
+            old_dir = f"{run_dir}/epoch_{old_epoch}"
+            if os.path.isdir(old_dir):
+                shutil.rmtree(old_dir)
+                print(f" - Pruned old checkpoint: {old_dir}")
