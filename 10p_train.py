@@ -408,7 +408,7 @@ def run_evaluation(epoch_idx, batch_idx, critic_loss_val, gen_loss_val, tag="eva
     log_dict = {
         "epoch": epoch_idx + 1,
         "batch": batch_idx,
-        "critic_loss": critic_loss_val,
+        "critic_loss_epoch_avg": critic_loss_val,
         "generator_loss": gen_loss_val,
         "tag": tag,
     }
