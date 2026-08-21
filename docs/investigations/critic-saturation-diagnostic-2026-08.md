@@ -150,16 +150,60 @@ uneventful trajectory versus `0.005`'s disruptive, still-partially-unresolved ep
 isn't disproven as the better choice, but the evidentiary basis for preferring it should now
 rest on those two legs, not on the original critic-derived dynamics.
 
+## Addendum (2026-08-21): `gen_grad_norm` dose-response across all 9 KL-sweep runs
+
+This investigation's Findings/Answer sections above are based on the two August diagnostic
+re-runs (`kl0.005`, `kl0.05`, 15 epochs each, `--holdout_size` enabled). Pulling full-resolution
+`gen_grad_norm` for all 9 original `lambda_kl` sweep runs (phase 1's five arms, phase 2's two
+arms, and the phase 2 retry's two arms — none of which had `--holdout_size` instrumentation)
+answers the "check whether other `lambda_kl` values reproduce the same pattern" bullet below,
+and sharpens two of this doc's claims with numbers instead of qualitative description.
+
+**`critic_loss` pins at ~5.000 in every one of the 9 runs, regardless of `lambda_kl`** (final
+values ranging 4.9697–5.0027, all six-decimal-adjacent to the `lambda_gp=5` value fixed across
+every run here) — confirming the collapse mechanism is universal across the full swept range,
+not just the two arms re-tested in this diagnostic.
+
+**`gen_grad_norm` median (phase 1, 500-sample full-resolution trace per arm) rises
+monotonically with `lambda_kl`:**
+
+| `lambda_kl` | 0 | 0.005 | 0.01 | 0.05 | 0.1 |
+|---|---|---|---|---|---|
+| `gen_grad_norm` median | 0.0 (79.4% exactly zero; nonzero floor ~1.7e-7) | 0.1615 | 0.1642 | 0.7255 | 1.3477 |
+
+A ~19x spread in generator-gradient health across the swept range, entirely separate from
+`critic_loss`'s uniform saturation — reinforcing this doc's core distinction between "does the
+critic collapse" (no) and "does the generator retain a usable gradient after collapse" (yes,
+`lambda_kl`-dependent).
+
+**Reproducibility split confirmed quantitatively, not just qualitatively.** Across phase 1 /
+phase 2 / phase 2 retry batches: `lambda_kl=0.05`'s `gen_grad_norm` median holds tight
+(0.7255 → 0.8399 → 0.8377, roughly a 15% band), while `lambda_kl=0.005`'s swings by an order of
+magnitude (0.1615 → 0.0703 → 0.8373). This is the same instability
+`docs/sweeps/lambda-kl-sweep-2026-07.md`'s Phase 2 Retry Results section already flagged
+qualitatively for `0.005`; this addendum adds the specific numbers behind it.
+
+**Structural metrics (`scAccuracy`, `plddt_score`) show no relationship to `gen_grad_norm`
+health across the full 9-run range.** `scAccuracy` stays within 0.3796–0.4062 and `plddt_score`
+within 0.7381–0.7690 across a ~19x spread in `gen_grad_norm` median (excluding the `kl=0` outlier,
+whose depressed `plddt_score` of 0.6698 is the one point where a structural metric does move —
+consistent with `kl=0`'s near-total loss of generator gradient rather than with any smooth
+trend: correlation across the other 8 runs is negative/flat, not positive). This is the same
+"structural metrics plateau early" finding CLAUDE.md and this doc's Findings section already
+state, now with the correlation checked directly against gradient health rather than against
+epoch count.
+
 ## Next steps
 
-- Test whether `lambda_gp=5` is too strong relative to the Wasserstein term's natural scale,
-  making "the critic ignores everything" an artificially cheap optimum — try a smaller
-  `lambda_gp` and check whether collapse still occurs.
+- ~~Test whether `lambda_gp=5` is too strong~~ — in progress: `lambda_gp` diagnostic sweep
+  (`slurms/investigations/lambda_gp_diagnostic.sh`, `gp_list=(0 0.1 1 10)`, `lambda_kl=0.05`
+  fixed, 8 epochs, `--holdout_size 200`) launched 2026-08-21 on MN5, results pending.
 - Directly test the AdamW post-flat-region-overshoot hypothesis for the epoch-12 event (e.g.
   log/inspect optimizer second-moment statistics, or compare against a different optimizer/eps
   setting) rather than leaving it as an inference from ordering alone.
 - Re-run with `--holdout_eval_fakes` set to get real/fake symmetry on the held-out set.
-- Check whether other `lambda_kl` values reproduce the same pattern (universal collapse,
-  `lambda_kl`-dependent post-collapse stability) to see how far it generalizes beyond these two
-  arms.
+- ~~Check whether other `lambda_kl` values reproduce the same pattern~~ — done, see addendum
+  above: universal `critic_loss` collapse confirmed across all 9 runs; `gen_grad_norm` health
+  is `lambda_kl`-dependent with a ~19x spread and a reproducibility split matching
+  `lambda-kl-sweep-2026-07.md`'s existing note on `0.005`.
 - Update CLAUDE.md item 20 with this investigation's answer (separate step).
