@@ -1,7 +1,7 @@
 #!/bin/bash
-#SBATCH --job-name=kl_sat_diag
-#SBATCH --output=outputs/10p/kl_saturation_diagnostic_%a.out
-#SBATCH --error=outputs/10p/kl_saturation_diagnostic_%a.err
+#SBATCH --job-name=critic_sat_diag
+#SBATCH --output=outputs/10p/critic_saturation_diagnostic_%a.out
+#SBATCH --error=outputs/10p/critic_saturation_diagnostic_%a.err
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=20
 #SBATCH --gres=gpu:1
@@ -41,7 +41,7 @@ kl_list=(0.005 0.05)
 lambda_kl=${kl_list[$SLURM_ARRAY_TASK_ID-1]}
 
 # Construct a run name
-run_name="kl-saturation-diagnostic-kl${lambda_kl}"
+run_name="critic-saturation-diagnostic-kl${lambda_kl}"
 
 python 10p_train.py \
   --n_critic    4 \
