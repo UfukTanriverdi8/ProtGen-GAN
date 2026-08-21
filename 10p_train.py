@@ -2,6 +2,7 @@ import os
 import shutil
 import argparse
 import random
+from typing import Literal, cast
 import numpy as np
 import torch
 from torch.utils.data import DataLoader
@@ -289,7 +290,10 @@ wandb_tags = [t.strip() for t in args.wandb_tags.split(",") if t.strip()]
 wandb.init(
     project="protgen-gan",
     name=args.run_name,
-    mode=os.environ.get("WANDB_MODE", "online"),
+    mode=cast(
+        Literal["online", "offline", "disabled", "shared"],
+        os.environ.get("WANDB_MODE", "online"),
+    ),
     tags=wandb_tags,
     config={
         "n_critic": args.n_critic,
@@ -446,7 +450,8 @@ def run_evaluation(epoch_idx, batch_idx, critic_loss_val, gen_loss_val, tag="eva
 
     unique_ratio = len(set(generated_sequences)) / len(generated_sequences)
 
-    esmfold_model.to(device)
+    assert esmfold_model is not None  # guaranteed by the num_eval_sequences>0 guard above
+    esmfold_model.to(device)  # type: ignore[arg-type]  # transformers stub misresolves .to() against __call__
     avg_plddt_score, _ = calculate_plddt_scores_and_save_pdb(
         generated_sequences,
         esmfold_tokenizer,
@@ -456,7 +461,7 @@ def run_evaluation(epoch_idx, batch_idx, critic_loss_val, gen_loss_val, tag="eva
         run_name=args.run_name,
         device=device,
     )
-    esmfold_model.to("cpu")
+    esmfold_model.to("cpu")  # type: ignore[arg-type]
     torch.cuda.empty_cache()
 
     avg_scAcc = calculate_mpnn_alignment_metric(

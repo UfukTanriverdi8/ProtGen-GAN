@@ -401,7 +401,7 @@ def compute_alignment_identity_and_similarity(seq1, seq2):
             similar += 1
         elif a != "-" and b != "-":
             # if substitution score > 0, consider it similar
-            score = blosum62[a, b]
+            score = blosum62[a, b]  # type: ignore[index]  # Bio.Align stub only declares slice indexing
             if score > 0:
                 similar += 1
 
@@ -492,6 +492,7 @@ def calculate_pairwise_tm_score(run_name="default_run_name", num_sequences=10):
             pdb2 = pdb_files[j]
             structure1 = get_structure(pdb1)
             structure2 = get_structure(pdb2)
+            assert structure1 is not None and structure2 is not None
             coords1, seq1 = get_residue_data(next(structure1.get_chains()))
             coords2, seq2 = get_residue_data(next(structure2.get_chains()))
             result = tm_align(coords1, coords2, seq1, seq2)

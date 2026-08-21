@@ -5,16 +5,20 @@ from datasets import load_dataset
 
 def load_and_tokenize_dataset(
     tokenizer,
-    gen_file=None,
-    critic_file=None,
-    full_dataset=None,
+    gen_file: str | None = None,
+    critic_file: str | None = None,
+    full_dataset: str | None = None,
     fully_masked=False,
     max_length=512,
 ):
     if fully_masked:
         # Load a single "full" dataset file and treat it as the critic dataset.
+        assert full_dataset is not None, "full_dataset is required when fully_masked=True"
         datasets = load_dataset("text", data_files={"critic": full_dataset})
     else:
+        assert gen_file is not None and critic_file is not None, (
+            "gen_file and critic_file are required when fully_masked=False"
+        )
         datasets = load_dataset(
             "text", data_files={"gen": gen_file, "critic": critic_file}
         )

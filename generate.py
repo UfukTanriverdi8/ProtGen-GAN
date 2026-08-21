@@ -174,7 +174,7 @@ def generate_full_mode_sequences(
     keep_percent: float = 0.10,
     temperature: float = 1.0,
     batch_size: int = 64,
-    device: str = "cuda",
+    device: str | torch.device = "cuda",
     rng_seed: int = 42,
 ) -> list[str]:
     assert 0.0 < keep_percent <= 1.0
@@ -234,7 +234,7 @@ def generate_seeded_mode_sequences(
     keep_percent: float = 0.10,
     temperature: float = 1.0,
     batch_size: int = 64,
-    device: str = "cuda",
+    device: str | torch.device = "cuda",
     rng_seed: int = 123,
 ) -> list[str]:
     """

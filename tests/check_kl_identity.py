@@ -70,8 +70,7 @@ def run_kl(ref_model, label):
                 critic,
                 input_ids,
                 attn_mask,
-                min_temp=1.0,
-                max_temp=1.0,
+                temperature=1.0,
                 tokenizer=tokenizer,
                 remask_frac=0.5,
             )
