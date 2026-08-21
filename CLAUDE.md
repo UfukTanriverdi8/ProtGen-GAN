@@ -291,11 +291,14 @@ gan/
 │   └── mn5-env-export.yml       Backup snapshot taken during the env migration — not for use
 ├── bfg-1.15.0.jar             BFG repo cleaner (git history cleanup utility)
 └── docs/
-    ├── RUN_DOCUMENTATION.md   Generic convention for docs/runs/ + docs/sweeps/ (below)
+    ├── RUN_DOCUMENTATION.md   Generic convention for docs/runs/ + docs/sweeps/ +
+    │                          docs/investigations/ (below)
     ├── runs/                  One markdown file per individual training run
     │                          (config, final metrics, per-epoch trend, verdict)
-    └── sweeps/                One markdown file per sweep (design ref, run table, winner
-                               selection reasoning, conclusion)
+    ├── sweeps/                One markdown file per sweep (design ref, run table, winner
+    │                          selection reasoning, conclusion)
+    └── investigations/        One markdown file per diagnostic question answered across
+                               runs — not a hyperparameter search for a winner
 ```
 
 > Fine-tuning code and AF3 analysis scripts will be added to this repo later.
