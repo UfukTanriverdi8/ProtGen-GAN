@@ -433,6 +433,10 @@ To sync MN5 with GitHub, pull from `origin` locally then push to `mn5`, or vice 
 **Commit messages:** never add a `Co-Authored-By: Claude` (or any Anthropic/Claude attribution)
 trailer to commits in this repo, regardless of default tooling conventions.
 
+**Scoped `chore` prefixes** for non-code artifacts that don't warrant `feat`/`fix`:
+- `chore(slurm)` — new or edited SLURM job scripts (`slurms/**`)
+- `chore(run-logs)` — `.out`/`.err` logs pulled from MN5 into `outputs/`
+
 ### Secrets (`.env`)
 Copy `.env.example` to `.env` and fill in real values (`WANDB_API_KEY`, `WANDB_MODE`). `.env` is
 gitignored and never committed — it must exist independently on every machine that runs training
