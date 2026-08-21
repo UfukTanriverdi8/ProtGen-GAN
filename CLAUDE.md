@@ -270,7 +270,10 @@ gan/
     └── sweeps/                    Hyperparameter sweep array jobs (split out from the flat
                                    layout above); see docs/RUN_DOCUMENTATION.md for how
                                    results are recorded
-        └── lambda_kl_sweep_p1.sh  Phase 1 screening: lambda_kl grid, seeded mode, n_critic=4
+        ├── lambda_kl_sweep_p1.sh  Phase 1 screening: lambda_kl grid, seeded mode, n_critic=4
+        ├── lambda_kl_sweep_p2.sh  Phase 2: lambda_kl finalists, seeded mode
+        └── critic_saturation_diagnostic.sh  Item 20 diagnostic: lambda_kl=0.005 vs 0.05,
+                                   held-out critic validation enabled
 
 ├── # VALIDATION / VISUALISATION
 └── validation/
@@ -548,6 +551,19 @@ evaluation is no longer appropriate.
     `lambda_kl=0.05` (item 18) stands. Fixed 2026-07-30: `generate_fake_sequences` now takes
     a `temperature` parameter, both training scripts pass `args.temperature` through.
 
+15. **Reconsider the fixed 50% remask fraction** — `models.py:136` TODO. The λ=0.01 run's
+    gentle decline (progres 0.92→0.87, pairwise_tm 0.75→0.64 over 3 epochs) raises whether
+    that's an early-training transient or a structural rate issue tied to the fixed fraction.
+
+16. **Validate blind mode under the gradient fix** — Stage 3 validation (item 2) covered
+    seeded mode only. Blind mode is documented as higher mode-collapse risk and was never
+    stable pre-fix — real gap, not a nice-to-have.
+
+17. **Reconcile straight-through decision vs. implementation** — the Decision table
+    (`docs/GENERATOR_GRADIENT_FIX.md` line 56) says straight-through was adopted for
+    intermediate refinement-step commits; `compute_soft_embeds` actually does K=1 truncation
+    with no straight-through. Confirm this is a deliberate simplification, not drift.
+
 18. ~~**lambda_kl sweep**~~ — ✅ Done, reproduced twice (Phase 1/2 on 2026-07-26, retried
     2026-07-31 after fixing an unrelated seed-pinning bug — see item 20). **Winner:
     `lambda_kl=0.05`** — beat `0.005` on 3/4 quality metrics and kept `gen_grad_norm` healthy
@@ -608,19 +624,6 @@ evaluation is no longer appropriate.
     run docs is still correct (backfilled from the submitting SLURM script), just not
     confirmable via wandb's own config field until this is fixed. See
     `docs/sweeps/lambda-kl-sweep-2026-07.md`'s Results section for the full trail.
-
-15. **Reconsider the fixed 50% remask fraction** — `models.py:136` TODO. The λ=0.01 run's
-    gentle decline (progres 0.92→0.87, pairwise_tm 0.75→0.64 over 3 epochs) raises whether
-    that's an early-training transient or a structural rate issue tied to the fixed fraction.
-
-16. **Validate blind mode under the gradient fix** — Stage 3 validation (item 2) covered
-    seeded mode only. Blind mode is documented as higher mode-collapse risk and was never
-    stable pre-fix — real gap, not a nice-to-have.
-
-17. **Reconcile straight-through decision vs. implementation** — the Decision table
-    (`docs/GENERATOR_GRADIENT_FIX.md` line 56) says straight-through was adopted for
-    intermediate refinement-step commits; `compute_soft_embeds` actually does K=1 truncation
-    with no straight-through. Confirm this is a deliberate simplification, not drift.
 
 22. **No validation loss exists — only training loss** (raised 2026-07-31). Neither training
     script holds out any data: `dataset.py`'s `get_dynamic_dataloaders` splits each epoch's data
