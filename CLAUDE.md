@@ -479,6 +479,12 @@ evaluation is no longer appropriate.
 
 ## TODO
 
+> **Item numbers are permanent once assigned** — never renumbered, never reused, even after
+> full resolution. Other docs (`docs/runs/`, `docs/investigations/`, `docs/sweeps/`), SLURM
+> script comments, `wandb_tags`, and git commit messages cross-reference items by number; a
+> renumber would silently break all of them. Mark an item resolved in place (✅ prefix) or fold
+> its prose into `docs/HISTORY.md`/a "Resolved Issues" pointer — don't remove or renumber it.
+
 1. ~~**Fix BUG 2**~~ — ✅ Fixed (2026-06-19)
 
 2. ~~**Gradient-flow fix (Stages 0–2)**~~ — ✅ Done (2026-06-26). gen_grad_norm
