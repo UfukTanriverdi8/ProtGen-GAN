@@ -1,5 +1,8 @@
 # Archive
 
+## Week of 2026-08-18
+Implemented holdout-validation (10p_train.py: CLI flags, WB logging, 3 eval-sites); verified nested holdout reproducibility. Compressed CLAUDE.md (884→671 lines). Pivoted λ_kl sweep from single-arm to 2-arm (0.005 vs 0.05); generated MN5 diagnostic SLURM.
+
 ## Week of 2026-07-27
 Fixed multi-machine git sync (MN5↔Anzu↔GitHub) and RNG seeding (added --seed flag, default 89). Phase 2 λ_kl-sweep finalized params (0.005, 0.05); added wandb-run-reviewer subagent, rewrote slurm-job skill. Diagnosed quota failure: 10p_train.py storing full ProtBERT+opt-state per epoch (~8GB)—freed 4TB+. Root-caused wandb config persistence gap and critic saturation (constant-output collapse); identified missing held-out eval in protgen validation. Flipped λ_kl rec to 0.05.
 

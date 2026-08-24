@@ -396,6 +396,8 @@ Current standard: `n_critic = 8`, first epoch frozen.
 - **Hook: file protection** — blocks edits to `.env` and `protgen-gan-env-v2.yml` (path-substring match, so it still applies now that the file lives under `envs/`)
 - **Hook: ruff auto-lint** — runs `ruff check` on every `.py` file after Edit/Write
 - **Hook: mn5 push guard** — requires confirmation for `git push mn5` or force-push
+- **Hook: CUDA_VISIBLE_DEVICES guard** — blocks `10p_train.py`/`fully_masked_train.py` Bash
+  invocations that don't set `CUDA_VISIBLE_DEVICES` inline; Anzu is shared multi-user
 - **Skill: `slurm-job`** — generates MN5 SLURM scripts from run parameters
 - **Skill: `bug-fix-checklist`** — Claude-only; greps for all known unfixed bugs before touching training/eval files
 - **Skill: `pre-submit`** — validates codebase state (bugs, env, wandb) before SLURM submission
@@ -525,6 +527,9 @@ evaluation is no longer appropriate.
     scores a 50% hard / 50% soft blend during generator updates; possible confidence-inflation
     reward-hack, not yet observed but not ruled out. Full writeup + proposed diagnostic:
     `docs/GENERATOR_GRADIENT_FIX.md` → "Open risks / caveats".
+    **Instrumentation added (2026-08-21):** `compute_confidence_metrics` (`models.py:182`)
+    logs `gen_max_prob`/`gen_entropy` at remasked positions on every generator-update step,
+    wired into both training scripts — makes this risk measurable. No run has used it yet.
 
 12. ~~**KL identity test**~~ — ✅ Done (2026-07-22). `tests/check_kl_identity.py` confirms
     `compute_kl_anchor` plumbing is correct (KL(P‖P)=0 + negative control).
@@ -634,6 +639,14 @@ evaluation is no longer appropriate.
     poor predictors of DNA-SAM binding (see Key Evaluation Findings above). Not yet scoped —
     needs a look at what ProTrek actually outputs and whether it's a drop-in replacement or
     additive.
+
+24. **Run bare gradient-flow-only training (no KL anchor, no GP)** — decided 2026-08-24.
+    `critic_loss` lands within a few thousandths of exactly `5.0000` for every `lambda_kl`
+    value tested (item 20), which is suspicious enough that it might not be pure architectural
+    collapse — could also be an error in the loss/GP calculation. Strip training back to the
+    bare gradient-flow fix, both stabilizers removed, and observe raw adversarial dynamics as
+    a clean baseline before trusting further diagnostics built on the current loss formulation.
+    See `docs/HISTORY.md` Phase 6 (final paragraphs) for the reasoning.
 
 ---
 
