@@ -1,7 +1,7 @@
 # protgen-gan - Entire History
 
 **Reconstructed from the meeting logs, code commits, and documentation of the project.**  
-**Last Updated: 20 August 2026**
+**Last Updated: 24 August 2026**
 
 This document captures the full life of the project: every major architectural decision, what was learned from each phase, and every significant bug discovered. It is written as a research narrative rather than a changelog, because the most important things to preserve are not just what changed but why, and what the consequences were.
 
@@ -182,21 +182,19 @@ This preserves a continuous differentiable path from the loss back to the genera
 
 ---
 
-### Bugs 4-9 — Additional Issues Found in Code Audit (April 2026)
+### Additional Critical Bugs (April 2026)
 
-Beyond the three major bugs above, a Claude Code audit of the full codebase identified several additional issues:
+Beyond the three major bugs above, a Claude Code audit of the full codebase identified several additional issues. The most consequential:
 
 **BUG 4 (CRITICAL)** -- `compute_gradient_penalty` called with wrong signature in both training scripts. `loss.py` was updated to accept `real_mask` and `fake_mask` parameters, but the calling code in `10p_train.py:328` and `fully_masked_train.py:317` was never updated. Will crash at runtime with `TypeError`.
 
 **BUG 5 (CRITICAL)** -- `calculate_plddt_scores_and_save_pdb` returns a tuple `(avg_score, scores_list)` but both training scripts treat it as a scalar and log it directly to wandb. Every pLDDT metric in every training run was logged as a tuple, not a float. All training pLDDT metrics in W&B are garbage.
 
-**BUG 6 (Significant)** -- `generate_fake_sequences` in `val_metrics.py` computes a random temperature but then never uses it, always passing `temperature=1.0` to the generator. Evaluation sequences during training always used temperature=1.0 regardless of the random sampling.
-
 **BUG 7 (Significant)** -- `fully_masked_train.py` sets the attention mask during generation to exclude `[MASK]` tokens. Should exclude `[PAD]` tokens instead. Masking out `[MASK]` tokens prevents ProtBERT from attending to those positions as context, which is the opposite of what bidirectional attention needs.
 
-**BUG 8 (Moderate)** -- NaN guard in `calculate_plddt_scores_and_save_pdb` filters out NaN values correctly, then immediately overwrites the result with an unfiltered average on the next line.
-
-**BUG 9 (Quality of life)** -- `generate_fake_batch` in `fully_masked_train.py` defaults to `debug=True`, flooding SLURM logs with per-position mask counts on every training batch.
+A handful of smaller issues (a dead temperature variable in evaluation sampling, an
+NaN guard immediately overwritten by an unsafe average, and noisy default debug logging)
+were also found and fixed in the same audit.
 
 ---
 
@@ -290,8 +288,8 @@ pinned at exactly 5.000) in nearly every arm. `lambda_kl` determines whether the
 generator's gradient survives that saturation, not whether the saturation happens.
 Full design, results, and per-run data: `docs/sweeps/lambda-kl-sweep-2026-07.md`. Why
 the critic saturates this way -- and whether it, not `lambda_kl`, is the real ceiling
-on generation quality -- is open and worth investigating before the next full-scale
-run; see `CLAUDE.md`'s task list.
+on generation quality -- was open at this point and worth investigating before the
+next full-scale run.
 
 A retry of Phase 2 then surfaced a bigger problem: neither training script pinned any
 random seed, so every run before 2026-07-31 -- this sweep included -- carried
@@ -300,8 +298,7 @@ was caught because re-running `lambda_kl=0.005` with identical settings produced
 qualitatively different dynamics the second time. `lambda_kl=0.05` held up across two
 independent unseeded runs, so it's still trusted, but every other historical
 hyperparameter conclusion in this project (LR search, n_critic search) lacks that same
-confirmation. A `--seed` flag (default 89) was added to fix this going forward; see
-`CLAUDE.md`'s Hyperparameter Search History section.
+confirmation. A `--seed` flag (default 89) was added to fix this going forward.
 
 Pinning the seed explained *why* runs disagreed with each other, but not *why* the
 critic saturates at `critic_loss=5.000` in the first place -- and there was still no
@@ -340,5 +337,48 @@ The new tooling was verified with a 1-epoch, 200-sequence smoke test on Anzu: al
 fields log correctly, the `"mid"` tag fires, and values reproduce identically across
 two independent runs with the same `--seed`. The actual question this tooling exists to
 answer -- whether score variance collapses in lockstep with `critic_loss` saturation --
-still needs a real-scale run taken long enough to hit saturation, most likely on MN5;
-see `CLAUDE.md`'s TODO item 20.
+still needed a real-scale run taken long enough to hit saturation.
+
+That run came on 2026-08-20/21: the two Phase 2 finalists (`lambda_kl=0.005` and
+`lambda_kl=0.05`) were re-run for 15 epochs each with the new holdout tooling enabled.
+Both arms showed the same signature -- real and fake score standard deviations collapsing
+to ~1e-5-1e-6 within the first few epochs, on both the training pool and the held-out
+set the critic never trained on. That rules out memorization as the explanation and
+confirms `critic_loss` pinning at 5.000 is genuine degenerate collapse (the critic
+becoming a constant function of its input), not benign convergence. Pulling the same
+number across all nine runs from the original `lambda_kl` sweep showed the same pinned
+value regardless of `lambda_kl`, so the collapse itself is architectural, not tied to
+that hyperparameter -- the mechanics point at `lambda_gp`, which is cheap for a
+constant-output critic to satisfy.
+
+What `lambda_kl` does change is what happens after collapse. The `0.05` arm stayed
+flat and quiet for the full 15 epochs. The `0.005` arm, after the same initial collapse,
+went through an unexplained instability episode around epoch 12 -- `gen_grad_norm`
+spiked from a baseline near 0.1-0.5 up to 116, `kl_loss` spiked to 3.77, and
+`generator_loss` never recovered, climbing from a healthy -0.073 at epoch 11 to +5.94
+by epoch 15. This means the original sweep's case for `lambda_kl=0.05` was leaning in
+part on critic-derived signal recorded while the critic was already collapsed --
+weaker ground than assumed at the time. The comparison's sturdier legs turn out to be
+the structural quality metrics, which stayed flat and comparable between arms, and this
+newer stability result: `0.05` reliably keeps the generator's gradient usable after
+collapse, `0.005` does not. Pulling `gen_grad_norm` across the full nine-run sweep
+confirmed this as a dose-response relationship, not a two-point coincidence: the
+gradient's median rises roughly nineteenfold from `lambda_kl=0` to `lambda_kl=0.1`,
+entirely independent of `critic_loss`'s uniform saturation.
+
+The same week, separately from the collapse question, a longer-standing open risk gained
+instrumentation to actually check it: the critic only ever trains on hard (discrete-token)
+embeddings but scores a 50/50 hard/soft blend during generator updates, and the generator
+could in principle be exploiting that mismatch -- inflating its own confidence to look
+better to the critic -- rather than genuinely improving. `compute_confidence_metrics` logs
+`gen_max_prob`/`gen_entropy` at remasked positions on every generator-update step, wired
+into both training scripts. No run has used it yet, so whether reward-hacking is actually
+happening is still open; this only makes it measurable.
+
+One loose thread: `critic_loss` landing within a few thousandths of exactly 5.000 for
+every `lambda_kl` value tested is suspicious enough that it may not be pure
+architecture -- it could also be an error somewhere in the loss or gradient-penalty
+calculation. The next step is to strip training back to the bare gradient-flow fix,
+with the KL anchor and gradient penalty both removed, and see what adversarial dynamics
+look like without either stabilizer layered on top, before trusting any further
+diagnostics built on the current loss formulation.
