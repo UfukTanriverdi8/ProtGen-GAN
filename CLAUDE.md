@@ -344,11 +344,17 @@ These findings are based on seeded mode results only (blind mode was collapsed d
   Sequences with high progres scores did not outperform those without.
 - **All 9 unique survivors came from seeded mode.** Blind mode contributed zero meaningful
   sequences — consistent with total mode collapse.
-- **Best candidate:** sequence `2508_len279` from `full_nc8_lrgen_5e-5_lrcrit_5e-4` (seeded),
-  RMSD 5.272 Å to reference DNA-SAM binding site. Structurally validated by a chemistry
+- **Lead candidate:** sequence `2508_len279` from `full_nc8_lrgen_5e-5_lrcrit_5e-4` (seeded),
+  RMSD 5.425 Å to reference DNA-SAM binding site. Structurally validated by a chemistry
   professor. Secondary structure similar to DNMT-3a with hydrophilic interactions for SAM binding.
+  This is the same sequence referenced below as the one recovered after the scAccuracy filter
+  excluded it; it's "second-best" only in the sense of raw distance ranking against `2405_len258`.
+- **Top-scoring by raw distance:** sequence `2405_len258` from `10p_nc8_lrgen_5e-6_lrcrit_5e-5`
+  (seeded), RMSD 5.272 Å, the true minimum across the eval set, but not yet structurally
+  validated or run through MD simulation, unlike `2508_len279` above.
 - **30 sequences returned AF3 errors** and remain unevaluated — potential candidates.
-- **scAccuracy >= 0.3 filter in 120k batch excluded the second-best candidate** (5.425 Å RMSD).
+- **scAccuracy >= 0.3 filter in 120k batch excluded `2508_len279`** (5.425 Å RMSD) before it was
+  recovered via the relaxed-filter batch and chemist-validated (see above).
   Don't use scAccuracy as a hard filter going forward.
 
 ---
@@ -509,8 +515,10 @@ evaluation is no longer appropriate.
 
 6. **Re-run the 30 AF3 error sequences** — these are unevaluated potential candidates.
 
-7. **Re-run 120k eval with relaxed filter** — drop `scaccuracy` threshold or remove entirely.
-   Recover the second-best candidate (5.425 Å RMSD) that was incorrectly filtered out.
+7. ✅ **2508_len279 recovered from the scAccuracy filter** (5.425 Å RMSD, chemist-validated).
+   Still open: a full 120k re-run without the scAccuracy gate never happened at scale — only
+   an ad hoc 52-sequence batch was. Also open: `2405_len258` (5.272 Å, the true minimum in the
+   eval set) has never been chemist- or MD-validated — likely higher priority than the re-run.
 
 8. **Retrain 2-3 epochs on best hyperparams** — once the gradient path is fixed, assess whether
    training dynamics change meaningfully before committing to a full large-scale retrain.
