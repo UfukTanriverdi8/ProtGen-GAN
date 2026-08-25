@@ -4,7 +4,7 @@
 Implemented holdout-validation (10p_train.py: CLI flags, WB logging, 3 eval-sites); verified nested holdout reproducibility. Compressed CLAUDE.md (884→671 lines). Pivoted λ_kl sweep from single-arm to 2-arm (0.005 vs 0.05); generated MN5 diagnostic SLURM.
 
 ## Week of 2026-07-27
-Fixed multi-machine git sync (MN5↔Anzu↔GitHub) and RNG seeding (added --seed flag, default 89). Phase 2 λ_kl-sweep finalized params (0.005, 0.05); added wandb-run-reviewer subagent, rewrote slurm-job skill. Diagnosed quota failure: 10p_train.py storing full ProtBERT+opt-state per epoch (~8GB)—freed 4TB+. Root-caused wandb config persistence gap and critic saturation (constant-output collapse); identified missing held-out eval in protgen validation. Flipped λ_kl rec to 0.05.
+Fixed multi-machine git sync (MN5↔Anzu↔GitHub) and RNG seeding (added --seed flag, default 89). Phase 2 λ_kl-sweep finalized params (0.005, 0.05); added wandb-run-reviewer subagent, rewrote slurm-job skill. Diagnosed quota failure: 10p_train.py storing full ProtBERT+opt-state per epoch (~8GB)—freed 4TB+. Root-caused wandb config persistence gap, critic saturation, and missing holdout-eval. Secured credentials (BFG+rotation), deployed SessionStart hook (machine-context injection, Anzu specs: 7 GPU/49GB/64 cores), debugged wandb MCP IPv6 routing.
 
 ## Week of 2026-07-20
 Soft-embed gradient debugging validated (gen_grad_norm>0, KL loss 0–4 vs 89–1236 pre-fix). Implemented λ_kl sweep Phase 1 (n_critic=4, temp=1.0); Phase 1 completed with finalized Phase 2 params (λ_kl: 0.005, 0.05). Merged mn5/dev commits; added --wandb_tags flag; rewrote slurm-job/pre-submit skills, retired wandb-sync skill. Docs audit: fixed stale entries (GRADIENT_FIX_EXPLAINED, ENV_MIGRATION, lambda-kl-sweep).
